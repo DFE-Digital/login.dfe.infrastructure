@@ -32,6 +32,13 @@
             "metadata": {
                 "description": "JSON string containing app config"
             }
+        },
+        "includeDeploymentSlot": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Whether or not to include a staging deployment slot"
+            }          
         }
     },
     "variables": {
@@ -64,7 +71,8 @@
             },
             "resources": [
                 {
-                    "name": "staging",
+                    "condition": "[parameters('includeDeploymentSlot')]",
+                    "name": "requiresDeploymentSlot",
                     "type": "slots",
                     "apiVersion": "2016-08-01",
                     "location": "[resourceGroup().location]",
