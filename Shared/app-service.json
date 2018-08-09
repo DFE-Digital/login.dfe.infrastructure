@@ -67,7 +67,7 @@
                 "siteConfig": {
                     "appSettings": "[variables('appServiceSettings')]",
                     "alwaysOn": false,
-                    "minTlsVersion": "1.2"
+                    "minTlsVersion": "1.0"
                 }
             },
             "resources": [
@@ -84,7 +84,7 @@
                         "siteConfig": {
                             "appSettings": "[variables('appServiceSettings')]",
                             "alwaysOn": false,
-                            "minTlsVersion": "1.2"
+                            "minTlsVersion": "1.0"
                         }
                     },
                     "dependsOn": [
