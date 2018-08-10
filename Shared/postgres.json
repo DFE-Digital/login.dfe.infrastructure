@@ -1,0 +1,74 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "administratorLogin": {
+        "type": "string"
+      },
+      "administratorLoginPassword": {
+        "type": "string"
+      },
+      "serverName": {
+        "type": "string"
+      },
+      "skuCapacity": {
+        "type": "int",
+        "defaultValue": 1
+      },
+      "skuFamily": {
+        "type": "string",
+        "defaultValue": "Gen5"
+      },
+      "skuName": {
+        "type": "string",
+        "defaultValue": "B_Gen5_1"
+      },
+      "skuSizeMB": {
+        "type": "int",
+        "defaultValue": 5120
+      },
+      "skuTier": {
+        "type": "string",
+        "defaultValue": "Basic"
+      },
+      "version": {
+        "type": "string",
+        "defaultValue": "9.6"
+      },
+      "backupRetentionDays": {
+        "type": "int",
+        "defaultValue": 7
+      },
+      "geoRedundantBackup": {
+        "type": "string",
+        "defaultValue": "disabled"
+      }
+    },
+    "resources": [
+      {
+        "apiVersion": "2017-12-01",
+        "kind": "",
+        "location": "[resourceGroup().location]",
+        "name": "[parameters('serverName')]",
+        "properties": {
+          "version": "[parameters('version')]",
+          "administratorLogin": "[parameters('administratorLogin')]",
+          "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+          "storageProfile": {
+            "storageMB": "[parameters('skuSizeMB')]",
+            "backupRetentionDays": "[parameters('backupRetentionDays')]",
+            "geoRedundantBackup": "[parameters('geoRedundantBackup')]"
+          }
+        },
+        "sku": {
+          "name": "[parameters('skuName')]",
+          "tier": "[parameters('skuTier')]",
+          "capacity": "[parameters('skuCapacity')]",
+          "size": "[parameters('skuSizeMB')]",
+          "family": "[parameters('skuFamily')]"
+        },
+        "type": "Microsoft.DBforPostgreSQL/servers"
+      }
+    ],
+    "variables": {}
+  }
