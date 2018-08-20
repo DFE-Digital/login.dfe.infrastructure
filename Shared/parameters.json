@@ -48,6 +48,9 @@
         "keyVaultName": {
             "value": "__keyVaultName__"
         },
+        "keyVaultResourceGroup": {
+            "value": "__keyVaultResourceGroup__"
+        },        
         "AccessPolicyObjectId": {
             "value": ""
         },
@@ -59,6 +62,18 @@
         },
         "EPGWIP": {
             "value": "__EPGWIP__"
-        }
+        },
+        "postgresAdministratorLogin": {
+            "value": "__postgresAdministratorLogin__"
+        },        
+        "postgresOsaDatabaseName": {
+            "value": "__postgresOsaDatabaseName__"
+        },
+        "postgresAdminSecretName": {
+            "value": "__postgresAdminSecretName__"
+        },
+        "postgresServerName": {
+            "value": "__postgresServerName__"
+        }        
     }
 }

@@ -1,0 +1,119 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "templatesBaseUri":{
+        "type": "string"
+      },
+      "postgresAdministratorLogin": {
+        "type": "string"
+      },
+      "postgresAdminSecretName":{
+        "type": "string"
+      },
+      "keyVaultName":{
+          "type": "string"
+      },
+      "keyVaultResourceGroup":{
+          "type": "string"
+      },      
+      "postgresServerName": {
+        "type": "string"
+      },
+      "postgresOsaDatabaseName": {
+        "type": "string",
+        "defaultValue": "osa" 
+      },
+      "skuCapacity": {
+        "type": "int",
+        "defaultValue": 1
+      },
+      "skuFamily": {
+        "type": "string",
+        "defaultValue": "Gen5"
+      },
+      "skuName": {
+        "type": "string",
+        "defaultValue": "B_Gen5_1"
+      },
+      "skuSizeMB": {
+        "type": "int",
+        "defaultValue": 5120
+      },
+      "skuTier": {
+        "type": "string",
+        "defaultValue": "Basic"
+      },
+      "version": {
+        "type": "string",
+        "defaultValue": "9.6"
+      },
+      "backupRetentionDays": {
+        "type": "int",
+        "defaultValue": 7
+      },
+      "geoRedundantBackup": {
+        "type": "string",
+        "defaultValue": "disabled"
+      }
+    },
+    "resources": [
+        {
+            "apiVersion": "2015-01-01",
+            "name": "nestedTemplate",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "incremental",
+                "templateLink": {
+                    "uri": "[parameters('templatesBaseUri')]/Shared/postgres.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "administratorLogin": 
+                    {
+                        "value": "[parameters('postgresAdministratorLogin')]"
+                    },
+                    "administratorLoginPassword": {
+                        "reference": {
+                            "keyVault": {
+                            "id": "[resourceId(subscription().subscriptionId,  parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+                            },
+                            "secretName": "[parameters('postgresAdminSecretName')]"
+                        }
+                    },
+                    "serverName": {
+                        "value": "[parameters('postgresServerName')]"
+                    },
+                    "databaseName": {
+                        "value": "[parameters('postgresOsaDatabaseName')]"
+                    },
+                    "skuCapacity": {
+                        "value": "[parameters('skuCapacity')]"
+                    },
+                    "skuFamily": {
+                        "value": "[parameters('skuFamily')]"
+                    },
+                    "skuName": {
+                        "value": "[parameters('skuName')]"
+                    },
+                    "skuSizeMB": {
+                        "value": "[parameters('skuSizeMB')]"
+                    },
+                    "skuTier": {
+                        "value": "[parameters('skuTier')]"
+                    },
+                    "version": {
+                        "value": "[parameters('version')]"
+                    },
+                    "backupRetentionDays": {
+                        "value": "[parameters('backupRetentionDays')]"
+                    },
+                    "geoRedundantBackup": {
+                        "value": "[parameters('geoRedundantBackup')]"
+                    }
+                },
+            }
+        }
+    ],
+    "variables": { }
+  }
