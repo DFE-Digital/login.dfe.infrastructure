@@ -1,0 +1,43 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "cdnName": {
+            "type": "string",
+            "metadata":{
+                "description": "The name of the App Service"
+            }
+        },
+        "cdnSKU": {
+            "type": "string",
+            "defaultValue": "Standard_Microsoft",
+            "allowedValues": [
+                "Standard_Verizon",
+                "Premium_Verizon",
+                "Custom_Verizon",
+                "Standard_Akamai",
+                "Standard_ChinaCdn",
+                "Standard_Microsoft"
+            ],
+            "metadata": {
+                "description": "The SKU of the search service."
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+                {
+                    "name": "[parameters('cdnName')]",
+                    "type": "Microsoft.Cdn/profiles",
+                    "apiVersion": "2017-10-12",
+                    "location": "[resourceGroup().location]",
+                    "tags": {},
+                    "sku": {
+                        "name": "[parameters('cdnSKU')]"
+                    },
+                    "properties": {},
+                    "resources": []
+        }
+    ],
+    "outputs": {}
+  }

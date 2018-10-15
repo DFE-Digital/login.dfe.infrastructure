@@ -59,6 +59,13 @@
         },
         "EPGWIP": {
             "value": "__EPGWIP__"
-        }      
+        },
+        "cdnSKU": {
+            "value": "__cdnSKU__"
+        },
+        "cdnName": {
+            "value": "__cdnName__"
+        }
+
     }
 }
