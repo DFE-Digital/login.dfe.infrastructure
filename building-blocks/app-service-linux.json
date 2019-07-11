@@ -103,5 +103,11 @@
         "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
       ]
     }
-  ]
+  ],
+  "outputs": {
+    "possibleOutboundIpAddresses": {
+      "type": "array",
+      "value": "[split(reference(parameters('appServiceName')).possibleOutboundIpAddresses, ',')]"
+    }
+  }
 }
