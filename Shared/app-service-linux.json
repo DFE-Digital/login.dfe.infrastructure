@@ -36,6 +36,10 @@
             "metadata": {
                 "description": "This can be passed into the template via the reference function: [reference(resourceId(parameters('certificateResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
             }
+        },
+        "appServiceAppSettings": {
+          "type": "array",
+          "defaultValue": []
         }
     },
     "variables": {
@@ -55,7 +59,8 @@
                 "serverFarmId": "[variables('appServicePlanId')]",
                 "siteConfig": {
                     "alwaysOn": true,
-                    "linuxFxVersion": "[parameters('runtimeStack')]"
+                    "linuxFxVersion": "[parameters('runtimeStack')]",
+                    "appSettings": "[parameters('appServiceAppSettings')]"
                 }
             },
             "resources": [
@@ -69,7 +74,8 @@
                         "serverFarmId": "[variables('appServicePlanId')]",
                         "siteConfig": {
                             "alwaysOn": false,
-                            "linuxFxVersion": "[parameters('runtimeStack')]"
+                            "linuxFxVersion": "[parameters('runtimeStack')]",
+                            "appSettings": "[parameters('appServiceAppSettings')]"
                         }
                     },
                     "dependsOn": [
