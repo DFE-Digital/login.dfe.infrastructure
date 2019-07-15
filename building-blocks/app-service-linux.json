@@ -55,7 +55,7 @@
       "type": "Microsoft.Web/sites",
       "name": "[parameters('appServiceName')]",
       "kind": "app,linux,container",
-      "apiVersion": "2016-08-01",
+      "apiVersion": "2018-02-01",
       "location": "[resourceGroup().location]",
       "properties": {
         "clientAffinityEnabled": false,
