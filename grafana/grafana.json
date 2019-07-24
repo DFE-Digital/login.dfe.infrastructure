@@ -242,7 +242,7 @@
         }
     },
     {
-        "name": "storage-container",
+        "name": "storage-container-provisioning",
         "type": "Microsoft.Resources/deployments",
         "apiVersion": "2017-05-10",
         "properties": {
@@ -265,7 +265,7 @@
         ]
     },
     {
-        "name": "storage-container",
+        "name": "storage-container-grafana",
         "type": "Microsoft.Resources/deployments",
         "apiVersion": "2017-05-10",
         "properties": {
