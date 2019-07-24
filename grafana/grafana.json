@@ -145,7 +145,10 @@
             "value": true
           }
         }
-      }
+      },
+      "dependsOn": [
+        "[variables('mySqlServerName')]"
+      ]
     },
     {
       "name": "app-service",
