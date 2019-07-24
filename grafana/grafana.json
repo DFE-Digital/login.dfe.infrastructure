@@ -1,0 +1,305 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "deploymentUrlBase": {
+      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/NSA-2310-Grafana/building-blocks/"
+    },
+    "resourceEnvironmentName": {
+      "type": "string"
+    },
+    "mySqlSkuName": {
+      "type": "string",
+      "defaultValue": "B_Gen5_2"
+    },
+    "mySqlSkuTier": {
+      "type": "string",
+      "defaultValue": "Basic"
+    },
+    "mySqlSkuFamily": {
+      "type": "string",
+      "defaultValue": "Gen5"
+    },
+    "mySqlStorageMB": {
+      "type": "string",
+      "defaultValue": "51200"
+    },
+    "mySqlAdminLogin": {
+      "type": "string"
+    },
+    "mySqlAdminPassword": {
+      "type": "securestring"
+    },
+    "appServicePlanSku": {
+      "type": "object",
+      "defaultValue": {
+        "name": "S1",
+        "tier": "Standard",
+        "size": "S1",
+        "family": "S",
+        "capacity": 2
+      }
+    },
+    "grafanaSecurityAdminUser": {
+      "type": "securestring"
+    },
+    "grafanaSecurityAdminPassword": {
+      "type": "securestring"
+    }
+  },
+  "variables": {
+    "appServiceName": "[concat(parameters('resourceEnvironmentName'), '-signin-gfa-as')]",
+    "appServicePlanName": "[concat(parameters('resourceEnvironmentName'), '-signin-gfa-asp')]",
+    "appServiceRuntimeStack": "[concat('DOCKER|', 'grafana/grafana')]",
+    "mySqlServerName": "[concat(parameters('resourceEnvironmentName'), '-signin-gfa-msql')]",
+    "mySqlServerFQDN": "[concat(parameters('resourceEnvironmentName'), '-signin-gfa-msql.mysql.database.azure.com')]",
+    "grafanaDatabaseName": "[concat(parameters('resourceEnvironmentName'), '_signin_gfa_db')]",
+    "grafanaDatabaseUser": "[concat(parameters('mySqlAdminLogin'), '@',variables('mySqlServerName'))]",
+    "storageAccountName": "[concat(parameters('resourceEnvironmentName'), 'signingfastr')]"
+  },
+  "resources": [
+    {
+      "name": "[variables('mySqlServerName')]",
+      "type": "Microsoft.DBforMySQL/servers",
+      "apiVersion": "2017-12-01",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "[parameters('mySqlSkuName')]",
+        "tier": "[parameters('mySqlSkuTier')]",
+        "family": "[parameters('mySqlSkuFamily')]"
+      },
+      "properties": {
+        "administratorLogin": "[parameters('mySqlAdminLogin')]",
+        "administratorLoginPassword": "[parameters('mySqlAdminPassword')]",
+        "version": "5.7",
+        "sslEnforcement": "Enabled",
+        "storageProfile": {
+          "backupRetentionDays": 7,
+          "storageMB": "[parameters('mySqlStorageMB')]"
+        },
+        "createMode": "Default"
+      },
+      "resources": [
+        {
+          "name": "[variables('grafanaDatabaseName')]",
+          "type": "databases",
+          "apiVersion": "2017-12-01",
+          "properties": {},
+          "dependsOn": [
+            "[variables('mySqlServerName')]"
+          ]
+        }
+      ]
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "mysql-server-firewall-rules",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('deploymentUrlBase'),'mysql-server-firewall-rules.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "firewallRuleNamePrefix": {
+            "value": "[concat(variables('appServicePlanName'),'-AZURE_IP-')]"
+          },
+          "ipAddresses": {
+            "value": "[reference('app-service').outputs.possibleOutboundIpAddresses.value]"
+          },
+          "serverName": {
+            "value": "[variables('mySqlServerName')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[variables('mySqlServerName')]"
+      ]
+    },
+    {
+      "name": "app-service-plan",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('deploymentUrlBase'), 'app-service-plan.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appServicePlanName": {
+            "value": "[variables('appServicePlanName')]"
+          },
+          "appServicePlanSku": {
+            "value": "[parameters('appServicePlanSku')]"
+          },
+          "appServicePlanOS": {
+            "value": "Linux"
+          },
+          "appServicePlanIsLinux": {
+            "value": true
+          },
+          "perSiteScalingEnabled": {
+            "value": true
+          }
+        }
+      }
+    },
+    {
+      "name": "app-service",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('deploymentUrlBase'), 'app-service-linux.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appServiceName": {
+            "value": "[variables('appServiceName')]"
+          },
+          "appServicePlanName": {
+            "value": "[variables('appServicePlanName')]"
+          },
+          "appServicePlanRG": {
+            "value": "[resourceGroup().name]"
+          },
+          "runtimeStack": {
+            "value": "[variables('appServiceRuntimeStack')]"
+          },
+          "appServiceAppSettings": {
+            "value": [
+              {
+                "name": "GF_DATABASE_TYPE",
+                "value": "mysql"
+              },
+              {
+                "name": "GF_DATABASE_HOST",
+                "value": "[variables('mySqlServerFQDN')]"
+              },
+              {
+                "name": "GF_DATABASE_NAME",
+                "value": "[variables('grafanaDatabaseName')]"
+              },
+              {
+                "name": "GF_DATABASE_USER",
+                "value": "[variables('grafanaDatabaseUser')]"
+              },
+              {
+                "name": "GF_DATABASE_PASSWORD",
+                "value": "[parameters('mySqlAdminPassword')]"
+              },
+              {
+                "name": "GF_DATABASE_SSL_MODE",
+                "value": "skip-verify"
+              },
+              {
+                "name": "GF_SECURITY_ADMIN_USER",
+                "value": "[parameters('grafanaSecurityAdminUser')]"
+              },
+              {
+                "name": "GF_SECURITY_ADMIN_PASSWORD",
+                "value": "[parameters('grafanaSecurityAdminPassword')]"
+              },
+              {
+                "name": "GF_DATABASE_CA_CERT_PATH",
+                "value": "/etc/ssl/certs/ca-certificates.crt"
+              },
+              {
+                "name": "GF_INSTALL_PLUGINS",
+                "value": "grafana-azure-monitor-datasource"
+              }
+            ]
+          },
+          "deployStagingSlot": {
+            "value": false
+          }
+        }
+      },
+      "dependsOn": [
+        "app-service-plan",
+        "storage-account"
+      ]
+    },
+    {
+        "name": "storage-account",
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2017-05-10",
+        "properties": {
+            "mode": "Incremental",
+            "templateLink": {
+                "uri": "[concat(parameters('deploymentUrlBase'), 'storage-account-arm.json')]",
+                "contentVersion": "1.0.0.0"
+            },
+            "parameters": {
+                "storageAccountName": {
+                    "value": "[variables('storageAccountName')]"
+                }
+            }
+        }
+    },
+    {
+        "name": "storage-container",
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2017-05-10",
+        "properties": {
+            "mode": "Incremental",
+            "templateLink": {
+                "uri": "[concat(parameters('deploymentUrlBase'), 'storage-container.json')]",
+                "contentVersion": "1.0.0.0"
+            },
+            "parameters": {
+                "storageAccountName": {
+                    "value": "[variables('storageAccountName')]"
+                },
+                "containerName": {
+                  "value": "provisioning"
+              }
+            }
+        },
+        "dependsOn": [
+          "storage-account"
+        ]
+    },
+    {
+        "name": "storage-container",
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2017-05-10",
+        "properties": {
+            "mode": "Incremental",
+            "templateLink": {
+                "uri": "[concat(parameters('deploymentUrlBase'), 'storage-container.json')]",
+                "contentVersion": "1.0.0.0"
+            },
+            "parameters": {
+                "storageAccountName": {
+                    "value": "[variables('storageAccountName')]"
+                },
+                "containerName": {
+                  "value": "grafana"
+              }
+            }
+        },
+        "dependsOn": [
+          "storage-account"
+        ]
+    }
+  ],
+  "outputs": {
+    "mySqlServerName": {
+      "type": "string",
+      "value": "[variables('mySqlServerName')]"
+    },
+    "appServiceName": {
+      "type": "string",
+      "value": "[variables('appServiceName')]"
+    },
+    "storageAccountName": {
+      "type": "string",
+      "value": "[variables('storageAccountName')]"
+    }
+  }
+}
