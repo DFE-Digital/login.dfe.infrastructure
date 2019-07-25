@@ -79,6 +79,7 @@ try {
     }
     $StorageAccountKey = (Get-AzStorageAccountKey @AccountKeyParams).Value[0]
 
+    # Set storage path object
     $NewStoragePathParams = @{
         Name        = $StoragePathName
         AccountName = $StorageAccountName
@@ -111,18 +112,19 @@ try {
         if (!$StoragePathUpdated) {
             # Add new storage path
             Write-Output "No matching storage paths, add a new one"
-            $UpdatedStoragePaths = $ExistingStoragePaths += $NewStoragePath
+            $ExistingStoragePaths += $NewStoragePath
         }
     }
     else {
         # Add new storage path
-        $UpdatedStoragePaths = $ExistingStoragePaths += $NewStoragePath
+        Write-Output "No existing storage paths, add a new one"
+        $ExistingStoragePaths += $NewStoragePath
     }
 
     $AppConfig = @{
         ResourceGroup    = $ResourceGroupName
         Name             = $AppServiceName
-        AzureStoragePath = $UpdatedStoragePaths
+        AzureStoragePath = $ExistingStoragePaths
     }
 
     Set-AzWebApp @AppConfig
