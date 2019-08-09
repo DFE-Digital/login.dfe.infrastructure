@@ -46,12 +46,23 @@
     },
     "grafanaSecurityAdminPassword": {
       "type": "securestring"
+    },
+    "grafanaVersion":{
+      "type": "string",
+      "allowedValues": [
+        "6.3.2",
+        "latest"
+      ],
+      "defaultValue": "6.3.2",
+      "metadata": {
+        "description": "Default value is latest version at initial deployment."
+      }
     }
   },
   "variables": {
     "appServiceName": "[concat(parameters('resourceEnvironmentName'), '-signin-gfa-as')]",
     "appServicePlanName": "[concat(parameters('resourceEnvironmentName'), '-signin-gfa-asp')]",
-    "appServiceRuntimeStack": "[concat('DOCKER|', 'grafana/grafana')]",
+    "appServiceRuntimeStack": "[concat('DOCKER|', 'grafana/grafana:', parameters('grafanaVersion'))]",
     "mySqlServerName": "[concat(parameters('resourceEnvironmentName'), '-signin-gfa-msql')]",
     "mySqlServerFQDN": "[concat(parameters('resourceEnvironmentName'), '-signin-gfa-msql.mysql.database.azure.com')]",
     "grafanaDatabaseName": "[concat(parameters('resourceEnvironmentName'), '_signin_gfa_db')]",
