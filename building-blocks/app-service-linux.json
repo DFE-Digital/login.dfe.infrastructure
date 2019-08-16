@@ -44,6 +44,21 @@
     "deployStagingSlot": {
       "type": "bool",
       "defaultValue": true
+    },
+    "appServiceState": {
+      "type": "string",
+      "defaultValue": "Running",
+      "allowedValues": [
+        "Stopped",
+        "Running"
+      ],
+      "metadata": {
+        "description": "State of the app service when deployed."
+      }
+    },
+    "azureStorageAccounts": {
+      "type": "object",
+      "defaultValue": {}
     }
   },
   "variables": {
@@ -79,10 +94,22 @@
             "serverFarmId": "[variables('appServicePlanId')]",
             "siteConfig": {
               "alwaysOn": false,
+              "state": "[parameters('appServiceState')]",
               "linuxFxVersion": "[parameters('runtimeStack')]",
               "appSettings": "[parameters('appServiceAppSettings')]"
             }
           },
+          "dependsOn": [
+            "[parameters('appServiceName')]"
+          ]
+        },
+        {
+          "condition": "[parameters('azureStorageAccounts')]",
+          "name": "azureStorageAccounts",
+          "type": "config",
+          "apiVersion": "2018-02-01",
+          "location": "[resourceGroup().location]",
+          "properties": "[parameters('azureStorageAccounts')]",
           "dependsOn": [
             "[parameters('appServiceName')]"
           ]
