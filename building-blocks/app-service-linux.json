@@ -79,7 +79,7 @@
         "serverFarmId": "[variables('appServicePlanId')]",
         "siteConfig": {
           "alwaysOn": true,
-          "linuxFxVersion": "[parameters('runtimeStack')]",
+          "linuxFxVersion": "[if(not(parameters('deployStagingSlot')), parameters('runtimeStack'), json('null'))]",
           "appSettings": "[parameters('appServiceAppSettings')]"
         }
       },

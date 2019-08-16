@@ -228,8 +228,8 @@
               }
             ]
           },
-          "deployStagingSlot": {
-            "value": false
+          "appServiceState": {
+            "value": "Stopped"
           },
           "azureStorageAccounts": {
             "value": {
