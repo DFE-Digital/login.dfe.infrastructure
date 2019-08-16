@@ -47,7 +47,7 @@
     "grafanaSecurityAdminPassword": {
       "type": "securestring"
     },
-    "grafanaVersion":{
+    "grafanaVersion": {
       "type": "string",
       "allowedValues": [
         "6.3.2",
@@ -230,6 +230,24 @@
           },
           "deployStagingSlot": {
             "value": false
+          },
+          "azureStorageAccounts": {
+            "value": {
+              "GrafanaData": {
+                "accessKey": "[reference('storage-account').outputs.storageKey.value]",
+                "accountName": "[variables('storageAccountName')]",
+                "mountPath": "/var/lib/grafana",
+                "shareName": "grafana",
+                "type": "AzureBlob"
+              },
+              "GrafanaProvisioning": {
+                "accessKey": "[reference('storage-account').outputs.storageKey.value]",
+                "accountName": "[variables('storageAccountName')]",
+                "mountPath": "/etc/grafana/provisioning",
+                "shareName": "provisioning",
+                "type": "AzureBlob"
+              }
+            }
           }
         }
       },
@@ -239,67 +257,67 @@
       ]
     },
     {
-        "name": "storage-account",
-        "type": "Microsoft.Resources/deployments",
-        "apiVersion": "2017-05-10",
-        "properties": {
-            "mode": "Incremental",
-            "templateLink": {
-                "uri": "[concat(parameters('deploymentUrlBase'), 'storage-account-arm.json')]",
-                "contentVersion": "1.0.0.0"
-            },
-            "parameters": {
-                "storageAccountName": {
-                    "value": "[variables('storageAccountName')]"
-                }
-            }
+      "name": "storage-account",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('deploymentUrlBase'), 'storage-account-arm.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "storageAccountName": {
+            "value": "[variables('storageAccountName')]"
+          }
         }
+      }
     },
     {
-        "name": "storage-container-provisioning",
-        "type": "Microsoft.Resources/deployments",
-        "apiVersion": "2017-05-10",
-        "properties": {
-            "mode": "Incremental",
-            "templateLink": {
-                "uri": "[concat(parameters('deploymentUrlBase'), 'storage-container.json')]",
-                "contentVersion": "1.0.0.0"
-            },
-            "parameters": {
-                "storageAccountName": {
-                    "value": "[variables('storageAccountName')]"
-                },
-                "containerName": {
-                  "value": "provisioning"
-              }
-            }
+      "name": "storage-container-provisioning",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('deploymentUrlBase'), 'storage-container.json')]",
+          "contentVersion": "1.0.0.0"
         },
-        "dependsOn": [
-          "storage-account"
-        ]
+        "parameters": {
+          "storageAccountName": {
+            "value": "[variables('storageAccountName')]"
+          },
+          "containerName": {
+            "value": "provisioning"
+          }
+        }
+      },
+      "dependsOn": [
+        "storage-account"
+      ]
     },
     {
-        "name": "storage-container-grafana",
-        "type": "Microsoft.Resources/deployments",
-        "apiVersion": "2017-05-10",
-        "properties": {
-            "mode": "Incremental",
-            "templateLink": {
-                "uri": "[concat(parameters('deploymentUrlBase'), 'storage-container.json')]",
-                "contentVersion": "1.0.0.0"
-            },
-            "parameters": {
-                "storageAccountName": {
-                    "value": "[variables('storageAccountName')]"
-                },
-                "containerName": {
-                  "value": "grafana"
-              }
-            }
+      "name": "storage-container-grafana",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('deploymentUrlBase'), 'storage-container.json')]",
+          "contentVersion": "1.0.0.0"
         },
-        "dependsOn": [
-          "storage-account"
-        ]
+        "parameters": {
+          "storageAccountName": {
+            "value": "[variables('storageAccountName')]"
+          },
+          "containerName": {
+            "value": "grafana"
+          }
+        }
+      },
+      "dependsOn": [
+        "storage-account"
+      ]
     }
   ],
   "outputs": {
