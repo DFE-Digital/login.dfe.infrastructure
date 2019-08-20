@@ -236,6 +236,8 @@
               "GrafanaData": {
                 "accessKey": "[reference('storage-account').outputs.storageKey.value]",
                 "accountName": "[variables('storageAccountName')]",
+                "azure-storage-mounts-path": "/var/lib/grafana",
+                "azure-storage-mounts-name": "grafana",
                 "mountPath": "/var/lib/grafana",
                 "shareName": "grafana",
                 "type": "AzureBlob"
@@ -243,6 +245,8 @@
               "GrafanaProvisioning": {
                 "accessKey": "[reference('storage-account').outputs.storageKey.value]",
                 "accountName": "[variables('storageAccountName')]",
+                "azure-storage-mounts-path": "/etc/grafana/provisioning",
+                "azure-storage-mounts-name": "provisioning",
                 "mountPath": "/etc/grafana/provisioning",
                 "shareName": "provisioning",
                 "type": "AzureBlob"
