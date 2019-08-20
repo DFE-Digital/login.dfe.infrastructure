@@ -57,6 +57,9 @@
       "metadata": {
         "description": "Default value is latest version at initial deployment."
       }
+    },
+    "grafanaGitHubClientSecret": {
+      "type": "securestring"
     }
   },
   "variables": {
@@ -225,6 +228,30 @@
               {
                 "name": "GF_INSTALL_PLUGINS",
                 "value": "grafana-azure-monitor-datasource"
+              },
+              {
+                "name": "GF_AUTH_GITHUB_ENABLED",
+                "value": true
+              },
+              {
+                "name": "GF_AUTH_GITHUB_ALLOW_SIGN_UP",
+                "value": true
+              },
+              {
+                "name": "GF_AUTH_GITHUB_CLIENT_ID",
+                "value": "f1d6b50b0a8dceaa8ab8"
+              },
+              {
+                "name": "GF_AUTH_GITHUB_CLIENT_SECRET",
+                "value": "[parameters('grafanaGitHubClientSecret')]"
+              },
+              {
+                "name": "GF_AUTH_GITHUB_TEAM_IDS",
+                "value": "2584127,3369724"
+              },
+              {
+                "name": "GF_AUTH_GITHUB_ALLOWED_ORGANISATIONS",
+                "value": "DFE-Digital"
               }
             ]
           },
