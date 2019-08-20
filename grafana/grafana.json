@@ -50,10 +50,10 @@
     "grafanaVersion": {
       "type": "string",
       "allowedValues": [
-        "6.3.2",
+        "6.3.3",
         "latest"
       ],
-      "defaultValue": "6.3.2",
+      "defaultValue": "6.3.3",
       "metadata": {
         "description": "Default value is latest version at initial deployment."
       }
@@ -236,8 +236,6 @@
               "GrafanaData": {
                 "accessKey": "[reference('storage-account').outputs.storageKey.value]",
                 "accountName": "[variables('storageAccountName')]",
-                "azure-storage-mounts-path": "/var/lib/grafana",
-                "azure-storage-mounts-name": "grafana",
                 "mountPath": "/var/lib/grafana",
                 "shareName": "grafana",
                 "type": "AzureBlob"
@@ -245,8 +243,6 @@
               "GrafanaProvisioning": {
                 "accessKey": "[reference('storage-account').outputs.storageKey.value]",
                 "accountName": "[variables('storageAccountName')]",
-                "azure-storage-mounts-path": "/etc/grafana/provisioning",
-                "azure-storage-mounts-name": "provisioning",
                 "mountPath": "/etc/grafana/provisioning",
                 "shareName": "provisioning",
                 "type": "AzureBlob"
