@@ -100,6 +100,19 @@
               "appSettings": "[parameters('appServiceAppSettings')]"
             }
           },
+          "resources": [
+            {
+              "condition": "[variables('attachAzureStorageAccounts')]",
+              "name": "azureStorageAccounts",
+              "type": "config",
+              "apiVersion": "2018-02-01",
+              "location": "[resourceGroup().location]",
+              "properties": "[parameters('azureStorageAccounts')]",
+              "dependsOn": [
+                "staging"
+              ]
+            }
+          ],
           "dependsOn": [
             "[parameters('appServiceName')]"
           ]
@@ -108,17 +121,6 @@
           "condition": "[variables('attachAzureStorageAccounts')]",
           "name": "azureStorageAccounts",
           "type": "config",
-          "apiVersion": "2018-02-01",
-          "location": "[resourceGroup().location]",
-          "properties": "[parameters('azureStorageAccounts')]",
-          "dependsOn": [
-            "[parameters('appServiceName')]"
-          ]
-        },
-        {
-          "condition": "[variables('attachAzureStorageAccounts')]",
-          "name": "azureStorageAccounts",
-          "type": "slots/config",
           "apiVersion": "2018-02-01",
           "location": "[resourceGroup().location]",
           "properties": "[parameters('azureStorageAccounts')]",
