@@ -252,6 +252,10 @@
               {
                 "name": "GF_AUTH_GITHUB_ALLOWED_ORGANISATIONS",
                 "value": "DFE-Digital"
+              },
+              {
+                "name": "GF_SERVER_ROOT_URL",
+                "value": "[concat('https://',reference(variables('appServiceName')).defaultHostName)]"
               }
             ]
           },
