@@ -38,7 +38,7 @@
         "tier": "Standard",
         "size": "S1",
         "family": "S",
-        "capacity": 2
+        "capacity": 1
       }
     },
     "grafanaSecurityAdminUser": {
@@ -268,7 +268,7 @@
                 "accessKey": "[reference('storage-account').outputs.storageKey.value]",
                 "accountName": "[variables('storageAccountName')]",
                 "mountPath": "/var/lib/grafana",
-                "shareName": "grafana",
+                "shareName": "data",
                 "type": "AzureBlob"
               },
               "GrafanaProvisioning": {
@@ -276,6 +276,13 @@
                 "accountName": "[variables('storageAccountName')]",
                 "mountPath": "/etc/grafana/provisioning",
                 "shareName": "provisioning",
+                "type": "AzureBlob"
+              },
+              "GrafanaLogs": {
+                "accessKey": "[reference('storage-account').outputs.storageKey.value]",
+                "accountName": "[variables('storageAccountName')]",
+                "mountPath": "/var/log/grafana",
+                "shareName": "logs",
                 "type": "AzureBlob"
               }
             }
