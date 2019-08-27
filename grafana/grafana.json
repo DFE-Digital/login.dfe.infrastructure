@@ -60,6 +60,17 @@
     },
     "grafanaGitHubClientSecret": {
       "type": "securestring"
+    },
+    "storageContainers": {
+      "type": "array",
+      "defaultValue": [
+        "data",
+        "logs",
+        "provisioning"
+      ],
+      "metadata": {
+        "description": "Names of containers to create in the storage account."
+      }
     }
   },
   "variables": {
@@ -312,9 +323,13 @@
       }
     },
     {
-      "name": "storage-container-provisioning",
+      "name": "[concat('storage-container-', parameters('storageContainers')[copyIndex()])]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-05-10",
+      "copy": {
+        "name": "storagecontainercopy",
+        "count": "[length(parameters('storageContainers'))]"
+      },
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -326,36 +341,10 @@
             "value": "[variables('storageAccountName')]"
           },
           "containerName": {
-            "value": "provisioning"
+            "value": "[parameters('storageContainers')[copyIndex()]]"
           }
         }
-      },
-      "dependsOn": [
-        "storage-account"
-      ]
-    },
-    {
-      "name": "storage-container-grafana",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2017-05-10",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('deploymentUrlBase'), 'storage-container.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "storageAccountName": {
-            "value": "[variables('storageAccountName')]"
-          },
-          "containerName": {
-            "value": "grafana"
-          }
-        }
-      },
-      "dependsOn": [
-        "storage-account"
-      ]
+      }
     }
   ],
   "outputs": {
