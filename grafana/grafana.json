@@ -320,10 +320,7 @@
             "value": "[variables('storageAccountName')]"
           }
         }
-      },
-      "dependsOn": [
-        "storage-account"
-      ]
+      }
     },
     {
       "name": "[concat('storage-container-', parameters('storageContainers')[copyIndex()])]",
@@ -347,7 +344,10 @@
             "value": "[parameters('storageContainers')[copyIndex()]]"
           }
         }
-      }
+      },
+      "dependsOn": [
+        "storage-account"
+      ]
     }
   ],
   "outputs": {
