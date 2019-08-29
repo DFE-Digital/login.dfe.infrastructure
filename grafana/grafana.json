@@ -51,9 +51,10 @@
       "type": "string",
       "allowedValues": [
         "6.3.3",
+        "6.3.4",
         "latest"
       ],
-      "defaultValue": "6.3.3",
+      "defaultValue": "6.3.4",
       "metadata": {
         "description": "Default value is latest version at initial deployment."
       }
