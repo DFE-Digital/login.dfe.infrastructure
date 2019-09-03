@@ -50,11 +50,11 @@
     "grafanaVersion": {
       "type": "string",
       "allowedValues": [
-        "6.3.3",
         "6.3.4",
+        "6.3.5",
         "latest"
       ],
-      "defaultValue": "6.3.4",
+      "defaultValue": "6.3.5",
       "metadata": {
         "description": "Default value is latest version at initial deployment."
       }
