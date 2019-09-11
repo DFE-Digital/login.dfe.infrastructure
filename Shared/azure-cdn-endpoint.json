@@ -71,7 +71,10 @@
             "name": "[concat(variables('fullEndpointName'), '/', if(variables('customDomainEnabled'), replace(parameters('customDomainName'), '.', '-'), 'placeholder'))]",
             "properties": {
                 "hostName": "[parameters('customDomainName')]"
-            }
+            },
+            "dependsOn": [
+              "[variables('fullEndpointName')]"
+            ]
         }
     ]
 }
