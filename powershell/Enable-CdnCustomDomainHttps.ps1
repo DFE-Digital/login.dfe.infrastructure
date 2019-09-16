@@ -51,25 +51,29 @@ try {
         EndpointName      = $CdnEndpointName
     }
 
-    $CustomHttpsState = (Get-AzCdnCustomDomain @GetAzCdnCustomDomain -ErrorAction SilentlyContinue).customHttpsProvisioningState
+    $CdnCustomDomain = Get-AzCdnCustomDomain @GetAzCdnCustomDomain
 
-    if (!$CustomHttpsState) {
-        Write-Verbose "Domain $($CustomDomainName) not configured on CDN endpoint $($CdnEndpointName)"
-        Write-Host "##vso[task.complete result=SucceededWithIssues;]DONE"
-    }
-    elseif ($CustomHttpsState -eq "Disabled") {
-        $EnableAzCdnCustomDomain = $GetAzCdnCustomDomain
-
-        $EnableAzCdnCustomDomain += @{
-            CustomDomainName = $CustomDomainName.Replace('.', '-')
-        }
-
-        Write-Verbose "Enabling HTTPS on custom domain $($CustomDomainName)"
-        Enable-AzCdnCustomDomain @EnableAzCdnCustomDomain
+    if (!$CdnCustomDomain) {
+        Write-Verbose "No custom domain configured on CDN endpoint $($CdnEndpointName)"
         Write-Host "##vso[task.complete result=SucceededWithIssues;]DONE"
     }
     else {
-        Write-Verbose "HTTPS on custom domain $($CustomDomainName) is $CustomHttpsState"
+        $CustomHttpsState = $CdnCustomDomain.CustomHttpsProvisioningState
+
+        if ($CustomHttpsState -eq "Disabled") {
+            $EnableAzCdnCustomDomain = $GetAzCdnCustomDomain
+
+            $EnableAzCdnCustomDomain += @{
+                CustomDomainName = $CustomDomainName.Replace('.', '-')
+            }
+
+            Write-Verbose "Enabling HTTPS on custom domain $($CustomDomainName)"
+            Enable-AzCdnCustomDomainHttps @EnableAzCdnCustomDomain
+            Write-Host "##vso[task.complete result=SucceededWithIssues;]DONE"
+        }
+        else {
+            Write-Verbose "HTTPS on custom domain $($CustomDomainName) is $CustomHttpsState"
+        }
     }
 }
 catch {
