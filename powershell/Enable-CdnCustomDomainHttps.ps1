@@ -72,9 +72,9 @@ try {
             Write-Host "##vso[task.complete result=SucceededWithIssues;]DONE"
         }
         else {
-            Write-Verbose "HTTPS on custom domain $($CustomDomainName) is $CustomHttpsState"
+            Write-Verbose "HTTPS on custom domain $($CustomDomainName) is $($CustomHttpsState)"
 
-            if ($CustomHttpsState -eq "Enabling") {
+            if ($CustomHttpsState -ne 'Enabled') {
                 Write-Verbose "Current substate is $($CdnCustomDomain.CustomHttpsProvisioningSubstate)"
                 Write-Host "##vso[task.complete result=SucceededWithIssues;]DONE"
             }
