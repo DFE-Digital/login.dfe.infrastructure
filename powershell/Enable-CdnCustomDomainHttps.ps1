@@ -25,7 +25,7 @@
         CustomDomainName = "GrafanaProvisioning"
     }
 
-    .\Enable-CdnCustomDomainHttps.ps1 @EnableCdnCustomDomainHttps
+    .\Enable-CdnCustomDomainHttps.ps1 @EnableCdnCustomDomainHttps -Verbose
 #>
 
 [CmdletBinding()]
@@ -51,21 +51,25 @@ try {
         EndpointName      = $cdnEndpointName
     }
 
-    $customHttpsState = (Get-AzureRmCdnCustomDomain @GetAzureRmCdnCustomDomain).customHttpsProvisioningState
+    $customHttpsState = (Get-AzureRmCdnCustomDomain @GetAzureRmCdnCustomDomain -ErrorAction SilentlyContinue).customHttpsProvisioningState
 
-    if ($customHttpsState -eq "Disabled") {
+    if (!$customHttpsState) {
+        Write-Verbose "There is no custom domain $($customDomainName) configured on CDN endpoint $($cdnEndpointName)"
+        Write-Host "##vso[task.complete result=SucceededWithIssues;]DONE"
+    }
+    elseif ($customHttpsState -eq "Disabled") {
         $EnableAzureRmCdnCustomDomain = $GetAzureRmCdnCustomDomain
 
         $EnableAzureRmCdnCustomDomain += @{
             CustomDomainName = $customDomainName.Replace('.', '-')
         }
 
-        Write-Output "Enabling HTTPS on custom domain $($customDomainName)"
+        Write-Verbose "Enabling HTTPS on custom domain $($customDomainName)"
         Enable-AzureRmCdnCustomDomain @EnableAzureRmCdnCustomDomain
         Write-Host "##vso[task.complete result=SucceededWithIssues;]DONE"
     }
     else {
-        Write-Output "HTTPS on custom domain $($customDomainName) is $customHttpsState"
+        Write-Verbose "HTTPS on custom domain $($customDomainName) is $customHttpsState"
     }
 }
 catch {
