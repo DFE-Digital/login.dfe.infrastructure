@@ -76,6 +76,7 @@ try {
 
             if ($CustomHttpsState -eq "Enabling") {
                 Write-Verbose "Current substate is $($CdnCustomDomain.CustomHttpsProvisioningSubstate)"
+                Write-Host "##vso[task.complete result=SucceededWithIssues;]DONE"
             }
         }
     }
