@@ -19,10 +19,10 @@
 
     .EXAMPLE
     $EnableCdnCustomDomainHttps = @{
-        ResourceGroupName  = $resourceGroupName
-        CdnProfileName     = $appServiceName
-        CdnEndpointName = $storageAccountName
-        CustomDomainName = "GrafanaProvisioning"
+        ResourceGroupName  = $ResourceGroupName
+        CdnProfileName     = $CdnProfileName
+        CdnEndpointName = $CdnEndpointName
+        CustomDomainName = $CustomDomainName
     }
 
     .\Enable-CdnCustomDomainHttps.ps1 @EnableCdnCustomDomainHttps -Verbose
@@ -73,6 +73,10 @@ try {
         }
         else {
             Write-Verbose "HTTPS on custom domain $($CustomDomainName) is $CustomHttpsState"
+
+            if ($CustomHttpsState -eq "Enabling") {
+                Write-Verbose "Current substate is $($CdnCustomDomain.CustomHttpsProvisioningSubstate)"
+            }
         }
     }
 }
