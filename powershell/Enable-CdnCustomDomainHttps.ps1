@@ -65,7 +65,7 @@ try {
         }
 
         Write-Verbose "Enabling HTTPS on custom domain $($CustomDomainName)"
-        #Enable-AzCdnCustomDomain @EnableAzCdnCustomDomain
+        Enable-AzCdnCustomDomain @EnableAzCdnCustomDomain
         Write-Host "##vso[task.complete result=SucceededWithIssues;]DONE"
     }
     else {
