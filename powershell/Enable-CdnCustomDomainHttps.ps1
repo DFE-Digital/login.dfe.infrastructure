@@ -51,9 +51,11 @@ try {
         EndpointName      = $CdnEndpointName
     }
 
+    Get-AzureRmCdnCustomDomain @GetAzureRmCdnCustomDomain -ErrorAction SilentlyContinue
+
     $CustomHttpsState = (Get-AzureRmCdnCustomDomain @GetAzureRmCdnCustomDomain -ErrorAction SilentlyContinue).customHttpsProvisioningState
 
-    if (!$customHttpsState) {
+    if (!$CustomHttpsState) {
         Write-Verbose "Domain $($CustomDomainName) not configured on CDN endpoint $($CdnEndpointName)"
         Write-Host "##vso[task.complete result=SucceededWithIssues;]DONE"
     }
@@ -65,7 +67,7 @@ try {
         }
 
         Write-Verbose "Enabling HTTPS on custom domain $($CustomDomainName)"
-        Enable-AzureRmCdnCustomDomain @EnableAzureRmCdnCustomDomain
+        #Enable-AzureRmCdnCustomDomain @EnableAzureRmCdnCustomDomain
         Write-Host "##vso[task.complete result=SucceededWithIssues;]DONE"
     }
     else {
