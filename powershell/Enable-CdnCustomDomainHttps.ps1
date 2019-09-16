@@ -47,29 +47,29 @@ param(
 try {
     $GetAzureRmCdnCustomDomain = @{
         ResourceGroupName = $ResourceGroupName
-        ProfileName       = $cdnProfileName
-        EndpointName      = $cdnEndpointName
+        ProfileName       = $CdnProfileName
+        EndpointName      = $CdnEndpointName
     }
 
-    $customHttpsState = (Get-AzureRmCdnCustomDomain @GetAzureRmCdnCustomDomain -ErrorAction SilentlyContinue).customHttpsProvisioningState
+    $CustomHttpsState = (Get-AzureRmCdnCustomDomain @GetAzureRmCdnCustomDomain -ErrorAction SilentlyContinue).customHttpsProvisioningState
 
     if (!$customHttpsState) {
-        Write-Verbose "There is no custom domain $($customDomainName) configured on CDN endpoint $($cdnEndpointName)"
+        Write-Verbose "Domain $($CustomDomainName) not configured on CDN endpoint $($CdnEndpointName)"
         Write-Host "##vso[task.complete result=SucceededWithIssues;]DONE"
     }
-    elseif ($customHttpsState -eq "Disabled") {
+    elseif ($CustomHttpsState -eq "Disabled") {
         $EnableAzureRmCdnCustomDomain = $GetAzureRmCdnCustomDomain
 
         $EnableAzureRmCdnCustomDomain += @{
-            CustomDomainName = $customDomainName.Replace('.', '-')
+            CustomDomainName = $CustomDomainName.Replace('.', '-')
         }
 
-        Write-Verbose "Enabling HTTPS on custom domain $($customDomainName)"
+        Write-Verbose "Enabling HTTPS on custom domain $($CustomDomainName)"
         Enable-AzureRmCdnCustomDomain @EnableAzureRmCdnCustomDomain
         Write-Host "##vso[task.complete result=SucceededWithIssues;]DONE"
     }
     else {
-        Write-Verbose "HTTPS on custom domain $($customDomainName) is $customHttpsState"
+        Write-Verbose "HTTPS on custom domain $($CustomDomainName) is $CustomHttpsState"
     }
 }
 catch {
