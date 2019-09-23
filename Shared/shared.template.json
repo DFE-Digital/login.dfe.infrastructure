@@ -117,7 +117,7 @@
     },
     "originName": {
       "defaultValue": "",
-        "type": "string"
+      "type": "string"
     },
     "originHostname": {
       "type": "string"
@@ -180,6 +180,62 @@
       "metadata": {
         "description": "Properties for the elastic pool"
       }
+    },
+    "newStyleAppServicePlanPrefix": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The prefix of the new style FE, BE, Worker ASP (e.g. <env>-signin-shd)"
+      }
+    },
+    "frontEndAppServicePlanSku": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "id": "01",
+          "sku": {
+            "name": "S1",
+            "tier": "Standard",
+            "size": "S1",
+            "family": "S",
+            "capacity": 1
+          }
+        }
+      ],
+      "metadata": {
+        "description": "The SKU of the front-end App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
+      }
+    },
+    "backEndAppServicePlanSku": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "id": "01",
+          "sku": {
+            "name": "S3",
+            "tier": "Standard",
+            "size": "S3",
+            "family": "S",
+            "capacity": 1
+          }
+        }
+      ],
+      "metadata": {
+        "description": "The SKU of the back-end App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
+      }
+    },
+    "workerAppServicePlanSku": {
+      "type": "object",
+      "defaultValue": {
+        "name": "S1",
+        "tier": "Standard",
+        "size": "S1",
+        "family": "S",
+        "capacity": 1
+      },
+      "metadata": {
+        "description": "The SKU of the worker App Service Plan"
+      }
     }
   },
   "variables": {
@@ -194,9 +250,13 @@
     "postgresTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/postgres.json')]",
     "azureCdnTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn.json')]",
     "azureCdnEndpointTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn-endpoint.json')]",
-    "certificateTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-certificate.json')]"
+    "certificateTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-certificate.json')]",
+    "frontEndAppServicePlanName": "[concat(parameters('newStyleAppServicePlanPrefix'),'fe-asp')]",
+    "backEndAppServicePlanName": "[concat(parameters('newStyleAppServicePlanPrefix'),'be-asp')]",
+    "workerAppServicePlanName": "[concat(parameters('newStyleAppServicePlanPrefix'),'wkr-asp')]"
   },
-  "resources": [{
+  "resources": [
+    {
       "apiVersion": "2017-05-10",
       "name": "AppServicePlan",
       "type": "Microsoft.Resources/deployments",
@@ -211,6 +271,94 @@
           },
           "appServicePlanSku": {
             "value": "[parameters('appServicePlanSku')]"
+          },
+          "appServicePlanOS": {
+            "value": "[parameters('appServicePlanOS')]"
+          },
+          "appServicePlanIsLinux": {
+            "value": "[parameters('appServicePlanIsLinux')]"
+          }
+        }
+      }
+    },
+    {
+      "condition": "[greater(length(parameters('newStyleAppServicePlanPrefix')), 0)]",
+      "apiVersion": "2017-05-10",
+      "name": "[concat('front-end-app-service-plan','-',parameters('frontEndAppServicePlanSku')[copyIndex()].id)]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('appServicePlanTemplateUri')]"
+        },
+        "parameters": {
+          "appServicePlanName": {
+            "value": "[concat(variables('frontEndAppServicePlanName'),'-',parameters('frontEndAppServicePlanSku')[copyIndex()].id)]"
+          },
+          "appServicePlanSku": {
+            "value": "[parameters('frontEndAppServicePlanSku')[copyIndex()].sku]"
+          },
+          "appServicePlanOS": {
+            "value": "[parameters('appServicePlanOS')]"
+          },
+          "appServicePlanIsLinux": {
+            "value": "[parameters('appServicePlanIsLinux')]"
+          }
+        }
+      },
+      "copy": {
+        "name": "FeAspCopy",
+        "count": "[length(parameters('frontEndAppServicePlanSku'))]",
+        "mode": "Parallel"
+      }
+    },
+    {
+      "condition": "[greater(length(parameters('newStyleAppServicePlanPrefix')), 0)]",
+      "apiVersion": "2017-05-10",
+      "name": "[concat('back-end-app-service-plan','-',parameters('backEndAppServicePlanSku')[copyIndex()].id)]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('appServicePlanTemplateUri')]"
+        },
+        "parameters": {
+          "appServicePlanName": {
+            "value": "[concat(variables('backEndAppServicePlanName'),'-',parameters('backEndAppServicePlanSku')[copyIndex()].id)]"
+          },
+          "appServicePlanSku": {
+            "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku]"
+          },
+          "appServicePlanOS": {
+            "value": "[parameters('appServicePlanOS')]"
+          },
+          "appServicePlanIsLinux": {
+            "value": "[parameters('appServicePlanIsLinux')]"
+          }
+        }
+      },
+      "copy": {
+        "name": "BeAspCopy",
+        "count": "[length(parameters('backEndAppServicePlanSku'))]",
+        "mode": "Parallel"
+      }
+    },
+    {
+      "condition": "[greater(length(parameters('newStyleAppServicePlanPrefix')), 0)]",
+      "apiVersion": "2017-05-10",
+      "name": "worker-app-service-plan",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('appServicePlanTemplateUri')]"
+        },
+        "parameters": {
+          "appServicePlanName": {
+            "value": "[variables('workerAppServicePlanName')]"
+          },
+          "appServicePlanSku": {
+            "value": "[parameters('workerAppServicePlanSku')]"
           },
           "appServicePlanOS": {
             "value": "[parameters('appServicePlanOS')]"
