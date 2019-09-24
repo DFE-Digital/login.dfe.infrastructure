@@ -194,10 +194,10 @@
         {
           "id": "01",
           "sku": {
-            "name": "S1",
-            "tier": "Standard",
-            "size": "S1",
-            "family": "S",
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
             "capacity": 1
           }
         }
@@ -212,10 +212,10 @@
         {
           "id": "01",
           "sku": {
-            "name": "S3",
-            "tier": "Standard",
-            "size": "S3",
-            "family": "S",
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
             "capacity": 1
           }
         }
@@ -227,10 +227,10 @@
     "workerAppServicePlanSku": {
       "type": "object",
       "defaultValue": {
-        "name": "S1",
-        "tier": "Standard",
-        "size": "S1",
-        "family": "S",
+        "name": "P1v2",
+        "tier": "PremiumV2",
+        "size": "P1v2",
+        "family": "Pv2",
         "capacity": 1
       },
       "metadata": {
