@@ -351,7 +351,7 @@
     {
       "condition": "[greater(length(parameters('newStyleAppServicePlanPrefix')), 0)]",
       "apiVersion": "2017-05-10",
-      "name": "worker-app-service-plan",
+      "name": "[concat('worker-app-service-plan','-',parameters('workerAppServicePlanSku')[copyIndex()].id)]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -363,7 +363,7 @@
             "value": "[variables('workerAppServicePlanName')]"
           },
           "appServicePlanSku": {
-            "value": "[parameters('workerAppServicePlanSku')]"
+            "value": "[parameters('workerAppServicePlanSku')[copyIndex()].sku]"
           },
           "appServicePlanOS": {
             "value": "[parameters('appServicePlanOS')]"
@@ -372,6 +372,11 @@
             "value": "[parameters('appServicePlanIsLinux')]"
           }
         }
+      },
+      "copy": {
+        "name": "WkrAspCopy",
+        "count": "[length(parameters('workerAppServicePlanSku'))]",
+        "mode": "Parallel"
       }
     },
     {
