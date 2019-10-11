@@ -225,14 +225,19 @@
       }
     },
     "workerAppServicePlanSku": {
-      "type": "object",
-      "defaultValue": {
-        "name": "P1v2",
-        "tier": "PremiumV2",
-        "size": "P1v2",
-        "family": "Pv2",
-        "capacity": 1
-      },
+      "type": "array",
+      "defaultValue": [
+        {
+          "id": "01",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 1
+          }
+        }
+      ],
       "metadata": {
         "description": "The SKU of the worker App Service Plan"
       }
@@ -449,7 +454,7 @@
       "copy": {
         "name": "databasecopy",
         "count": "[length(parameters('databaseNames'))]",
-        "mode": "Serial"
+        "mode": "Parallel"
       },
       "dependsOn": [
         "SQLServer"
