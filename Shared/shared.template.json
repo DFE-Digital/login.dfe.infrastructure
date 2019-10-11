@@ -360,7 +360,7 @@
         },
         "parameters": {
           "appServicePlanName": {
-            "value": "[variables('workerAppServicePlanName')]"
+            "value": "[concat(variables('workerAppServicePlanName'),'-',parameters('backEndAppServicePlanSku')[copyIndex()].id)]"
           },
           "appServicePlanSku": {
             "value": "[parameters('workerAppServicePlanSku')[copyIndex()].sku]"
