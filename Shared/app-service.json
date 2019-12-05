@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "appServiceName": {
@@ -78,7 +78,20 @@
                 "value": "[parameters('appServiceConfigPath')]"
             }
         ],
-        "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]"
+        "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
+        "siteConfigSettings": {
+          "withAppServiceSettings": {
+            "appSettings": "[variables('appServiceSettings')]",
+            "alwaysOn": true,
+            "minTlsVersion": "[parameters('minTlsVersion')]",
+            "numberOfWorkers": "[parameters('numberOfWorkers')]"
+          },
+          "withoutAppServiceSettings": {
+            "alwaysOn": true,
+            "minTlsVersion": "[parameters('minTlsVersion')]",
+            "numberOfWorkers": "[parameters('numberOfWorkers')]"
+          }
+        }
     },
     "resources": [
         {
@@ -90,11 +103,7 @@
                 "serverFarmId": "[variables('appServicePlanId')]",
                 "clientAffinityEnabled": false,
                 "httpsOnly": true,
-                "siteConfig": {
-                    "alwaysOn": true,
-                    "minTlsVersion": "[parameters('minTlsVersion')]",
-                    "numberOfWorkers": "[parameters('numberOfWorkers')]"
-                }
+                "siteConfig": "[if(parameters('includeDeploymentSlot'), variables('siteConfigSettings').withoutAppServiceSettings, variables('siteConfigSettings').withAppServiceSettings)]"
             },
             "resources": [
                 {
@@ -107,12 +116,7 @@
                         "serverFarmId": "[variables('appServicePlanId')]",
                         "clientAffinityEnabled": false,
                         "httpsOnly": true,
-                        "siteConfig": {
-                            "appSettings": "[variables('appServiceSettings')]",
-                            "alwaysOn": false,
-                            "minTlsVersion": "[parameters('minTlsVersion')]",
-                            "numberOfWorkers": "[parameters('numberOfWorkers')]"
-                        }
+                        "siteConfig": "[variables('siteConfigSettings').withAppServiceSettings]"
                     },
                     "dependsOn": [
                         "[parameters('appServiceName')]"
