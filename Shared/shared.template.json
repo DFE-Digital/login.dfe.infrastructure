@@ -6,15 +6,6 @@
       "type": "string",
       "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/master/"
     },
-    "appServicePlanName": {
-      "type": "string"
-    },
-    "appServicePlanSku": {
-      "type": "object",
-      "metadata": {
-        "description": "The SKU of the App Service Plan"
-      }
-    },
     "appServicePlanOS": {
       "type": "string",
       "metadata": {
@@ -263,31 +254,6 @@
     "certificateTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-certificate.json')]"
   },
   "resources": [
-    {
-      "apiVersion": "2017-05-10",
-      "name": "AppServicePlan",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('appServicePlanTemplateUri')]"
-        },
-        "parameters": {
-          "appServicePlanName": {
-            "value": "[parameters('appServicePlanName')]"
-          },
-          "appServicePlanSku": {
-            "value": "[parameters('appServicePlanSku')]"
-          },
-          "appServicePlanOS": {
-            "value": "[parameters('appServicePlanOS')]"
-          },
-          "appServicePlanIsLinux": {
-            "value": "[parameters('appServicePlanIsLinux')]"
-          }
-        }
-      }
-    },
     {
       "condition": "[greater(length(parameters('frontEndAppServicePlanName')), 0)]",
       "apiVersion": "2017-05-10",
