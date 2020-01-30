@@ -266,9 +266,6 @@
               }
             ]
           },
-          "appServiceState": {
-            "value": "Stopped"
-          },
           "azureStorageAccounts": {
             "value": {
               "GrafanaData": {
