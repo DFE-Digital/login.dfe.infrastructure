@@ -66,6 +66,9 @@
       "withoutAppServiceSettings": {
         "alwaysOn": true,
         "linuxFxVersion": "[parameters('runtimeStack')]"
+      },
+      "withoutLinuxFxVersion": {
+        "alwaysOn": true
       }
     }
   },
@@ -80,7 +83,7 @@
         "clientAffinityEnabled": false,
         "httpsOnly": true,
         "serverFarmId": "[variables('appServicePlanId')]",
-        "siteConfig": "[if(parameters('deployStagingSlot'), variables('siteConfigSettings').withoutAppServiceSettings, if(variables('appServiceAppSettingsProvided'), variables('siteConfigSettings').withAppServiceSettings, variables('siteConfigSettings').withoutAppServiceSettings))]"
+        "siteConfig": "[if(parameters('deployStagingSlot'), variables('siteConfigSettings').withoutLinuxFxVersion, if(variables('appServiceAppSettingsProvided'), variables('siteConfigSettings').withAppServiceSettings, variables('siteConfigSettings').withoutAppServiceSettings))]"
       },
       "resources": [
         {
