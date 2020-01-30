@@ -4,7 +4,7 @@
   "parameters": {
     "deploymentUrlBase": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/master/building-blocks/"
+      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/master/Shared/"
     },
     "resourceEnvironmentName": {
       "type": "string"
@@ -308,12 +308,15 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('deploymentUrlBase'), 'storage-account-arm.json')]",
+          "uri": "[concat(parameters('deploymentUrlBase'), 'storage-account.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
           "storageAccountName": {
             "value": "[variables('storageAccountName')]"
+          },
+          "storageKind": {
+            "value": "Storage"
           }
         }
       }
