@@ -44,7 +44,7 @@ function makeRequest(token: string, body: string): Promise<any> {
   });
 }
 
-function sleep(ms: number): Promise<void> {
+function sleep(ms: number = 10000): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
