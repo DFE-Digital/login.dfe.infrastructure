@@ -13,5 +13,5 @@ export default {
   },
 
   endpoint: "signin-pr-jobslnx-as.azurewebsites.net",
-  wait: 10000
+  wait: 900000
 };
