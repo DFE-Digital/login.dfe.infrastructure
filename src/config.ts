@@ -12,5 +12,5 @@ export default {
   },
 
   endpoint: "signin-pr-jobslnx-as.azurewebsites.net",
-  wait: process.env.JOB_CLEARANCE_WAIT
+  wait: parseInt(process.env.JOB_CLEARANCE_WAIT)
 };

@@ -50,11 +50,9 @@ function sleep(ms: number = 10000): Promise<void> {
 
 async function notify(title: string, msg: string): Promise<void> {
   return new Promise(async (resolve, reject) => {
-    const webhook = new IncomingWebhook(
-      "***REMOVED***"
-    );
+    const webhook = new IncomingWebhook("");
 
-    await webhook.send({
+    let a = await webhook.send({
       attachments: [
         {
           fallback: "Clear jobs ran",
@@ -70,6 +68,8 @@ async function notify(title: string, msg: string): Promise<void> {
       ]
     });
 
+    console.log(a);
+
     resolve();
   });
 }
@@ -79,7 +79,7 @@ async function notify(title: string, msg: string): Promise<void> {
   try {
     let token = await getToken();
     await makeRequest(token, "stopped");
-    await notify("Jobs stopped", "KueJS jobs stopped");
+    // await notify("Jobs stopped", "KueJS jobs stopped");
     await sleep(config.wait);
     await makeRequest(token, "started");
     await notify("Jobs started", "KueJS jobs started");
