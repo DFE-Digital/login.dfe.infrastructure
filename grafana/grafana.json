@@ -70,7 +70,7 @@
     }
   },
   "variables": {
-    "appServiceName": "[concat(parameters('resourceEnvironmentName'), '-signin-gfa-as')]",
+    "appServiceName": "[concat(parameters('resourceEnvironmentName'), '-signin-gfa',if(contains(parameters('resourceEnvironmentName'),'s141'),'','-as'))]",
     "appServicePlanName": "[concat(parameters('resourceEnvironmentName'), '-signin-gfa-asp')]",
     "appServiceRuntimeStack": "[concat('DOCKER|', 'grafana/grafana:', parameters('grafanaVersion'))]",
     "mySqlServerName": "[concat(parameters('resourceEnvironmentName'), '-signin-gfa-msql')]",
