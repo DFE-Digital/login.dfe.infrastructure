@@ -49,13 +49,34 @@
     },
     "grafanaVersion": {
       "type": "string",
-      "defaultValue": "6.4.3",
+      "defaultValue": "6.7.1",
       "metadata": {
         "description": "Default value is latest version at initial deployment."
       }
     },
+    "grafanaGitHubEnabled": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "grafanaGitHubAllowSignUp": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "grafanaGitHubClientId": {
+      "type": "securestring",
+      "defaultValue": ""
+    },
     "grafanaGitHubClientSecret": {
-      "type": "securestring"
+      "type": "securestring",
+      "defaultValue": ""
+    },
+    "grafanaGitHubTeamIds": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "grafanaGitHubAllowedOrgs": {
+      "type": "string",
+      "defaultValue": ""
     },
     "storageContainers": {
       "type": "array",
@@ -238,15 +259,15 @@
               },
               {
                 "name": "GF_AUTH_GITHUB_ENABLED",
-                "value": true
+                "value": "[parameters('grafanaGitHubEnabled')]"
               },
               {
                 "name": "GF_AUTH_GITHUB_ALLOW_SIGN_UP",
-                "value": true
+                "value": "[parameters('grafanaGitHubAllowSignUp')]"
               },
               {
                 "name": "GF_AUTH_GITHUB_CLIENT_ID",
-                "value": "f1d6b50b0a8dceaa8ab8"
+                "value": "[parameters('grafanaGitHubClientId')]"
               },
               {
                 "name": "GF_AUTH_GITHUB_CLIENT_SECRET",
@@ -254,11 +275,11 @@
               },
               {
                 "name": "GF_AUTH_GITHUB_TEAM_IDS",
-                "value": "2584127,3369724"
+                "value": "[parameters('grafanaGitHubTeamIds')]"
               },
               {
                 "name": "GF_AUTH_GITHUB_ALLOWED_ORGANISATIONS",
-                "value": "DFE-Digital"
+                "value": "[parameters('grafanaGitHubAllowedOrgs')]"
               },
               {
                 "name": "GF_SERVER_ROOT_URL",
