@@ -16,17 +16,6 @@
                 "Premium_LRS"
             ]
         },
-        "accessTier": {
-          "type": "string",
-          "defaultValue": "Hot",
-          "allowedValues": [
-            "Hot",
-            "Cool"
-          ],
-          "metadata": {
-            "description": "This setting is required if using BlobStorage as the storageKind, otherwise can be left blank"
-          }
-        },
         "storageKind": {
             "type": "string",
             "defaultValue": "BlobStorage",
@@ -61,7 +50,7 @@
                         }
                     }
                 },
-                "accessTier": "[if(equals(parameters('storageKind'),'BlobStorage'),parameters('accessTier'),json('null'))]"
+                "accessTier": "Hot"
             }
         }
     ],
