@@ -313,7 +313,7 @@
             "value": "[variables('storageAccountName')]"
           },
           "storageKind": {
-            "value": "Storage"
+            "value": "BlobStorage"
           }
         }
       }
