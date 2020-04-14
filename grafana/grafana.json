@@ -4,7 +4,7 @@
   "parameters": {
     "deploymentUrlBase": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/master/Shared/"
+      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/develop/grafana/"
     },
     "resourceEnvironmentName": {
       "type": "string"
