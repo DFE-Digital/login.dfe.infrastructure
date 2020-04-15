@@ -14,11 +14,12 @@
         {
             "type": "Microsoft.Cache/Redis",
             "name": "[parameters('redisCacheName')]",
-            "apiVersion": "2016-04-01",
+            "apiVersion": "2018-03-01",
             "location": "[resourceGroup().location]",
             "properties": {
                 "sku": "[parameters('redisCacheSku')]",
-                "enableNonSslPort": false
+                "enableNonSslPort": false,
+                "minimumTlsVersion": "1.2"
             }
         }
     ],

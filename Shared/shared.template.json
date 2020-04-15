@@ -348,7 +348,7 @@
       }
     },
     {
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2018-03-01",
       "name": "RedisCache",
       "type": "Microsoft.Resources/deployments",
       "properties": {
