@@ -31,7 +31,7 @@ param(
     [Parameter(Mandatory=$false)]
     [string]$Location = "West Europe",
     [Parameter(Mandatory=$true)]
-    [ValidateSet("Prod", "Pre-Prod", "Dev", "Test")]
+    [ValidateSet("Prod", "Pre-Prod", "Dev", "Test", "Integration")]
     [string]$Environment,
     [Parameter(Mandatory=$true)]
     [ValidateSet("Shared IT core services", "Shared IT core services (PP)")]
