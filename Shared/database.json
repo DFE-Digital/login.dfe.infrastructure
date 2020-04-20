@@ -37,7 +37,17 @@
       "metadata": {
         "description": "The maximum size of the database in bytes"
       }
+    },
+    "individualDatabaseSku": {
+      "type": "object",
+      "defaultValue": "",
+      "metadata": {
+        "description": "If provided the database will be deployed outside of the Elastic Pool with the specified Service Tier"
+      }
     }
+  },
+  "variables": {
+    "elasticPoolName": "[if(empty(parameters('individualDatabaseSku')),parameters('elasticPoolName'),json('null'))]"
   },
   "resources": [
     {
@@ -51,8 +61,9 @@
       "properties": {
         "collation": "SQL_Latin1_General_CP1_CI_AS",
         "maxSizeBytes": "[parameters('databaseMaxSizeBytes')]",
-        "elasticPoolName": "[parameters('elasticPoolName')]"
+        "elasticPoolName": "[variables('elasticPoolName')]"
       },
+      "sku": "[parameters('individualDatabaseSku')]",
       "resources": [
         {
           "comments": "Transparent Data Encryption",
