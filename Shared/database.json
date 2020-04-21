@@ -38,7 +38,7 @@
         "description": "The maximum size of the database in bytes"
       }
     },
-    "individualDatabaseSku": {
+    "databaseSku": {
       "type": "object",
       "defaultValue": "",
       "metadata": {
@@ -47,6 +47,7 @@
     }
   },
   "variables": {
+    "isElasticDatabase": "[equals(parameters('databaseSku').name,'ElasticPool')]",
     "databaseProperties": {
       "elasticPoolDatabase": {
         "collation": "SQL_Latin1_General_CP1_CI_AS",
@@ -57,10 +58,6 @@
         "collation": "SQL_Latin1_General_CP1_CI_AS",
         "maxSizeBytes": "[parameters('databaseMaxSizeBytes')]"
       }
-    },
-    "databaseSku": {
-      "name": "[parameters('individualDatabaseSku').name]",
-      "tier": "[parameters('individualDatabaseSku').tier]"
     }
   },
   "resources": [
@@ -72,8 +69,8 @@
         "displayName": "Database"
       },
       "apiVersion": "2014-04-01",
-      "properties": "[if(empty(parameters('individualDatabaseSku')), variables('databaseProperties').elasticPoolDatabase, variables('databaseProperties').standardDatabase)]",
-      "sku": "[if(empty(parameters('individualDatabaseSku')),json('null'), variables('databaseSku'))]",
+      "properties": "[if(variables('isElasticDatabase'), variables('databaseProperties').elasticPoolDatabase, variables('databaseProperties').standardDatabase)]",
+      "sku": "[parameters('databaseSku')]",
       "resources": [
         {
           "comments": "Transparent Data Encryption",
