@@ -47,7 +47,17 @@
     }
   },
   "variables": {
-    "elasticPoolName": "[if(empty(parameters('individualDatabaseSku')),parameters('elasticPoolName'),json('null'))]"
+    "databaseProperties": {
+      "elasticPoolDatabase": {
+        "collation": "SQL_Latin1_General_CP1_CI_AS",
+        "maxSizeBytes": "[parameters('databaseMaxSizeBytes')]",
+        "elasticPoolName": "[parameters('elasticPoolName')]"
+      },
+      "standardDatabase": {
+        "collation": "SQL_Latin1_General_CP1_CI_AS",
+        "maxSizeBytes": "[parameters('databaseMaxSizeBytes')]"
+      }
+    }
   },
   "resources": [
     {
@@ -58,12 +68,8 @@
         "displayName": "Database"
       },
       "apiVersion": "2014-04-01",
-      "properties": {
-        "collation": "SQL_Latin1_General_CP1_CI_AS",
-        "maxSizeBytes": "[parameters('databaseMaxSizeBytes')]",
-        "elasticPoolName": "[variables('elasticPoolName')]"
-      },
-      "sku": "[parameters('individualDatabaseSku')]",
+      "properties": "[if(empty(parameters('individualDatabaseSku')), variables('databaseProperties').elasticPoolDatabase, variables('databaseProperties').standardDatabase)]",
+      "sku": "[if(empty(parameters('individualDatabaseSku')),json('null'), parameters('individualDatabaseSku'))]",
       "resources": [
         {
           "comments": "Transparent Data Encryption",
