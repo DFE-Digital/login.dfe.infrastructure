@@ -40,7 +40,10 @@
     },
     "databaseSku": {
       "type": "object",
-      "defaultValue": "",
+      "defaultValue": {
+        "name": "ElasticPool",
+        "tier": "Standard"
+      },
       "metadata": {
         "description": "If provided the database will be deployed outside of the Elastic Pool with the specified Service Tier"
       }
@@ -52,7 +55,7 @@
       "elasticPoolDatabase": {
         "collation": "SQL_Latin1_General_CP1_CI_AS",
         "maxSizeBytes": "[parameters('databaseMaxSizeBytes')]",
-        "elasticPoolName": "[parameters('elasticPoolName')]"
+        "elasticPoolId": "[resourceId('Microsoft.Sql/servers/elasticpools',parameters('sqlserverName'),parameters('elasticPoolName'))]"
       },
       "standardDatabase": {
         "collation": "SQL_Latin1_General_CP1_CI_AS",
@@ -68,7 +71,7 @@
       "tags": {
         "displayName": "Database"
       },
-      "apiVersion": "2014-04-01",
+      "apiVersion": "2017-10-01-preview",
       "properties": "[if(variables('isElasticDatabase'), variables('databaseProperties').elasticPoolDatabase, variables('databaseProperties').standardDatabase)]",
       "sku": "[parameters('databaseSku')]",
       "resources": [
