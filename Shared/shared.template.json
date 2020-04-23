@@ -422,8 +422,8 @@
           "databaseMaxSizeBytes": {
             "value": "[parameters('databaseNames')[copyIndex()].maxSizeBytes]"
           },
-          "individualDatabaseSku": {
-            "value": "[if(empty(parameters('databaseNames')[copyIndex()].sku),json('null'),parameters('databaseNames')[copyIndex()].sku)]"
+          "databaseSku": {
+            "value": "[parameters('databaseNames')[copyIndex()].sku]"
           }
         }
       },
