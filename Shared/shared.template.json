@@ -348,7 +348,7 @@
       }
     },
     {
-      "apiVersion": "2018-03-01",
+      "apiVersion": "2019-07-01",
       "name": "RedisCache",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -421,6 +421,9 @@
           },
           "databaseMaxSizeBytes": {
             "value": "[parameters('databaseNames')[copyIndex()].maxSizeBytes]"
+          },
+          "databaseSku": {
+            "value": "[parameters('databaseNames')[copyIndex()].sku]"
           }
         }
       },
