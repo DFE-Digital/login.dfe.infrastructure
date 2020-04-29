@@ -31,7 +31,8 @@
             }
         }
     },
-    "variables": {},
+    "variables": {
+    },
     "resources": [
         {
             "type": "Microsoft.Web/serverfarms",
@@ -47,5 +48,10 @@
             }
         }
     ],
-    "outputs": {}
+    "outputs": {
+        "appServicePlanId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+        }
+    }
 }
