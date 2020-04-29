@@ -421,6 +421,9 @@
           },
           "databaseMaxSizeBytes": {
             "value": "[parameters('databaseNames')[copyIndex()].maxSizeBytes]"
+          },
+          "databaseSku": {
+            "value": "[parameters('databaseNames')[copyIndex()].sku]"
           }
         }
       },
