@@ -65,31 +65,18 @@
                 "description": "This can be passed into the template via the reference function: [reference(resourceId(parameters('certificateResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
             }
         },
-        "additionalAppSettings" : {
-            "type":"object"
+        "additionalAppSettings": {
+            "type": "object"
         }
     },
     "variables": {
         "appServicePlanId": "[resourceId(parameters('appServicePlanRG'),'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
-        "baseAppSerrings": {
+        "baseAppSettings": {
             "WEBSITE_NODE_DEFAULT_VERSION": "[parameters('nodeVersion')]",
             "settings": "[parameters('appServiceConfigPath')]"
         },
-        "combinedAppSettings": "[union(variables('baseAppSerrings'), parameters('additionalAppSettings'))]",
-        "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
-        "siteConfigSettings": {
-            "withAppServiceSettings": {
-                "appSettings": "[variables('combinedAppSettings')]",
-                "alwaysOn": true,
-                "minTlsVersion": "[parameters('minTlsVersion')]",
-                "numberOfWorkers": "[parameters('numberOfWorkers')]"
-            },
-            "withoutAppServiceSettings": {
-                "alwaysOn": true,
-                "minTlsVersion": "[parameters('minTlsVersion')]",
-                "numberOfWorkers": "[parameters('numberOfWorkers')]"
-            }
-        }
+        "combinedAppSettings": "[union(variables('baseAppSettings'), parameters('additionalAppSettings'))]",
+        "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]"
     },
     "resources": [
         {
@@ -101,7 +88,11 @@
                 "serverFarmId": "[variables('appServicePlanId')]",
                 "clientAffinityEnabled": false,
                 "httpsOnly": true,
-                "siteConfig": "[if(parameters('includeDeploymentSlot'), variables('siteConfigSettings').withoutAppServiceSettings, variables('siteConfigSettings').withAppServiceSettings)]"
+                "siteConfig": {
+                    "alwaysOn": true,
+                    "minTlsVersion": "[parameters('minTlsVersion')]",
+                    "numberOfWorkers": "[parameters('numberOfWorkers')]"
+                }
             },
             "resources": [
                 {
@@ -114,8 +105,23 @@
                         "serverFarmId": "[variables('appServicePlanId')]",
                         "clientAffinityEnabled": false,
                         "httpsOnly": true,
-                        "siteConfig": "[variables('siteConfigSettings').withAppServiceSettings]"
+                        "siteConfig": {
+                            "alwaysOn": true,
+                            "minTlsVersion": "[parameters('minTlsVersion')]",
+                            "numberOfWorkers": "[parameters('numberOfWorkers')]"
+                        }
                     },
+                    "resources": [
+                        {
+                            "apiVersion": "2015-08-01",
+                            "name": "appsettings",
+                            "type": "config",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Web/sites/slots/', parameters('appServiceName'), 'Staging')]"
+                            ],
+                            "properties": "[variables('combinedAppSettings')]"
+                        }
+                    ],
                     "dependsOn": [
                         "[parameters('appServiceName')]"
                     ]
