@@ -294,21 +294,21 @@
                 "accountName": "[variables('storageAccountName')]",
                 "mountPath": "/var/lib/grafana",
                 "shareName": "data",
-                "type": "AzureBlob"
+                "type": "AzureFiles"
               },
               "GrafanaProvisioning": {
                 "accessKey": "[reference('storage-account').outputs.storageKey.value]",
                 "accountName": "[variables('storageAccountName')]",
                 "mountPath": "/etc/grafana/provisioning",
                 "shareName": "provisioning",
-                "type": "AzureBlob"
+                "type": "AzureFiles"
               },
               "GrafanaLogs": {
                 "accessKey": "[reference('storage-account').outputs.storageKey.value]",
                 "accountName": "[variables('storageAccountName')]",
                 "mountPath": "/var/log/grafana",
                 "shareName": "logs",
-                "type": "AzureBlob"
+                "type": "AzureFiles"
               }
             }
           }
@@ -334,30 +334,31 @@
             "value": "[variables('storageAccountName')]"
           },
           "storageKind": {
-            "value": "Storage"
+            "value": "StorageV2"
           }
         }
       }
     },
+
     {
-      "name": "[concat('storage-container-', parameters('storageContainers')[copyIndex()])]",
+      "name": "[concat('storage-fileshare-', parameters('storageContainers')[copyIndex()])]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-05-10",
       "copy": {
-        "name": "storagecontainercopy",
+        "name": "storagefilesharecopy",
         "count": "[length(parameters('storageContainers'))]"
       },
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('deploymentUrlBase'), 'storage-container.json')]",
+          "uri": "[concat(parameters('deploymentUrlBase'), 'storage-fileshare.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
           "storageAccountName": {
             "value": "[variables('storageAccountName')]"
           },
-          "containerName": {
+          "fileShareName": {
             "value": "[parameters('storageContainers')[copyIndex()]]"
           }
         }
