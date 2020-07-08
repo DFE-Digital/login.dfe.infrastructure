@@ -66,11 +66,17 @@
             }
         },
         "additionalAppSettings": {
-            "type": "object"
+            "type": "object",
+            "metadata": {
+                "description": "Key/Value pair set of any azure config variables to be deployed with the slot"
+            }
         }
     },
     "variables": {
-        "appServicePlanId": "[resourceId(parameters('appServicePlanRG'),'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+        "resourceIds": {
+            "appServicePlanId": "[resourceId(parameters('appServicePlanRG'),'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+            "appServiceId": "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
+        },
         "baseAppSettings": {
             "WEBSITE_NODE_DEFAULT_VERSION": "[parameters('nodeVersion')]",
             "settings": "[parameters('appServiceConfigPath')]"
@@ -85,7 +91,7 @@
             "apiVersion": "2016-08-01",
             "location": "[resourceGroup().location]",
             "properties": {
-                "serverFarmId": "[variables('appServicePlanId')]",
+                "serverFarmId": "[variables('resourceIds').appServicePlanId]",
                 "clientAffinityEnabled": false,
                 "httpsOnly": true,
                 "siteConfig": {
@@ -102,7 +108,7 @@
                     "apiVersion": "2016-08-01",
                     "location": "[resourceGroup().location]",
                     "properties": {
-                        "serverFarmId": "[variables('appServicePlanId')]",
+                        "serverFarmId": "[variables('resourceIds').appServicePlanId]",
                         "clientAffinityEnabled": false,
                         "httpsOnly": true,
                         "siteConfig": {
@@ -144,5 +150,9 @@
         }
     ],
     "outputs": {
+        "siteUri": {
+            "type": "string",
+            "value": "[concat('http://', reference(variables('resourceIds').appServiceId).hostnames[0])]"
+        }
     }
 }
