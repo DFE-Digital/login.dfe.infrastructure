@@ -35,7 +35,7 @@
       "storageContainers": {
         "type": "array",
         "defaultValue": [
-          "influxData"
+          "influxdata"
         ],
         "metadata": {
           "description": "Names of containers to create in the storage account."
@@ -123,7 +123,7 @@
                   "accessKey": "[reference('storage-account').outputs.storageKey.value]",
                   "accountName": "[variables('storageAccountName')]",
                   "mountPath": "/var/lib/influxdb",
-                  "shareName": "influxData",
+                  "shareName": "influxdata",
                   "type": "AzureFiles"
                 }
               }
