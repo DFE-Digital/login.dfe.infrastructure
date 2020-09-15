@@ -171,7 +171,7 @@
           },
           "parameters": {
             "storageAccountName": {
-              "value": "[reference('storage-account').outputs.storageAccountName]"
+              "value": "[variables('storageAccountName')]"
             },
             "fileShareName": {
               "value": "[parameters('storageContainers')[copyIndex()]]"
