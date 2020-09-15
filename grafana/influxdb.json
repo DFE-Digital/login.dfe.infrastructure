@@ -120,7 +120,7 @@
             "azureStorageAccounts": {
               "value": {
                 "InfluxDBData": {
-                  "accessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
+                  "accessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
                   "accountName": "[reference('storage-account').outputs.storageAccountName]",
                   "mountPath": "/var/lib/influxdb",
                   "shareName": "influxData",
