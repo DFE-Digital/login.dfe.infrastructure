@@ -47,7 +47,8 @@
     "variables": {
       "appServiceName": "[concat(parameters('projectIdentifier'), '-signin-infx',if(contains(parameters('projectIdentifier'),'s141'),'','-as'))]",
       "appServicePlanName": "[concat(parameters('projectIdentifier'), '-signin-infx-asp')]",
-      "appServiceRuntimeStack": "[concat('DOCKER|', 'influxdb:', parameters('influxdbVersion'))]"
+      "appServiceRuntimeStack": "[concat('DOCKER|', 'influxdb:', parameters('influxdbVersion'))]",
+      "storageAccountName": "[concat(parameters('resourceEnvironmentName'), 'signingfastr')]"
     },
     "resources": [
       {
