@@ -35,9 +35,7 @@
       "storageContainers": {
         "type": "array",
         "defaultValue": [
-          "data",
-          "logs",
-          "provisioning"
+          "influxData"
         ],
         "metadata": {
           "description": "Names of containers to create in the storage account."
