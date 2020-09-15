@@ -111,7 +111,7 @@
                 },
                 {
                     "name": "INFLUXDB_ADMIN_USER",
-                    "value": "[parameters('influxDatabaseUser')]"
+                    "value": "[parameters('influxDBAdminUser')]"
                 },
                 {
                     "name": "INFLUXDB_ADMIN_PASSWORD",
