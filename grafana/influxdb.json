@@ -120,8 +120,8 @@
             "azureStorageAccounts": {
               "value": {
                 "InfluxDBData": {
-                  "accessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
-                  "accountName": "[reference('storage-account').outputs.storageAccountName]",
+                  "accessKey": "[reference('storage-account').outputs.storageKey.value]",
+                  "accountName": "[variables('storageAccountName')]",
                   "mountPath": "/var/lib/influxdb",
                   "shareName": "influxData",
                   "type": "AzureFiles"
@@ -189,8 +189,8 @@
         "value": "[variables('appServiceName')]"
       },
       "storageAccountName": {
-        "type": "string",
-        "value": "[reference('storage-account').outputs.storageAccountName]"
+        "type": "string",   
+        "value": "[variables('storageAccountName')]"
       }
     }
   }
