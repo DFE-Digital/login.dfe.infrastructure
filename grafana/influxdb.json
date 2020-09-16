@@ -114,6 +114,10 @@
                 {
                     "name": "INFLUXDB_ADMIN_PASSWORD",
                     "value": "[parameters('influxDBAdminPassword')]"
+                },
+                {
+                    "name": "WEBSITES_PORT",
+                    "value": "8086"
                 }
             ]
             },
