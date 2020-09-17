@@ -29,6 +29,7 @@
         },
         "appServiceConfigPath": {
             "type": "string",
+			"defaultValue": "",
             "metadata": {
                 "description": "JSON string containing app config"
             }
