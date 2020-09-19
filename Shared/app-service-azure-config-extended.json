@@ -22,7 +22,7 @@
         },
         "nodeVersion": {
             "type": "string",
-            "defaultValue": "12.9.0",
+            "defaultValue": "12.9",
             "metadata": {
                 "description": "The default NodeJS version that the App Service will run"
             }
@@ -173,7 +173,7 @@
         {
             "type": "Microsoft.Web/sites",
             "name": "[parameters('appServiceName')]",
-            "apiVersion": "2018-02-01",
+            "apiVersion": "2016-08-01",
             "location": "[resourceGroup().location]",
             "properties": {
                 "serverFarmId": "[variables('resourceIds').appServicePlanId]",
@@ -182,13 +182,7 @@
                 "siteConfig": {
                     "alwaysOn": true,
                     "minTlsVersion": "[parameters('minTlsVersion')]",
-                    "numberOfWorkers": "[parameters('numberOfWorkers')]",
-					 "metadata": [
-						{
-						"name": "CURRENT_STACK",
-						"value": "node"
-						}
-					]
+                    "numberOfWorkers": "[parameters('numberOfWorkers')]"
                 }
             },
             "resources": [
