@@ -311,9 +311,6 @@
                 "type": "AzureFiles"
               }
             }
-          },
-          "deployStagingSlot": {
-            "value": false
           }
         }
       },
