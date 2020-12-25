@@ -253,10 +253,7 @@
                 "name": "GF_DATABASE_CA_CERT_PATH",
                 "value": "/etc/ssl/certs/ca-certificates.crt"
               },
-              {
-                "name": "GF_INSTALL_PLUGINS",
-                "value": "grafana-azure-monitor-datasource, grafana-piechart-panel, redis-datasource"
-              },
+             
               {
                 "name": "GF_AUTH_GITHUB_ENABLED",
                 "value": "[parameters('grafanaGitHubEnabled')]"
