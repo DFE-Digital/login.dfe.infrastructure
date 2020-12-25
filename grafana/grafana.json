@@ -254,7 +254,6 @@
                 "value": "/etc/ssl/certs/ca-certificates.crt"
               },
               {
-                "version": "7.1.3",
                 "name": "GF_INSTALL_PLUGINS",
                 "value": "grafana-azure-monitor-datasource, grafana-piechart-panel, redis-datasource"
               },
