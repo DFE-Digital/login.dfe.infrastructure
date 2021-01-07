@@ -73,6 +73,7 @@
         },
         "healthCheckPath": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
                 "description": "This can be used to specify the path for the Health Check. If set it as empty string it will disable the Health Check"
             }
