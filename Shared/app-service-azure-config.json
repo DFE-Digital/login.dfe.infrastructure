@@ -70,6 +70,12 @@
             "metadata": {
                 "description": "Key/Value pair set of any azure config variables to be deployed with the slot"
             }
+        },
+        "healthCheckPath": {
+            "type": "string",
+            "metadata": {
+                "description": "This can be used to specify the path for the Health Check. If set it as empty string it will disable the Health Check"
+            }
         }
     },
     "variables": {
@@ -97,7 +103,8 @@
                 "siteConfig": {
                     "alwaysOn": true,
                     "minTlsVersion": "[parameters('minTlsVersion')]",
-                    "numberOfWorkers": "[parameters('numberOfWorkers')]"
+                    "numberOfWorkers": "[parameters('numberOfWorkers')]",
+                    "healthCheckPath": "[parameters('healthCheckPath')]"
                 }
             },
             "resources": [
@@ -114,7 +121,8 @@
                         "siteConfig": {
                             "alwaysOn": true,
                             "minTlsVersion": "[parameters('minTlsVersion')]",
-                            "numberOfWorkers": "[parameters('numberOfWorkers')]"
+                            "numberOfWorkers": "[parameters('numberOfWorkers')]",
+                            "healthCheckPath": "[parameters('healthCheckPath')]"
                         }
                     },
                     "resources": [
