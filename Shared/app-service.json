@@ -64,6 +64,10 @@
             "metadata": {
                 "description": "This can be passed into the template via the reference function: [reference(resourceId(parameters('certificateResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
             }
+        },
+        "healthCheckPath": {
+            "type": "string",
+            "defaultValue": ""
         }
     },
     "variables": {
@@ -76,6 +80,10 @@
             {
                 "name": "settings",
                 "value": "[parameters('appServiceConfigPath')]"
+            },
+            {
+                "name": "healthcheckPath",
+                "value": "[parameters('healthcheckPath')]"
             }
         ],
         "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
@@ -84,12 +92,14 @@
             "appSettings": "[variables('appServiceSettings')]",
             "alwaysOn": true,
             "minTlsVersion": "[parameters('minTlsVersion')]",
-            "numberOfWorkers": "[parameters('numberOfWorkers')]"
+            "numberOfWorkers": "[parameters('numberOfWorkers')]",
+            "healthCheckPath": "[parameters('healthCheckPath')]"
           },
           "withoutAppServiceSettings": {
             "alwaysOn": true,
             "minTlsVersion": "[parameters('minTlsVersion')]",
-            "numberOfWorkers": "[parameters('numberOfWorkers')]"
+            "numberOfWorkers": "[parameters('numberOfWorkers')]",
+             "healthCheckPath": "[parameters('healthCheckPath')]"
           }
         }
     },
