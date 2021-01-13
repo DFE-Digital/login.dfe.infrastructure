@@ -73,7 +73,13 @@
             "metadata": {
                 "description": "This can be used to specify the path for the Health Check. If set it as empty string it will disable the Health Check"
             }
-        }
+        },
+         "additionalAppSettings": {
+            "type": "object",
+            "metadata": {
+                "description": "Key/Value pair set of any azure config variables to be deployed with the slot"
+            }
+        },
     },
     "variables": {
         "appServicePlanId": "[resourceId(parameters('appServicePlanRG'),'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
@@ -85,10 +91,6 @@
             {
                 "name": "settings",
                 "value": "[parameters('appServiceConfigPath')]"
-            },
-            {
-                "name": "WEBSITE_HEALTHCHECK_MAXPINGFAILURES",
-                "value": ""
             }
         ],
          
@@ -111,8 +113,9 @@
            
             
           }
-        }
-       
+        },
+        "baseAppSettings": {},
+        "combinedAppSettings": "[union(variables('baseAppSettings'), parameters('additionalAppSettings'))]"
     },
     "resources": [
         {
@@ -121,10 +124,12 @@
             "apiVersion": "2016-08-01",
             "location": "[resourceGroup().location]",
             "properties": {
+                "combinedAppSettings": "[variables('combinedAppSettings')]",
                 "serverFarmId": "[variables('appServicePlanId')]",
                 "clientAffinityEnabled": false,
                 "httpsOnly": true,
-                "siteConfig": "[if(parameters('includeDeploymentSlot'), variables('siteConfigSettings').withoutAppServiceSettings, variables('siteConfigSettings').withAppServiceSettings)]"
+                "siteConfig": "[if(parameters('includeDeploymentSlot'), variables('siteConfigSettings').withoutAppServiceSettings, variables('siteConfigSettings').withAppServiceSettings)]",
+                
               
             },
             "resources": [
