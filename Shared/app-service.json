@@ -67,10 +67,10 @@
        
         },
         "WEBSITE_HEALTHCHECK_MAXPINGFAILURES": {
+           "defaultValue": "",
             "type": "string",
-            "defaultValue": "",
             "metadata": {
-                "description": "This can be used to specify the Health Check Time."
+                "description": "This can be used to specify the value for the time interval of the health check"
             }
         },
          "healthCheckPath": {
@@ -93,6 +93,7 @@
                 "value": "[parameters('appServiceConfigPath')]"
             }
         ],
+         
         "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
         "siteConfigSettings": {
           "withAppServiceSettings": {
@@ -100,17 +101,20 @@
             "alwaysOn": true,
             "minTlsVersion": "[parameters('minTlsVersion')]",
             "numberOfWorkers": "[parameters('numberOfWorkers')]",
-            "WEBSITE_HEALTHCHECK_MAXPINGFAILURES": "[parameters('WEBSITE_HEALTHCHECK_MAXPINGFAILURES')]",
-            "healthCheckPath": "[parameters('healthCheckPath')]"
+            "healthCheckPath": "[parameters('healthCheckPath')]",
+            "WEBSITE_HEALTHCHECK_MAXPINGFAILURES": "[parameters('WEBSITE_HEALTHCHECK_MAXPINGFAILURES')]"
+           
           },
           "withoutAppServiceSettings": {
             "alwaysOn": true,
             "minTlsVersion": "[parameters('minTlsVersion')]",
             "numberOfWorkers": "[parameters('numberOfWorkers')]",
-            "WEBSITE_HEALTHCHECK_MAXPINGFAILURES": "[parameters('WEBSITE_HEALTHCHECK_MAXPINGFAILURES')]",
-            "healthCheckPath": "[parameters('healthCheckPath')]"
+            "healthCheckPath": "[parameters('healthCheckPath')]",
+            "WEBSITE_HEALTHCHECK_MAXPINGFAILURES": "[parameters('WEBSITE_HEALTHCHECK_MAXPINGFAILURES')]"
+            
           }
         }
+       
     },
     "resources": [
         {
@@ -123,6 +127,7 @@
                 "clientAffinityEnabled": false,
                 "httpsOnly": true,
                 "siteConfig": "[if(parameters('includeDeploymentSlot'), variables('siteConfigSettings').withoutAppServiceSettings, variables('siteConfigSettings').withAppServiceSettings)]"
+              
             },
             "resources": [
                 {
