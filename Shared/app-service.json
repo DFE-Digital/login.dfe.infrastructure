@@ -64,6 +64,21 @@
             "metadata": {
                 "description": "This can be passed into the template via the reference function: [reference(resourceId(parameters('certificateResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
             }
+       
+        },
+        "WEBSITE_HEALTHCHECK_MAXPINGFAILURES": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "This can be used to specify the path for the Health Time."
+            }
+        },
+         "healthCheckPath": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "This can be used to specify the path for the Health Check. If set it as empty string it will disable the Health Check"
+            }
         }
     },
     "variables": {
@@ -84,12 +99,16 @@
             "appSettings": "[variables('appServiceSettings')]",
             "alwaysOn": true,
             "minTlsVersion": "[parameters('minTlsVersion')]",
-            "numberOfWorkers": "[parameters('numberOfWorkers')]"
+            "numberOfWorkers": "[parameters('numberOfWorkers')]",
+            "WEBSITE_HEALTHCHECK_MAXPINGFAILURES": "[parameters('WEBSITE_HEALTHCHECK_MAXPINGFAILURES')]",
+            "healthCheckPath": "[parameters('healthCheckPath')]"
           },
           "withoutAppServiceSettings": {
             "alwaysOn": true,
             "minTlsVersion": "[parameters('minTlsVersion')]",
-            "numberOfWorkers": "[parameters('numberOfWorkers')]"
+            "numberOfWorkers": "[parameters('numberOfWorkers')]",
+            "WEBSITE_HEALTHCHECK_MAXPINGFAILURES": "[parameters('WEBSITE_HEALTHCHECK_MAXPINGFAILURES')]",
+            "healthCheckPath": "[parameters('healthCheckPath')]"
           }
         }
     },
