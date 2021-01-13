@@ -76,10 +76,13 @@
         },
          "additionalAppSettings": {
             "type": "object",
+            "defaultValue": {
+
+            },
             "metadata": {
                 "description": "Key/Value pair set of any azure config variables to be deployed with the slot"
             }
-        },
+        }
     },
     "variables": {
         "appServicePlanId": "[resourceId(parameters('appServicePlanRG'),'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
