@@ -66,7 +66,13 @@
             }
        
         },
-        
+        "WEBSITE_HEALTHCHECK_MAXPINGFAILURES": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "This can be used to specify the Health Check Time."
+            }
+        },
          "healthCheckPath": {
             "type": "string",
             "defaultValue": "",
@@ -94,14 +100,14 @@
             "alwaysOn": true,
             "minTlsVersion": "[parameters('minTlsVersion')]",
             "numberOfWorkers": "[parameters('numberOfWorkers')]",
-           
+            "WEBSITE_HEALTHCHECK_MAXPINGFAILURES": "[parameters('WEBSITE_HEALTHCHECK_MAXPINGFAILURES')]",
             "healthCheckPath": "[parameters('healthCheckPath')]"
           },
           "withoutAppServiceSettings": {
             "alwaysOn": true,
             "minTlsVersion": "[parameters('minTlsVersion')]",
             "numberOfWorkers": "[parameters('numberOfWorkers')]",
-            
+            "WEBSITE_HEALTHCHECK_MAXPINGFAILURES": "[parameters('WEBSITE_HEALTHCHECK_MAXPINGFAILURES')]",
             "healthCheckPath": "[parameters('healthCheckPath')]"
           }
         }
