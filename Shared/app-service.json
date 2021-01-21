@@ -64,6 +64,22 @@
             "metadata": {
                 "description": "This can be passed into the template via the reference function: [reference(resourceId(parameters('certificateResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
             }
+        },
+          "healthCheckPath": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "This can be used to specify the path for the Health Check. If set it as empty string it will disable the Health Check"
+            }
+        },
+         "additionalAppSettings": {
+            "type": "object",
+            "defaultValue": {
+
+            },
+            "metadata": {
+                "description": "Key/Value pair set of any azure config variables to be deployed with the slot"
+            }
         }
     },
     "variables": {
@@ -84,14 +100,20 @@
             "appSettings": "[variables('appServiceSettings')]",
             "alwaysOn": true,
             "minTlsVersion": "[parameters('minTlsVersion')]",
-            "numberOfWorkers": "[parameters('numberOfWorkers')]"
+            "numberOfWorkers": "[parameters('numberOfWorkers')]",
+            "healthCheckPath": "[parameters('healthCheckPath')]"
           },
           "withoutAppServiceSettings": {
             "alwaysOn": true,
             "minTlsVersion": "[parameters('minTlsVersion')]",
-            "numberOfWorkers": "[parameters('numberOfWorkers')]"
+            "numberOfWorkers": "[parameters('numberOfWorkers')]",
+            "healthCheckPath": "[parameters('healthCheckPath')]"
+           
+            
           }
-        }
+        },
+        "baseAppSettings": {},
+        "combinedAppSettings": "[union(variables('baseAppSettings'), parameters('additionalAppSettings'))]"
     },
     "resources": [
         {
@@ -100,6 +122,7 @@
             "apiVersion": "2016-08-01",
             "location": "[resourceGroup().location]",
             "properties": {
+                "combinedAppSettings": "[variables('combinedAppSettings')]",
                 "serverFarmId": "[variables('appServicePlanId')]",
                 "clientAffinityEnabled": false,
                 "httpsOnly": true,
