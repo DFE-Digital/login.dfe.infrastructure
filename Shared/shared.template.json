@@ -117,43 +117,6 @@
         "description": "Firewall IP"
       }
     },
-    "postgresServerName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the postgres server"
-      }
-    },
-    "postgresSku": {
-      "type": "object",
-      "defaultValue": "",
-      "metadata": {
-        "description": "SKU for the postgres server"
-      }
-    },
-    "postgresAdminLogin": {
-      "type": "string",
-      "metadata": {
-        "description": "Admin username for the postgres server"
-      }
-    },
-    "postgresAdminPassword": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Admin password for the postgres server"
-      }
-    },
-    "postgresVersion": {
-      "type": "string",
-      "metadata": {
-        "description": "Version of the postgres server"
-      }
-    },
-    "postgresDatabases": {
-      "type": "array",
-      "metadata": {
-        "description": "Array of database names to create within the postgres server"
-      }
-    },
     "keyvaultCertificateNames": {
       "type": "array",
       "defaultValue": [],
@@ -244,7 +207,14 @@
       "type": "string",
       "metadata": {
         "description": "Object Id of the Azure Websites RP",
-        "environmentVariable": "microsoftAzureWebsitesRPObjectId"
+        "environmentVariable": "azureDevOpsObjectId"
+      }
+    },
+    "keyVaultApplicationObjectId": {
+      "type": "string",
+      "metadata": {
+        "description": "Object Id of the Key Vault application",
+        "environmentVariable": "keyVaultApplicationObjectId"
       }
     }
   },
@@ -257,13 +227,27 @@
     "storageAccountTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/storage-account.json')]",
     "keyVaultTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/key-vault.json')]",
     "azureSearchTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-search.json')]",
-    "postgresTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/postgres.json')]",
     "azureCdnTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn.json')]",
     "azureCdnEndpointTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn-endpoint.json')]",
     "certificateTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-certificate.json')]",
     "keyVaultAccessPolicies": [
       {
         "objectId": "[parameters('microsoftAzureWebsitesRPObjectId')]",
+        "tenantId": "[subscription().tenantId]",
+        "permissions": {
+          "secrets": [
+            "Get",
+            "List",
+            "Set",
+            "Delete",
+            "Recover",
+            "Backup",
+            "Restore"
+          ]
+        }
+      },
+      {
+        "objectId": "[parameters('keyVaultApplicationObjectId')]",
         "tenantId": "[subscription().tenantId]",
         "permissions": {
           "secrets": [
@@ -581,37 +565,6 @@
         }
       },
       "dependsOn": []
-    },
-    {
-      "name": "Postgres",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2014-04-01",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('postgresTemplateUri')]"
-        },
-        "parameters": {
-          "postgresServerName": {
-            "value": "[parameters('postgresServerName')]"
-          },
-          "postgresSku": {
-            "value": "[parameters('postgresSku')]"
-          },
-          "postgresAdminLogin": {
-            "value": "[parameters('postgresAdminLogin')]"
-          },
-          "postgresAdminPassword": {
-            "value": "[parameters('postgresAdminPassword')]"
-          },
-          "postgresVersion": {
-            "value": "[parameters('postgresVersion')]"
-          },
-          "postgresDatabases": {
-            "value": "[parameters('postgresDatabases')]"
-          }
-        }
-      }
     },
     {
       "name": "AzureCDN",
