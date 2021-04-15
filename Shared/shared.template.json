@@ -230,6 +230,10 @@
     "azureCdnTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn.json')]",
     "azureCdnEndpointTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn-endpoint.json')]",
     "certificateTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-certificate.json')]",
+    "elasticSku": {
+      "name": "ElasticPool",
+      "tier": "Standard"
+    },
     "keyVaultAccessPolicies": [
       {
         "objectId": "[parameters('microsoftAzureWebsitesRPObjectId')]",
@@ -482,7 +486,7 @@
             "value": "[parameters('databaseNames')[copyIndex()].maxSizeBytes]"
           },
           "databaseSku": {
-            "value": "[parameters('databaseNames')[copyIndex()].sku]"
+            "value": "[if(contains(parameters('databaseNames')[copyIndex()], 'sku'), parameters('databaseNames')[copyIndex()].sku, variables('elasticSku'))]"
           }
         }
       },
