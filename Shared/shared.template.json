@@ -4,7 +4,7 @@
   "parameters": {
     "templatesBaseUri": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/master/"
+      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/feature/DSI-3246-SharedInfAlignment"
     },
     "appServicePlanOS": {
       "type": "string",
@@ -162,6 +162,7 @@
     },
     "keyvaultCertificateNames": {
       "type": "array",
+      "defaultValue": [],
       "metadata": {
         "description": "Names of the certificates stored in keyvault"
       }
@@ -237,6 +238,20 @@
       "metadata": {
         "description": "The SKU of the worker App Service Plan"
       }
+    },
+    "microsoftAzureWebsitesRPObjectId": {
+      "type": "string",
+      "metadata": {
+        "description": "Object Id of the Azure Websites RP",
+        "environmentVariable": "microsoftAzureWebsitesRPObjectId"
+      }
+    },
+    "azureDevOpsObjectId": {
+      "type": "string",
+      "metadata": {
+        "description": "Object Id of the Azure Websites RP",
+        "environmentVariable": "microsoftAzureWebsitesRPObjectId"
+      }
     }
   },
   "variables": {
@@ -251,7 +266,73 @@
     "postgresTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/postgres.json')]",
     "azureCdnTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn.json')]",
     "azureCdnEndpointTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn-endpoint.json')]",
-    "certificateTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-certificate.json')]"
+    "certificateTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-certificate.json')]",
+    "keyVaultAccessPolicies": [
+      {
+        "objectId": "[parameters('microsoftAzureWebsitesRPObjectId')]",
+        "tenantId": "[subscription().tenantId]",
+        "permissions": {
+          "secrets": [
+            "Get",
+            "List",
+            "Set",
+            "Delete",
+            "Recover",
+            "Backup",
+            "Restore"
+          ]
+        }
+      },
+      {
+        "objectId": "[parameters('azureDevOpsObjectId')]",
+        "tenantId": "[subscription().tenantId]",
+        "permissions": {
+          "keys": [
+            "Get",
+            "List",
+            "Update",
+            "Create",
+            "Import",
+            "Delete",
+            "Recover",
+            "Backup",
+            "Restore",
+            "Decrypt",
+            "Encrypt",
+            "UnwrapKey",
+            "WrapKey",
+            "Verify",
+            "Sign"
+          ],
+          "secrets": [
+            "Get",
+            "List",
+            "Set",
+            "Delete",
+            "Recover",
+            "Backup",
+            "Restore"
+          ],
+          "certificates": [
+            "Get",
+            "List",
+            "Update",
+            "Create",
+            "Import",
+            "Delete",
+            "Recover",
+            "Backup",
+            "Restore",
+            "ManageContacts",
+            "ManageIssuers",
+            "GetIssuers",
+            "ListIssuers",
+            "SetIssuers",
+            "DeleteIssuers"
+          ]
+        }
+      }
+    ]
   },
   "resources": [
     {
@@ -483,8 +564,8 @@
           "keyVaultName": {
             "value": "[parameters('keyVaultName')]"
           },
-          "AccessPolicyObjectIds": {
-            "value": "[parameters('AccessPolicyObjectIds')]"
+          "keyVaultAccessPolicies": {
+            "value": "[variables('keyVaultAccessPolicies')]"
           }
         }
       },
@@ -587,6 +668,7 @@
       ]
     },
     {
+      "condition": "[greater(length(parameters('keyvaultCertificateNames')), 0)]",
       "name": "[concat('AppServiceCertificates', copyIndex())]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2014-04-01",
