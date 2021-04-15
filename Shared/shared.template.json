@@ -4,7 +4,7 @@
   "parameters": {
     "templatesBaseUri": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/feature/DSI-3246-SharedInfAlignment"
+      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/feature/DSI-3246-SharedInfAlignment/"
     },
     "appServicePlanOS": {
       "type": "string",
@@ -80,12 +80,6 @@
       "type": "string",
       "metadata": {
         "description": "Name of the Key Vault resource"
-      }
-    },
-    "AccessPolicyObjectIds": {
-      "type": "array",
-      "metadata": {
-        "description": "ObjectIDs for the Keyvault Access Policy"
       }
     },
     "azureSearchName": {
