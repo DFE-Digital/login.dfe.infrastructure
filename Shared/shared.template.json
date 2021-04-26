@@ -242,8 +242,9 @@
     "azureCdnTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn.json')]",
     "azureCdnEndpointTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn-endpoint.json')]",
     "certificateTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-certificate.json')]",
-    "virtualNetworkTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/virtual-network.json')]",
-    "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
+    "networkTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/network.template.json')]",
+    //"resourceNamePrefix": "[toLower(concat('s141d01-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
+    "resourceNamePrefix": "[toLower('s141d01-signin-shd')]",
     "virtualNetworkName": "[concat(variables('resourceNamePrefix'),'-vnet')]",
     "mgmtManagementSubnetCount": 1,
     "elasticSku": {
@@ -671,7 +672,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('virtualNetworkTemplateUri')]",
+          "uri": "[variables('networkTemplateUri')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
