@@ -68,7 +68,7 @@
     },
     "managementSubnetCount": {
       "type": "int",
-      "defaultValue": 1,
+      "defaultValue": 0,
       "maxValue": 5,
       "metadata": {
         "description": "The number of management subnets to provision"
@@ -162,7 +162,7 @@
       },
       {
         "name": "managementSubnetCopy",
-        "count": "[parameters('managementSubnetCount')]",
+        "count": "[if(greater(parameters('managementSubnetCount'), 0), parameters('managementSubnetCount'), 1)]",
         "input": {
           "name": "[concat(parameters('managementSubnetNamePrefix'), '-', copyIndex('managementSubnetCopy'))]",
           "properties": {
