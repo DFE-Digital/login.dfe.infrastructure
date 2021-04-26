@@ -216,6 +216,18 @@
         "description": "Object Id of the Key Vault application",
         "environmentVariable": "keyVaultApplicationObjectId"
       }
+    },
+    "virtualNetworkDeploy": {
+      "type": "string",
+      "defaultValue": "Disabled",
+      "allowedValues": [
+        "Disabled",
+        "Enabled"
+      ],
+      "metadata": {
+        "description": "Deploys the Virtual Network and deletes all subnets if Enabled https://github.com/Azure/azure-quickstart-templates/issues/2786",
+        "environmentVariable": "virtualNetworkDeploy"
+      }
     }
   },
   "variables": {
@@ -230,6 +242,10 @@
     "azureCdnTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn.json')]",
     "azureCdnEndpointTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn-endpoint.json')]",
     "certificateTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-certificate.json')]",
+    "virtualNetworkTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/virtual-network.json')]",
+    "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
+    "virtualNetworkName": "[concat(variables('resourceNamePrefix'),'-vnet')]",
+    "mgmtManagementSubnetCount": 1,
     "elasticSku": {
       "name": "ElasticPool",
       "tier": "Standard"
@@ -647,6 +663,32 @@
       "dependsOn": [
         "KeyVault"
       ]
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "[concat('virtual-network-west-europe-', variables('resourceNamePrefix'))]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('virtualNetworkTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "virtualNetworkName": {
+            "value": "[variables('virtualNetworkName')]"
+          },
+          "virtualNetworkDeploy": {
+            "value": "[parameters('virtualNetworkDeploy')]"
+          },
+          "managementSubnetCount": {
+            "value": "[variables('mgmtManagementSubnetCount')]"
+          },
+          "virtualNetworkAddressSpacePrefix": {
+            "value": "10.0"
+          }
+        }
+      }
     }
   ],
   "outputs": {}
