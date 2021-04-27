@@ -228,6 +228,13 @@
         "description": "Deploys the Virtual Network and deletes all subnets if Enabled https://github.com/Azure/azure-quickstart-templates/issues/2786",
         "environmentVariable": "virtualNetworkDeploy"
       }
+    },
+    "appSubnets": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Names of additional subnets to create for applications"
+      }
     }
   },
   "variables": {
@@ -687,6 +694,9 @@
           },
           "virtualNetworkAddressSpacePrefix": {
             "value": "10.0"
+          },
+          "appSubnets": {
+            "value": "[parameters('appSubnets')]"
           }
         }
       }

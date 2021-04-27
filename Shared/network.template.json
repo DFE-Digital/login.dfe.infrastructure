@@ -104,6 +104,13 @@
         "description": "The number of shared backend app subnets to provision."
       }
     },
+    "appSubnets": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Names of additional subnets to create for applications"
+      }
+    },
     "serviceEndpointList": {
       "type": "array",
       "defaultValue": [],
@@ -201,12 +208,27 @@
             "routeTable": "[variables('emptyObject')]"
           }
         }
+      },
+      {
+        "name": "appSubnetCopy",
+        "count": "[if(empty(parameters('appSubnets')), 0, length(parameters('appSubnets')))]",
+        "input": {
+          "name": "[concat(parameters('appSubnets')[copyIndex('appSubnetCopy')], '-sn')]",
+          "properties": {
+            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 30, copyIndex('appSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
+            "serviceEndpointList": "[parameters('serviceEndpointList')]",
+            "delegations": "[variables('subnetDelegations')]",
+            "networkSecurityGroup": "[variables('emptyObject')]",
+            "routeTable": "[variables('emptyObject')]"
+          }
+        }
       }
     ],
     "gatewaySubnet": "[if(greater(parameters('gatewaySubnetCount'), 0), variables('gatewaySubnetCopy'), variables('emptyArray'))]",
     "frontendSubnet": "[if(greater(parameters('frontendSubnetCount'), 0), variables('frontendSubnetCopy'), variables('emptyArray'))]",
     "backendSubnet": "[if(greater(parameters('backendSubnetCount'), 0), variables('backendSubnetCopy'), variables('emptyArray'))]",
-    "subnetConfiguration": "[concat(variables('managementSubnetCopy'), variables('gatewaySubnet'), variables('frontendSubnet'), variables('backendSubnet'))]"
+    "appSubnet": "[if(greater(length(parameters('appSubnets')), 0), variables('appSubnetCopy'), variables('emptyArray'))]",
+    "subnetConfiguration": "[concat(variables('managementSubnetCopy'), variables('gatewaySubnet'), variables('frontendSubnet'), variables('backendSubnet'), variables('appSubnet'))]"
   },
   "functions": [
     {
