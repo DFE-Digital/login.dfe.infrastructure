@@ -48,17 +48,6 @@
                         }
                     }
                 ],
-                "isCompressionEnabled": true,
-                "contentTypesToCompress": [
-                    "text/plain",
-                    "text/html",
-                    "text/css",
-                    "text/javascript",
-                    "application/x-javascript",
-                    "application/javascript",
-                    "application/json",
-                    "application/xml"
-                ],
                 "optimizationType": "[parameters('optimizationType')]",
                 "originHostHeader": "[parameters('originHostname')]",
                 "originPath": "[if(greater(length(parameters('originPath')), 0), variables('formattedOriginPath'), json('null'))]"
