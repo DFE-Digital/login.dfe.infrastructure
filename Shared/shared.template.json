@@ -231,27 +231,47 @@
     },
     "appSubnets": {
       "type": "array",
-      "defaultValue": [],
+      "defaultValue": [
+        "oidc",
+        "int",
+        "svc"
+      ],
       "metadata": {
-        "description": "Names of additional subnets to create for applications"
+        "description": "Names of additional subnets to create for application integration"
       }
+    },
+    "platformGlobalIdentifier": {
+      "type": "string",
+      "defaultValue": "s141"
+    },
+    "environmentId": {
+      "type": "string",
+      "allowedValues": [
+        "d01",
+        "t01",
+        "t02",
+        "t03",
+        "p01",
+        "p02"
+      ]
+    },
+    "platformGlobalName": {
+      "type": "string",
+      "defaultValue": "signin"
+    },
+    "serviceEndpointList": {
+      "type": "array",
+      "allowedValues": [
+        "Microsoft.Web",
+        "Microsoft.Sql",
+        "Microsoft.Storage",
+        "Microsoft.KeyVault",
+        "Microsoft.ServiceBus"
+      ]
     }
   },
   "variables": {
-    "redisTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/redis-cache.json')]",
-    "appServicePlanTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-plan.json')]",
-    "azureSQLTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-sql.json')]",
-    "databaseTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/database.json')]",
-    "appInsightsTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/app-insights.json')]",
-    "storageAccountTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/storage-account.json')]",
-    "keyVaultTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/key-vault.json')]",
-    "azureSearchTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-search.json')]",
-    "azureCdnTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn.json')]",
-    "azureCdnEndpointTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn-endpoint.json')]",
-    "certificateTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-certificate.json')]",
-    "networkTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/network.template.json')]",
-    //"resourceNamePrefix": "[toLower(concat('s141d01-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
-    "resourceNamePrefix": "[toLower('s141d01-signin-shd')]",
+    "resourceNamePrefix": "[concat(toLower(parameters('platformGlobalIdentifier')), toLower(parameters('environmentId')),'-', toLower(parameters('platformGlobalName')),'-shd')]",
     "virtualNetworkName": "[concat(variables('resourceNamePrefix'),'-vnet')]",
     "mgmtManagementSubnetCount": 1,
     "elasticSku": {
@@ -349,7 +369,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('appServicePlanTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-plan.json')]"
         },
         "parameters": {
           "appServicePlanName": {
@@ -380,7 +400,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('appServicePlanTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-plan.json')]"
         },
         "parameters": {
           "appServicePlanName": {
@@ -411,7 +431,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('appServicePlanTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-plan.json')]"
         },
         "parameters": {
           "appServicePlanName": {
@@ -441,7 +461,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('redisTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/redis-cache.json')]"
         },
         "parameters": {
           "redisCacheName": {
@@ -460,7 +480,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('azureSQLTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-sql.json')]"
         },
         "parameters": {
           "sqlAdministratorLogin": {
@@ -485,13 +505,36 @@
       }
     },
     {
+      "apiVersion": "2017-05-10",
+      "name": "sql-server-firewall-rule",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/sql-server-firewall-rules.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "serverName": {
+            "value": "[parameters('sqlserverName')]"
+          },
+          "subnetResourceIdList": {
+            "value": "[reference('get-subnet-resourceid-list').outputs.subnetResourceIdList.value]"
+          }
+        }
+      },
+      "dependsOn": [
+        "sql-server-deployment"
+      ]
+    },
+    {
       "name": "[parameters('databaseNames')[copyIndex()].name]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2014-04-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('databaseTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/database.json')]"
         },
         "parameters": {
           "databaseName": {
@@ -530,7 +573,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('appInsightsTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/app-insights.json')]"
         },
         "parameters": {
           "appInsightsName": {
@@ -547,7 +590,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('storageAccountTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/storage-account.json')]"
         },
         "parameters": {
           "storageAccountName": {
@@ -564,7 +607,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('keyVaultTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/key-vault.json')]"
         },
         "parameters": {
           "keyVaultName": {
@@ -584,7 +627,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('azureSearchTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-search.json')]"
         },
         "parameters": {
           "azureSearchName": {
@@ -601,7 +644,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('azureCdnTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn.json')]"
         },
         "parameters": {
           "cdnProfileName": {
@@ -617,7 +660,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('azureCdnEndpointTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn-endpoint.json')]"
         },
         "parameters": {
           "cdnEndpointName": {
@@ -650,7 +693,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('certificateTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-certificate.json')]"
         },
         "parameters": {
           "keyVaultCertificateName": {
@@ -674,15 +717,18 @@
     },
     {
       "apiVersion": "2017-05-10",
-      "name": "[concat('virtual-network-west-europe-', variables('resourceNamePrefix'))]",
+      "name": "VirtualNetwork",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('networkTemplateUri')]",
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/network.template.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
+          "templatesBaseUri": {
+            "value": "[parameters('templatesBaseUri')]"
+          },
           "virtualNetworkName": {
             "value": "[variables('virtualNetworkName')]"
           },
@@ -697,6 +743,9 @@
           },
           "appSubnets": {
             "value": "[parameters('appSubnets')]"
+          },
+          "serviceEndpointList": {
+            "value": "[parameters('serviceEndpointList')]"
           }
         }
       }
