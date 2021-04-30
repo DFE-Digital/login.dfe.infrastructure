@@ -331,6 +331,10 @@
     "backendSubnetConfiguration": {
       "type": "array",
       "value": "[variables('backendSubnet')]"
+    },
+    "appSubnetConfiguration": {
+      "type": "array",
+      "value": "[variables('appSubnet')]"
     }
   }
 }

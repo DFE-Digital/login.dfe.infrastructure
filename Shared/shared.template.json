@@ -749,6 +749,26 @@
           }
         }
       }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "get-subnet-resourceid-list",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'utilities/getSubnetResourceIdList.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "virtualNetworkName": {
+            "value": "[variables('virtualNetworkName')]"
+          },
+          "subnetConfiguration": {
+            "value": "[reference('VirtualNetwork').outputs.appSubnetConfiguration.value]"
+          }
+        }
+      }
     }
   ],
   "outputs": {}
