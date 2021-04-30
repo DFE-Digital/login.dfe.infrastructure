@@ -261,6 +261,13 @@
     },
     "serviceEndpointList": {
       "type": "array",
+      "defaultValue": [
+        "Microsoft.Web",
+        "Microsoft.Sql",
+        "Microsoft.Storage",
+        "Microsoft.KeyVault",
+        "Microsoft.ServiceBus"
+      ],
       "allowedValues": [
         "Microsoft.Web",
         "Microsoft.Sql",
@@ -268,11 +275,24 @@
         "Microsoft.KeyVault",
         "Microsoft.ServiceBus"
       ]
+    },
+    "serviceBusSku": {
+      "type": "string",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ],
+      "defaultValue": "Premium",
+      "metadata": {
+        "description": "The messaging tier for service Bus namespace"
+      }
     }
   },
   "variables": {
     "resourceNamePrefix": "[concat(toLower(parameters('platformGlobalIdentifier')), toLower(parameters('environmentId')),'-', toLower(parameters('platformGlobalName')),'-shd')]",
     "virtualNetworkName": "[concat(variables('resourceNamePrefix'),'-vnet')]",
+    "serviceBusNamespaceName": "[concat(variables('resourceNamePrefix'),'-sbn')]",
     "mgmtManagementSubnetCount": 1,
     "elasticSku": {
       "name": "ElasticPool",
@@ -456,7 +476,7 @@
     },
     {
       "apiVersion": "2019-07-01",
-      "name": "RedisCache",
+      "name": "redis-cache",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -474,7 +494,7 @@
       }
     },
     {
-      "name": "SQLServer",
+      "name": "sql-server",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2014-04-01",
       "properties": {
@@ -524,7 +544,7 @@
         }
       },
       "dependsOn": [
-        "sql-server-deployment"
+        "sql-server"
       ]
     },
     {
@@ -563,11 +583,11 @@
         "mode": "Parallel"
       },
       "dependsOn": [
-        "SQLServer"
+        "sql-server"
       ]
     },
     {
-      "name": "AppInsights",
+      "name": "app-insights",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2014-04-01",
       "properties": {
@@ -584,7 +604,7 @@
       "dependsOn": []
     },
     {
-      "name": "StorageAccount",
+      "name": "storage-account",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2014-04-01",
       "properties": {
@@ -601,7 +621,7 @@
       "dependsOn": []
     },
     {
-      "name": "KeyVault",
+      "name": "key-vault",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2014-04-01",
       "properties": {
@@ -621,7 +641,7 @@
       "dependsOn": []
     },
     {
-      "name": "AzureSearch",
+      "name": "azure-search",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2014-04-01",
       "properties": {
@@ -638,7 +658,7 @@
       "dependsOn": []
     },
     {
-      "name": "AzureCDN",
+      "name": "azure-cdn",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2014-04-01",
       "properties": {
@@ -654,7 +674,7 @@
       }
     },
     {
-      "name": "AzureCDNEndpoint",
+      "name": "azure-cdn-endpoint",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2019-03-01",
       "properties": {
@@ -681,13 +701,13 @@
         }
       },
       "dependsOn": [
-        "StorageAccount",
-        "AzureCDN"
+        "storage-account",
+        "azure-cdn"
       ]
     },
     {
       "condition": "[greater(length(parameters('keyvaultCertificateNames')), 0)]",
-      "name": "[concat('AppServiceCertificates', copyIndex())]",
+      "name": "[concat('app-service-certificates', copyIndex())]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2014-04-01",
       "properties": {
@@ -712,12 +732,12 @@
         "count": "[length(parameters('keyvaultCertificateNames'))]"
       },
       "dependsOn": [
-        "KeyVault"
+        "key-vault"
       ]
     },
     {
       "apiVersion": "2017-05-10",
-      "name": "VirtualNetwork",
+      "name": "virtual-network",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -765,7 +785,27 @@
             "value": "[variables('virtualNetworkName')]"
           },
           "subnetConfiguration": {
-            "value": "[reference('VirtualNetwork').outputs.appSubnetConfiguration.value]"
+            "value": "[reference('virtual-network').outputs.appSubnetConfiguration.value]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "service-bus",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/service-bus.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "serviceBusNamespaceName": {
+            "value": "[variables('serviceBusNamespaceName')]"
+          },
+          "serviceBusSku": {
+            "value": "[parameters('serviceBusSku')]"
           }
         }
       }
