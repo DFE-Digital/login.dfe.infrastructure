@@ -264,7 +264,7 @@
   "resources": [
     {
       "apiVersion": "2017-05-10",
-      "name": "virtual-network",
+      "name": "vnet",
       "condition": "[equals(parameters('virtualNetworkDeploy'), 'Enabled')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -288,7 +288,7 @@
       "name": "[concat('subnet-', variables('subnetConfiguration')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
       "dependsOn": [
-        "virtual-network"
+        "vnet"
       ],
       "properties": {
         "mode": "Incremental",

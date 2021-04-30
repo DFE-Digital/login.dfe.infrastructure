@@ -259,6 +259,10 @@
       "type": "string",
       "defaultValue": "signin"
     },
+    "applicationName": {
+      "type": "string",
+      "defaultValue": "shd"
+    },
     "serviceEndpointList": {
       "type": "array",
       "defaultValue": [
@@ -290,7 +294,7 @@
     }
   },
   "variables": {
-    "resourceNamePrefix": "[concat(toLower(parameters('platformGlobalIdentifier')), toLower(parameters('environmentId')),'-', toLower(parameters('platformGlobalName')),'-shd')]",
+    "resourceNamePrefix": "[concat(toLower(parameters('platformGlobalIdentifier')), toLower(parameters('environmentId')),'-', toLower(parameters('platformGlobalName')),'-', toLower(parameters('applicationName')))]",
     "virtualNetworkName": "[concat(variables('resourceNamePrefix'),'-vnet')]",
     "serviceBusNamespaceName": "[concat(variables('resourceNamePrefix'),'-sbn')]",
     "mgmtManagementSubnetCount": 1,
