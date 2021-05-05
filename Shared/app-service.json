@@ -64,9 +64,7 @@
             "metadata": {
                 "description": "This can be passed into the template via the reference function: [reference(resourceId(parameters('certificateResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
             }
-       
         },
-        
          "healthCheckPath": {
             "type": "string",
             "defaultValue": "",
@@ -76,9 +74,7 @@
         },
          "additionalAppSettings": {
             "type": "object",
-            "defaultValue": {
-
-            },
+            "defaultValue": {},
             "metadata": {
                 "description": "Key/Value pair set of any azure config variables to be deployed with the slot"
             }
@@ -96,7 +92,6 @@
                 "value": "[parameters('appServiceConfigPath')]"
             }
         ],
-         
         "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
         "siteConfigSettings": {
           "withAppServiceSettings": {
@@ -104,17 +99,13 @@
             "alwaysOn": true,
             "minTlsVersion": "[parameters('minTlsVersion')]",
             "numberOfWorkers": "[parameters('numberOfWorkers')]",
-            "healthCheckPath": "[parameters('healthCheckPath')]",
-            
-           
+            "healthCheckPath": "[parameters('healthCheckPath')]"
           },
           "withoutAppServiceSettings": {
             "alwaysOn": true,
             "minTlsVersion": "[parameters('minTlsVersion')]",
             "numberOfWorkers": "[parameters('numberOfWorkers')]",
-            "healthCheckPath": "[parameters('healthCheckPath')]",
-           
-            
+            "healthCheckPath": "[parameters('healthCheckPath')]"
           }
         },
         "baseAppSettings": {},
@@ -131,9 +122,7 @@
                 "serverFarmId": "[variables('appServicePlanId')]",
                 "clientAffinityEnabled": false,
                 "httpsOnly": true,
-                "siteConfig": "[if(parameters('includeDeploymentSlot'), variables('siteConfigSettings').withoutAppServiceSettings, variables('siteConfigSettings').withAppServiceSettings)]",
-                
-              
+                "siteConfig": "[if(parameters('includeDeploymentSlot'), variables('siteConfigSettings').withoutAppServiceSettings, variables('siteConfigSettings').withAppServiceSettings)]"
             },
             "resources": [
                 {
