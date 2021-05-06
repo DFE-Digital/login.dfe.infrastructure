@@ -42,7 +42,7 @@
         },
         "minTlsVersion": {
             "type": "string",
-            "defaultValue": "1.0",
+            "defaultValue": "1.2",
             "metadata": {
                 "description": "The minimum tls version for the service"
             }
@@ -64,24 +64,27 @@
             "metadata": {
                 "description": "This can be passed into the template via the reference function: [reference(resourceId(parameters('certificateResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
             }
-       
         },
-        
-         "healthCheckPath": {
+        "healthCheckPath": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "This can be used to specify the path for the Health Check. If set it as empty string it will disable the Health Check"
             }
         },
-         "additionalAppSettings": {
+        "additionalAppSettings": {
             "type": "object",
-            "defaultValue": {
-
-            },
+            "defaultValue": {},
             "metadata": {
                 "description": "Key/Value pair set of any azure config variables to be deployed with the slot"
             }
+        },
+        "subnetResourceId": {
+          "type": "string",
+          "defaultValue": "",
+          "metadata": {
+            "description": "Resource ID of the subnet used for vNet integration"
+          }
         }
     },
     "variables": {
@@ -96,7 +99,6 @@
                 "value": "[parameters('appServiceConfigPath')]"
             }
         ],
-         
         "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
         "siteConfigSettings": {
           "withAppServiceSettings": {
@@ -104,17 +106,13 @@
             "alwaysOn": true,
             "minTlsVersion": "[parameters('minTlsVersion')]",
             "numberOfWorkers": "[parameters('numberOfWorkers')]",
-            "healthCheckPath": "[parameters('healthCheckPath')]",
-            
-           
+            "healthCheckPath": "[parameters('healthCheckPath')]"
           },
           "withoutAppServiceSettings": {
             "alwaysOn": true,
             "minTlsVersion": "[parameters('minTlsVersion')]",
             "numberOfWorkers": "[parameters('numberOfWorkers')]",
-            "healthCheckPath": "[parameters('healthCheckPath')]",
-           
-            
+            "healthCheckPath": "[parameters('healthCheckPath')]"
           }
         },
         "baseAppSettings": {},
@@ -131,9 +129,7 @@
                 "serverFarmId": "[variables('appServicePlanId')]",
                 "clientAffinityEnabled": false,
                 "httpsOnly": true,
-                "siteConfig": "[if(parameters('includeDeploymentSlot'), variables('siteConfigSettings').withoutAppServiceSettings, variables('siteConfigSettings').withAppServiceSettings)]",
-                
-              
+                "siteConfig": "[if(parameters('includeDeploymentSlot'), variables('siteConfigSettings').withoutAppServiceSettings, variables('siteConfigSettings').withAppServiceSettings)]"
             },
             "resources": [
                 {
@@ -167,6 +163,20 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
             ]
+        },
+        {
+          "type": "Microsoft.Web/sites/config",
+          "condition": "[greater(length(parameters('subnetResourceId')), 0)]",
+          "name": "[concat(parameters('appServiceName'), '/virtualNetwork')]",
+          "apiVersion": "2018-11-01",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "subnetResourceId": "[parameters('subnetResourceId')]",
+            "swiftSupported": true
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
+          ]
         }
     ],
     "outputs": {}
