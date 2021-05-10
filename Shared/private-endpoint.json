@@ -20,7 +20,7 @@
         "description": "The type of sub-resource for the resource selected above that your private endpoint will be able to access."
       }
     },
-    "subnetId": {
+    "privateEndpointSubnetId": {
       "type": "string",
       "metadata": {
         "description": "The subnet resource id to attach the private endpoint to"
@@ -35,7 +35,7 @@
       "apiVersion": "2020-03-01",
       "properties": {
         "subnet": {
-          "id": "[parameters('subnetId')]"
+          "id": "[parameters('privateEndpointSubnetId')]"
         },
         "privateLinkServiceConnections": [
           {
