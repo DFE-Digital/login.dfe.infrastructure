@@ -114,6 +114,9 @@
           "uri": "[concat(parameters('templatesBaseUri'),'Shared/private-dns-zone-groups.json')]"
         },
         "parameters": {
+          "privateEndpointName": {
+            "value": "[parameters('privateEndpointName')]"
+          },
           "privateDnsZoneName": {
             "value": "[parameters('privateDnsZoneName')]"
           }
