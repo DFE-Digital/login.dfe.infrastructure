@@ -10,9 +10,7 @@
     }
   },
   "variables": {
-    //"privateDnsZoneConfigsName": "privatelink-redis-cache-windows-net"
     "privateDnsZoneConfigsName": "[replace(parameters('privateDnsZoneName'), '.','-')]",
-    //"privateDnsZoneId": "/subscriptions/9d98d71c-7399-47fc-a888-d5ea74c3d8c0/resourceGroups/s141d01-3246/providers/Microsoft.Network/privateDnsZones/privatelink.redis.cache.windows.net"
     "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', parameters('privateDnsZoneName'))]"
   },
   "resources": [

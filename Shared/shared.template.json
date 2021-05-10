@@ -302,6 +302,13 @@
       "name": "ElasticPool",
       "tier": "Standard"
     },
+    "redisPrivateEndpoint": {
+      "privateDnsZoneName": "privatelink.redis.cache.windows.net",
+      "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+      "privateEndpointName": "[concat(parameters('redisCacheName'),'-', 'mgmt-sn-0', '-pe')]",
+      "privateLinkResource": "[resourceId('Microsoft.Cache/Redis', parameters('redisCacheName'))]",
+      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'mgmt-sn-0')]"
+    },
     "keyVaultAccessPolicies": [
       {
         "objectId": "[parameters('microsoftAzureWebsitesRPObjectId')]",
@@ -508,19 +515,19 @@
         },
         "parameters": {
           "privateEndpointName": {
-            "value": "[variables('privateEndpointName')]"
+            "value": "[variables('redisPrivateEndpoint').privateEndpointName]"
           },
           "privateLinkResource": {
-            "value": "[variables('privateLinkResource')]"
+            "value": "[variables('redisPrivateEndpoint').privateLinkResource]"
           },
           "privateEndpointSubnetId": {
-            "value": "[variables('privateEndpointSubnetId')]"
+            "value": "[variables('redisPrivateEndpoint').privateEndpointSubnetId]"
           },
           "privateDnsZoneName": {
-            "value": "[parameters('privateDnsZoneName')]"
+            "value": "[variables('redisPrivateEndpoint').privateDnsZoneName]"
           },
           "virtualNetworkId": {
-            "value": "[variables('virtualNetworkId')]"
+            "value": "[variables('redisPrivateEndpoint').virtualNetworkId]"
           }
         }
       }
