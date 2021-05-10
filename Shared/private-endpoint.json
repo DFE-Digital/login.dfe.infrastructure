@@ -1,0 +1,52 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "privateEndpointName": {
+      "type": "string"
+    },
+    "privateLinkResource": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource id of the resource you're connecting to"
+      }
+    },
+    "targetSubResource": {
+      "type": "array",
+      "defaultValue": [
+        "redisCache"
+      ],
+      "metadata": {
+        "description": "The type of sub-resource for the resource selected above that your private endpoint will be able to access."
+      }
+    },
+    "subnetId": {
+      "type": "string",
+      "metadata": {
+        "description": "The subnet resource id to attach the private endpoint to"
+      }
+    }
+  },
+  "resources": [
+    {
+      "location": "[resourceGroup().location]",
+      "name": "[parameters('privateEndpointName')]",
+      "type": "Microsoft.Network/privateEndpoints",
+      "apiVersion": "2020-03-01",
+      "properties": {
+        "subnet": {
+          "id": "[parameters('subnetId')]"
+        },
+        "privateLinkServiceConnections": [
+          {
+            "name": "[parameters('privateEndpointName')]",
+            "properties": {
+              "privateLinkServiceId": "[parameters('privateLinkResource')]",
+              "groupIds": "[parameters('targetSubResource')]"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

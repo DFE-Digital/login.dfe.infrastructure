@@ -498,6 +498,34 @@
       }
     },
     {
+      "apiVersion": "2019-07-01",
+      "name": "redis-private-endpoint",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/private-endpoint.template.json')]"
+        },
+        "parameters": {
+          "privateEndpointName": {
+            "value": "[variables('privateEndpointName')]"
+          },
+          "privateLinkResource": {
+            "value": "[variables('privateLinkResource')]"
+          },
+          "privateEndpointSubnetId": {
+            "value": "[variables('privateEndpointSubnetId')]"
+          },
+          "privateDnsZoneName": {
+            "value": "[parameters('privateDnsZoneName')]"
+          },
+          "virtualNetworkId": {
+            "value": "[variables('virtualNetworkId')]"
+          }
+        }
+      }
+    },
+    {
       "name": "sql-server",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2014-04-01",
