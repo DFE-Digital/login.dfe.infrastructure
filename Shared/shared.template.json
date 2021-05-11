@@ -298,6 +298,7 @@
     "virtualNetworkName": "[concat(variables('resourceNamePrefix'),'-vnet')]",
     "serviceBusNamespaceName": "[concat(variables('resourceNamePrefix'),'-sbn')]",
     "mgmtManagementSubnetCount": 1,
+    "redisSubnetCount": 1,
     "elasticSku": {
       "name": "ElasticPool",
       "tier": "Standard"
@@ -800,6 +801,9 @@
           },
           "managementSubnetCount": {
             "value": "[variables('mgmtManagementSubnetCount')]"
+          },
+          "redisSubnetCount": {
+            "value": "[variables('redisSubnetCount')]"
           },
           "virtualNetworkAddressSpacePrefix": {
             "value": "10.0"

@@ -197,6 +197,20 @@
         }
       },
       {
+        "name": "redisSubnetCopy",
+        "count": "[if(greater(parameters('redisSubnetCount'), 0), parameters('redisSubnetCount'), 1)]",
+        "input": {
+          "name": "[concat(parameters('redisSubnetNamePrefix'), '-', copyIndex('redisSubnetCopy'))]",
+          "properties": {
+            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 10, copyIndex('redisSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
+            "serviceEndpointList": "[variables('emptyArray')]",
+            "delegations": "[variables('emptyArray')]",
+            "networkSecurityGroup": "[variables('emptyObject')]",
+            "routeTable": "[variables('emptyObject')]"
+          }
+        }
+      },
+      {
         "name": "frontendSubnetCopy",
         "count": "[if(greater(parameters('frontendSubnetCount'), 0), parameters('frontendSubnetCount'), 1)]",
         "input": {
@@ -217,20 +231,6 @@
           "name": "[concat(parameters('backendSubnetNamePrefix'), '-', copyIndex('backendSubnetCopy'))]",
           "properties": {
             "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 20, copyIndex('backendSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
-            "serviceEndpointList": "[parameters('serviceEndpointList')]",
-            "delegations": "[variables('subnetDelegations')]",
-            "networkSecurityGroup": "[variables('emptyObject')]",
-            "routeTable": "[variables('emptyObject')]"
-          }
-        }
-      },
-      {
-        "name": "redisSubnetCopy",
-        "count": "[if(greater(parameters('redisSubnetCount'), 0), parameters('redisSubnetCount'), 1)]",
-        "input": {
-          "name": "[concat(parameters('redisSubnetNamePrefix'), '-', copyIndex('redisSubnetCopy'))]",
-          "properties": {
-            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 20, copyIndex('redisSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
             "serviceEndpointList": "[parameters('serviceEndpointList')]",
             "delegations": "[variables('subnetDelegations')]",
             "networkSecurityGroup": "[variables('emptyObject')]",
