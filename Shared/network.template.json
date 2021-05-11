@@ -348,6 +348,12 @@
           },
           "routeTable": {
             "value": "[if(empty(variables('subnetConfiguration')[copyIndex()].properties.routeTable), variables('emptyObject'), variables('subnetConfiguration')[copyIndex()].properties.routeTable)]"
+          },
+          "privateEndpointNetworkPolicies": {
+            "value": "[if(contains(variables('subnetConfiguration')[copyIndex()].properties, 'privateEndpointNetworkPolicies'), variables('subnetConfiguration')[copyIndex()].properties.privateEndpointNetworkPolicies, 'Enabled')]"
+          },
+          "privateLinkServiceNetworkPolicies": {
+            "value": "[if(contains(variables('subnetConfiguration')[copyIndex()].properties, 'privateLinkServiceNetworkPolicies'), variables('subnetConfiguration')[copyIndex()].properties.privateLinkServiceNetworkPolicies, 'Enabled')]"
           }
         }
       },

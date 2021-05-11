@@ -47,6 +47,22 @@
       "metadata": {
         "description": "An object of the Network Security Group. Object reference can be found here: https://docs.microsoft.com/en-us/azure/templates/microsoft.network/2018-11-01/virtualnetworks/subnets#NetworkSecurityGroup"
       }
+    },
+    "privateEndpointNetworkPolicies": {
+      "type": "string",
+      "allowedValues": [
+        "Enabled",
+        "Disabled"
+      ],
+      "defaultValue": "Enabled"
+    },
+    "privateLinkServiceNetworkPolicies": {
+      "type": "string",
+      "allowedValues": [
+        "Enabled",
+        "Disabled"
+      ],
+      "defaultValue": "Enabled"
     }
   },
   "variables": {
@@ -69,7 +85,9 @@
     "baseSubnetProperties": {
       "addressPrefix": "[parameters('subnetAddressPrefix')]",
       "serviceEndpoints": "[if(greater(length(parameters('serviceEndpointList')), 0), variables('serviceEndPoints'), variables('serviceEndPointsEmpty'))]",
-      "delegations": "[parameters('delegations')]"
+      "delegations": "[parameters('delegations')]",
+      "privateEndpointNetworkPolicies": "[parameters('privateEndpointNetworkPolicies')]",
+      "privateLinkServiceNetworkPolicies": "[parameters('privateLinkServiceNetworkPolicies')]"
     },
     "networkSecurityGroupIncludedSubnetProperties": "[if(empty(parameters('networkSecurityGroup')), variables('baseSubnetProperties'), union(variables('baseSubnetProperties'), variables('networkSecurityGroupSubnetProperty')))]",
     "subnetProperties": "[if(empty(parameters('routeTable')), variables('networkSecurityGroupIncludedSubnetProperties'), union(variables('networkSecurityGroupIncludedSubnetProperties'), variables('routeTableSubnetProperty')))]"
