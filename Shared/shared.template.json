@@ -308,7 +308,8 @@
       "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
       "privateEndpointName": "[concat(parameters('redisCacheName'),'-', 'redis-sn-0', '-pe')]",
       "privateLinkResource": "[resourceId('Microsoft.Cache/Redis', parameters('redisCacheName'))]",
-      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), 'redis-sn-0')]"
+      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), 'redis-sn-0')]",
+      "publicNetworkAccess": "Enabled"
     },
     "keyVaultAccessPolicies": [
       {
@@ -501,6 +502,9 @@
           },
           "redisCacheSku": {
             "value": "[parameters('redisCacheSku')]"
+          },
+          "publicNetworkAccess": {
+            "value": "[variables('redisPrivateEndpoint').publicNetworkAccess]"
           }
         }
       }

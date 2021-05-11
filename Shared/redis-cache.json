@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "redisCacheName": {
@@ -7,6 +7,14 @@
         },
         "redisCacheSku": {
             "type": "object"
+        },
+        "publicNetworkAccess": {
+          "type": "string",
+          "allowedValues": [
+            "Enabled",
+            "Disabled"
+          ],
+          "defaultValue": "Disabled"
         }
     },
     "variables": {},
@@ -19,7 +27,8 @@
             "properties": {
                 "sku": "[parameters('redisCacheSku')]",
                 "enableNonSslPort": false,
-                "minimumTlsVersion": "1.2"
+                "minimumTlsVersion": "1.2",
+                "publicNetworkAccess": "[parameters('publicNetworkAccess')]"
             }
         }
     ],
