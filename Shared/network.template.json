@@ -206,7 +206,8 @@
             "serviceEndpointList": "[variables('emptyArray')]",
             "delegations": "[variables('emptyArray')]",
             "networkSecurityGroup": "[variables('emptyObject')]",
-            "routeTable": "[variables('emptyObject')]"
+            "routeTable": "[variables('emptyObject')]",
+            "privateEndpointNetworkPolicies": "Disabled"
           }
         }
       },
