@@ -104,6 +104,21 @@
         "description": "The number of shared backend app subnets to provision."
       }
     },
+    "redisSubnetNamePrefix": {
+      "type": "string",
+      "defaultValue": "redis-sn",
+      "metadata": {
+        "description": "The prefix used for naming new shared backend app subnets."
+      }
+    },
+    "redisSubnetCount": {
+      "type": "int",
+      "defaultValue": 0,
+      "maxValue": 5,
+      "metadata": {
+        "description": "The number of shared backend app subnets to provision."
+      }
+    },
     "appSubnets": {
       "type": "array",
       "defaultValue": [],
@@ -210,6 +225,20 @@
         }
       },
       {
+        "name": "redisSubnetCopy",
+        "count": "[if(greater(parameters('redisSubnetCount'), 0), parameters('redisSubnetCount'), 1)]",
+        "input": {
+          "name": "[concat(parameters('redisSubnetNamePrefix'), '-', copyIndex('redisSubnetCopy'))]",
+          "properties": {
+            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 20, copyIndex('redisSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
+            "serviceEndpointList": "[parameters('serviceEndpointList')]",
+            "delegations": "[variables('subnetDelegations')]",
+            "networkSecurityGroup": "[variables('emptyObject')]",
+            "routeTable": "[variables('emptyObject')]"
+          }
+        }
+      },
+      {
         "name": "appSubnetCopy",
         "count": "[if(empty(parameters('appSubnets')), 0, length(parameters('appSubnets')))]",
         "input": {
@@ -227,8 +256,9 @@
     "gatewaySubnet": "[if(greater(parameters('gatewaySubnetCount'), 0), variables('gatewaySubnetCopy'), variables('emptyArray'))]",
     "frontendSubnet": "[if(greater(parameters('frontendSubnetCount'), 0), variables('frontendSubnetCopy'), variables('emptyArray'))]",
     "backendSubnet": "[if(greater(parameters('backendSubnetCount'), 0), variables('backendSubnetCopy'), variables('emptyArray'))]",
+    "redisSubnet": "[if(greater(parameters('redisSubnetCount'), 0), variables('redisSubnetCopy'), variables('emptyArray'))]",
     "appSubnet": "[if(greater(length(parameters('appSubnets')), 0), variables('appSubnetCopy'), variables('emptyArray'))]",
-    "subnetConfiguration": "[concat(variables('managementSubnetCopy'), variables('gatewaySubnet'), variables('frontendSubnet'), variables('backendSubnet'), variables('appSubnet'))]"
+    "subnetConfiguration": "[concat(variables('managementSubnetCopy'), variables('gatewaySubnet'), variables('frontendSubnet'), variables('backendSubnet'), variables('redisSubnet'), variables('appSubnet'))]"
   },
   "functions": [
     {
