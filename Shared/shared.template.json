@@ -305,9 +305,9 @@
     "redisPrivateEndpoint": {
       "privateDnsZoneName": "privatelink.redis.cache.windows.net",
       "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-      "privateEndpointName": "[concat(parameters('redisCacheName'),'-', 'mgmt-sn-0', '-pe')]",
+      "privateEndpointName": "[concat(parameters('redisCacheName'),'-', 'redis-sn-0', '-pe')]",
       "privateLinkResource": "[resourceId('Microsoft.Cache/Redis', parameters('redisCacheName'))]",
-      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'mgmt-sn-0')]"
+      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), 'redis-sn-0')]"
     },
     "keyVaultAccessPolicies": [
       {
@@ -514,6 +514,9 @@
           "uri": "[concat(parameters('templatesBaseUri'),'Shared/private-endpoint.template.json')]"
         },
         "parameters": {
+          "templatesBaseUri": {
+            "value": "[parameters('templatesBaseUri')]"
+          },
           "privateEndpointName": {
             "value": "[variables('redisPrivateEndpoint').privateEndpointName]"
           },
@@ -530,7 +533,11 @@
             "value": "[variables('redisPrivateEndpoint').virtualNetworkId]"
           }
         }
-      }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'redis-cache')]",
+        "[resourceId('Microsoft.Resources/deployments', 'virtual-network')]"
+      ]
     },
     {
       "name": "sql-server",
@@ -583,7 +590,7 @@
         }
       },
       "dependsOn": [
-        "sql-server"
+        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]"
       ]
     },
     {
@@ -622,7 +629,7 @@
         "mode": "Parallel"
       },
       "dependsOn": [
-        "sql-server"
+        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]"
       ]
     },
     {
@@ -656,8 +663,7 @@
             "value": "[parameters('storageAccountName')]"
           }
         }
-      },
-      "dependsOn": []
+      }
     },
     {
       "name": "key-vault",
@@ -676,8 +682,7 @@
             "value": "[variables('keyVaultAccessPolicies')]"
           }
         }
-      },
-      "dependsOn": []
+      }
     },
     {
       "name": "azure-search",
@@ -693,8 +698,7 @@
             "value": "[parameters('azureSearchName')]"
           }
         }
-      },
-      "dependsOn": []
+      }
     },
     {
       "name": "azure-cdn",
@@ -740,8 +744,8 @@
         }
       },
       "dependsOn": [
-        "storage-account",
-        "azure-cdn"
+        "[resourceId('Microsoft.Resources/deployments', 'storage-account')]",
+        "[resourceId('Microsoft.Resources/deployments', 'azure-cdn')]"
       ]
     },
     {
@@ -771,7 +775,7 @@
         "count": "[length(parameters('keyvaultCertificateNames'))]"
       },
       "dependsOn": [
-        "key-vault"
+        "[resourceId('Microsoft.Resources/deployments', 'key-vault')]"
       ]
     },
     {
