@@ -309,8 +309,7 @@
       "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
       "privateEndpointName": "[concat(parameters('redisCacheName'),'-', 'redis-sn-0', '-pe')]",
       "privateLinkResource": "[resourceId('Microsoft.Cache/Redis', parameters('redisCacheName'))]",
-      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), 'redis-sn-0')]",
-      "publicNetworkAccess": "Enabled"
+      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), 'redis-sn-0')]"
     },
     "keyVaultAccessPolicies": [
       {
@@ -503,9 +502,6 @@
           },
           "redisCacheSku": {
             "value": "[parameters('redisCacheSku')]"
-          },
-          "publicNetworkAccess": {
-            "value": "[variables('redisCachePrivateEndpoint').publicNetworkAccess]"
           }
         }
       }
@@ -544,6 +540,28 @@
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'redis-cache')]",
         "[resourceId('Microsoft.Resources/deployments', 'virtual-network')]"
+      ]
+    },
+    {
+      "apiVersion": "2019-07-01",
+      "name": "redis-cache-public-access",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/redis-cache.json')]"
+        },
+        "parameters": {
+          "redisCacheName": {
+            "value": "[parameters('redisCacheName')]"
+          },
+          "redisCacheSku": {
+            "value": "[parameters('redisCacheSku')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'redis-cache-private-endpoint')]"
       ]
     },
     {
