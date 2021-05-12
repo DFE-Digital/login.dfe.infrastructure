@@ -22,13 +22,14 @@
         },
         "nodeVersion": {
             "type": "string",
-            "defaultValue": "8.9.4",
+            "defaultValue": "12.9",
             "metadata": {
                 "description": "The default NodeJS version that the App Service will run"
             }
         },
         "appServiceConfigPath": {
             "type": "string",
+			"defaultValue": "",
             "metadata": {
                 "description": "JSON string containing app config"
             }
@@ -42,7 +43,7 @@
         },
         "minTlsVersion": {
             "type": "string",
-            "defaultValue": "1.2",
+            "defaultValue": "1.0",
             "metadata": {
                 "description": "The minimum tls version for the service"
             }
@@ -65,16 +66,92 @@
                 "description": "This can be passed into the template via the reference function: [reference(resourceId(parameters('certificateResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
             }
         },
-        "healthCheckPath": {
+        "appInsightsInstrumentationKey": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
-                "description": "This can be used to specify the path for the Health Check. If set it as empty string it will disable the Health Check"
+                "description": "Required value for application service"
+            }
+        },
+        "exclientBaseUrl": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+               "description": "Required value for application service"
+            }
+        },
+        "samlSigningCert": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+               "description": "Required value for application service"
+            }
+        },
+        "oidcHost": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+               "description": "Required value for application service"
+            }
+        },
+        "redisConn": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+               "description": "Required value for application service"
+            }
+        },
+        "samlSigningCertRsaPrivateKey": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+               "description": "Required value for application service"
+            }
+        },
+        "secretKeyBase": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+               "description": "Required value for application service"
+            }
+        },
+        "serviceID": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+               "description": "Required value for application service"
+            }
+        },
+        "assertionsHost": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+               "description": "Required value for application service"
+            }
+        },
+        "assertionsSecret": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+               "description": "Required value for application service"
+            }
+        },
+        "profileHost": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+               "description": "Required value for application service"
+            }
+        },
+        "identityURL": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+               "description": "Required value for application service"
             }
         },
         "additionalAppSettings": {
             "type": "object",
-            "defaultValue": {},
             "metadata": {
                 "description": "Key/Value pair set of any azure config variables to be deployed with the slot"
             }
@@ -88,35 +165,16 @@
         }
     },
     "variables": {
-        "appServicePlanId": "[resourceId(parameters('appServicePlanRG'),'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
-        "appServiceSettings": [
-            {
-                "name": "WEBSITE_NODE_DEFAULT_VERSION",
-                "value": "[parameters('nodeVersion')]"
-            },
-            {
-                "name": "settings",
-                "value": "[parameters('appServiceConfigPath')]"
-            }
-        ],
-        "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
-        "siteConfigSettings": {
-          "withAppServiceSettings": {
-            "appSettings": "[variables('appServiceSettings')]",
-            "alwaysOn": true,
-            "minTlsVersion": "[parameters('minTlsVersion')]",
-            "numberOfWorkers": "[parameters('numberOfWorkers')]",
-            "healthCheckPath": "[parameters('healthCheckPath')]"
-          },
-          "withoutAppServiceSettings": {
-            "alwaysOn": true,
-            "minTlsVersion": "[parameters('minTlsVersion')]",
-            "numberOfWorkers": "[parameters('numberOfWorkers')]",
-            "healthCheckPath": "[parameters('healthCheckPath')]"
-          }
+        "resourceIds": {
+            "appServicePlanId": "[resourceId(parameters('appServicePlanRG'),'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+            "appServiceId": "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
         },
-        "baseAppSettings": {},
-        "combinedAppSettings": "[union(variables('baseAppSettings'), parameters('additionalAppSettings'))]"
+        "baseAppSettings": {
+            "WEBSITE_NODE_DEFAULT_VERSION": "[parameters('nodeVersion')]",
+            "settings": "[parameters('appServiceConfigPath')]"
+        },
+        "combinedAppSettings": "[union(variables('baseAppSettings'), parameters('additionalAppSettings'))]",
+        "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]"
     },
     "resources": [
         {
@@ -125,11 +183,14 @@
             "apiVersion": "2016-08-01",
             "location": "[resourceGroup().location]",
             "properties": {
-                "combinedAppSettings": "[variables('combinedAppSettings')]",
-                "serverFarmId": "[variables('appServicePlanId')]",
+                "serverFarmId": "[variables('resourceIds').appServicePlanId]",
                 "clientAffinityEnabled": false,
                 "httpsOnly": true,
-                "siteConfig": "[if(parameters('includeDeploymentSlot'), variables('siteConfigSettings').withoutAppServiceSettings, variables('siteConfigSettings').withAppServiceSettings)]"
+                "siteConfig": {
+                    "alwaysOn": true,
+                    "minTlsVersion": "[parameters('minTlsVersion')]",
+                    "numberOfWorkers": "[parameters('numberOfWorkers')]"
+                }
             },
             "resources": [
                 {
@@ -139,11 +200,26 @@
                     "apiVersion": "2016-08-01",
                     "location": "[resourceGroup().location]",
                     "properties": {
-                        "serverFarmId": "[variables('appServicePlanId')]",
+                        "serverFarmId": "[variables('resourceIds').appServicePlanId]",
                         "clientAffinityEnabled": false,
                         "httpsOnly": true,
-                        "siteConfig": "[variables('siteConfigSettings').withAppServiceSettings]"
+                        "siteConfig": {
+                            "alwaysOn": true,
+                            "minTlsVersion": "[parameters('minTlsVersion')]",
+                            "numberOfWorkers": "[parameters('numberOfWorkers')]"
+                        }
                     },
+                    "resources": [
+                        {
+                            "apiVersion": "2015-08-01",
+                            "name": "appsettings",
+                            "type": "config",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Web/sites/slots/', parameters('appServiceName'), 'Staging')]"
+                            ],
+                            "properties": "[variables('combinedAppSettings')]"
+                        }
+                    ],
                     "dependsOn": [
                         "[parameters('appServiceName')]"
                     ]
@@ -179,5 +255,10 @@
           ]
         }
     ],
-    "outputs": {}
+    "outputs": {
+        "siteUri": {
+            "type": "string",
+            "value": "[concat('http://', reference(variables('resourceIds').appServiceId).hostnames[0])]"
+        }
+    }
 }
