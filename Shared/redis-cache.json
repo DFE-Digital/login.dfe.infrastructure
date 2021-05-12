@@ -14,7 +14,7 @@
             "Enabled",
             "Disabled"
           ],
-          "defaultValue": "Disabled"
+          "defaultValue": "Enabled"
         }
     },
     "variables": {},
@@ -22,7 +22,7 @@
         {
             "type": "Microsoft.Cache/Redis",
             "name": "[parameters('redisCacheName')]",
-            "apiVersion": "2019-07-01",
+            "apiVersion": "2020-06-01",
             "location": "[resourceGroup().location]",
             "properties": {
                 "sku": "[parameters('redisCacheSku')]",
