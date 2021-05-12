@@ -304,7 +304,7 @@
       "tier": "Standard"
     },
     "redisCachePrivateEndpoint": {
-      "deployRedisCachePrivateEndpoint": false,
+      "deployRedisCachePrivateEndpoint": true,
       "privateDnsZoneName": "privatelink.redis.cache.windows.net",
       "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
       "privateEndpointName": "[concat(parameters('redisCacheName'),'-', 'redis-sn-0', '-pe')]",
