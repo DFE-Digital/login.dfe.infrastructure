@@ -84,7 +84,7 @@
     "frontendSubnetCount": {
       "type": "int",
       "defaultValue": 0,
-      "maxValue": 5,
+      "maxValue": 10,
       "metadata": {
         "description": "The number of shared frontend app subnets to provision"
       }
@@ -99,7 +99,7 @@
     "backendSubnetCount": {
       "type": "int",
       "defaultValue": 0,
-      "maxValue": 5,
+      "maxValue": 10,
       "metadata": {
         "description": "The number of shared backend app subnets to provision."
       }
@@ -231,7 +231,7 @@
         "input": {
           "name": "[concat(parameters('backendSubnetNamePrefix'), '-', copyIndex('backendSubnetCopy'))]",
           "properties": {
-            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 20, copyIndex('backendSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
+            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 25, copyIndex('backendSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
             "serviceEndpointList": "[parameters('serviceEndpointList')]",
             "delegations": "[variables('subnetDelegations')]",
             "networkSecurityGroup": "[variables('emptyObject')]",
@@ -245,7 +245,7 @@
         "input": {
           "name": "[concat(parameters('appSubnets')[copyIndex('appSubnetCopy')], '-sn')]",
           "properties": {
-            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 30, copyIndex('appSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
+            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 35, copyIndex('appSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
             "serviceEndpointList": "[parameters('serviceEndpointList')]",
             "delegations": "[variables('subnetDelegations')]",
             "networkSecurityGroup": "[variables('emptyObject')]",
