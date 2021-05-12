@@ -1,39 +1,19 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "keyVaultName": {
             "type": "string"
         },
-        "AccessPolicyObjectIds": {
-            "type": "array"
+        "keyVaultAccessPolicies": {
+          "type": "array",
+          "defaultValue": [],
+          "metadata": {
+            "description": "Array of objects with the following schema: https://docs.microsoft.com/en-us/azure/templates/microsoft.keyvault/2018-02-14/vaults#AccessPolicyEntry"
+          }
         }
     },
-    "variables": {
-        "copy": [
-            {
-                "name": "webAppAccessPolicy",
-                "count": "[length(parameters('AccessPolicyObjectIds'))]",
-                "input": {
-                    "objectId": "[parameters('AccessPolicyObjectIds')[copyIndex('webAppAccessPolicy')]]",
-                    "tenantId": "[subscription().tenantId]",
-                    "permissions": {
-                        "keys": [],
-                        "secrets": [
-                            "Get",
-                            "List",
-                            "Set",
-                            "Delete",
-                            "Recover",
-                            "Backup",
-                            "Restore"
-                        ],
-                        "certificates": []
-                    }
-                }
-            }
-        ]
-    },
+    "variables": {},
     "resources": [
         {
             "type": "Microsoft.KeyVault/vaults",
@@ -42,7 +22,7 @@
             "location": "[resourceGroup().location]",
             "properties": {
                 "enabledForTemplateDeployment": "true",
-                "accessPolicies": "[variables('webAppAccessPolicy')]",
+                "accessPolicies": "[parameters('keyVaultAccessPolicies')]",
                 "tenantId": "[subscription().tenantId]",
                 "sku": {
                     "name": "Standard",

@@ -7,7 +7,7 @@
         },
         "azureCdnSku": {
             "type": "string",
-            "defaultValue": "Standard_Verizon"
+            "defaultValue": "Premium_Verizon"
         }
     },
     "variables": {},

@@ -1,0 +1,210 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "deploymentUrlBase": {
+        "type": "string",
+        "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/develop/grafana/"
+      },
+      "projectIdentifier": {
+        "type": "string"
+      },
+      "appServicePlanSku": {
+        "type": "object",
+        "defaultValue": {
+          "name": "S2",
+          "tier": "Standard",
+          "size": "S2",
+          "family": "S",
+          "capacity": 1
+        }
+      },
+      "influxDBAdminUser": {
+        "type": "string"
+      },
+      "influxDBAdminPassword": {
+        "type": "securestring"
+      },
+      "influxdbVersion": {
+        "type": "string",
+        "defaultValue": "1.7",
+        "metadata": {
+          "description": "Default value is latest version at initial deployment."
+        }
+      },
+      "storageContainers": {
+        "type": "array",
+        "defaultValue": [
+          "influxdata"
+        ],
+        "metadata": {
+          "description": "Names of containers to create in the storage account."
+        }
+      }
+    },
+    "variables": {
+      "appServiceName": "[concat(parameters('projectIdentifier'), '-signin-infx',if(contains(parameters('projectIdentifier'),'s141'),'','-as'))]",
+      "appServicePlanName": "[concat(parameters('projectIdentifier'), '-signin-infx-asp')]",
+      "appServiceRuntimeStack": "[concat('DOCKER|', 'influxdb:', parameters('influxdbVersion'))]",
+      "storageAccountName": "[concat(parameters('projectIdentifier'), 'k6loadtest')]"
+    },
+    "resources": [
+      {
+        "name": "app-service-plan",
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2017-05-10",
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "[concat(parameters('deploymentUrlBase'), 'app-service-plan.json')]",
+            "contentVersion": "1.0.0.0"
+          },
+          "parameters": {
+            "appServicePlanName": {
+              "value": "[variables('appServicePlanName')]"
+            },
+            "appServicePlanSku": {
+              "value": "[parameters('appServicePlanSku')]"
+            },
+            "appServicePlanOS": {
+              "value": "Linux"
+            },
+            "appServicePlanIsLinux": {
+              "value": true
+            },
+            "perSiteScalingEnabled": {
+              "value": true
+            }
+          }
+        }
+      },
+      {
+        "name": "app-service",
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2017-05-10",
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "[concat(parameters('deploymentUrlBase'), 'app-service-linux.json')]",
+            "contentVersion": "1.0.0.0"
+          },
+          "parameters": {
+            "appServiceName": {
+              "value": "[variables('appServiceName')]"
+            },
+            "appServicePlanName": {
+              "value": "[variables('appServicePlanName')]"
+            },
+            "appServicePlanRG": {
+              "value": "[resourceGroup().name]"
+            },
+            "runtimeStack": {
+              "value": "[variables('appServiceRuntimeStack')]"
+            },
+            "appServiceAppSettings": {
+              "value": [
+                {
+                    "name": "INFLUXDB_DB",
+                    "value": "PERF"
+                },
+                {
+                    "name": "INFLUXDB_ADMIN_USER",
+                    "value": "[parameters('influxDBAdminUser')]"
+                },
+                {
+                    "name": "INFLUXDB_ADMIN_PASSWORD",
+                    "value": "[parameters('influxDBAdminPassword')]"
+                },
+                {
+                    "name": "WEBSITES_PORT",
+                    "value": "8086"
+                },
+                {
+                    "name": "INFLUXDB_DATA_MAX_SERIES_PER_DATABASE",
+                    "value": "0"
+                },
+                {
+                    "name": "INFLUXDB_DATA_MAX_VALUES_PER_TAG",
+                    "value": "0"
+                }
+
+            ]
+            },
+            "azureStorageAccounts": {
+              "value": {
+                "InfluxDBData": {
+                  "accessKey": "[reference('storage-account').outputs.storageKey.value]",
+                  "accountName": "[variables('storageAccountName')]",
+                  "mountPath": "/var/lib/influxdb",
+                  "shareName": "influxdata",
+                  "type": "AzureFiles"
+                }
+              }
+            }
+          }
+        },
+        "dependsOn": [
+          "app-service-plan",
+          "storage-account"
+        ]
+      },
+      {
+        "name": "storage-account",
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2017-05-10",
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "[concat(parameters('deploymentUrlBase'), 'storage-account.json')]",
+            "contentVersion": "1.0.0.0"
+          },
+          "parameters": {
+            "storageAccountName": {
+              "value": "[variables('storageAccountName')]"
+            },
+            "storageKind": {
+              "value": "Storage"
+            }
+          }
+        }
+      },
+      {
+        "name": "[concat('storage-fileshare-', parameters('storageContainers')[copyIndex()])]",
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2017-05-10",
+        "copy": {
+          "name": "storagefilesharecopy",
+          "count": "[length(parameters('storageContainers'))]"
+        },
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "[concat(parameters('deploymentUrlBase'), 'storage-fileshare.json')]",
+            "contentVersion": "1.0.0.0"
+          },
+          "parameters": {
+            "storageAccountName": {
+              "value": "[variables('storageAccountName')]"
+            },
+            "fileShareName": {
+              "value": "[parameters('storageContainers')[copyIndex()]]"
+            }
+          }
+        },
+        "dependsOn": [
+          "storage-account"
+        ]
+      }
+    ],
+    "outputs": {
+      "appServiceName": {
+        "type": "string",
+        "value": "[variables('appServiceName')]"
+      },
+      "storageAccountName": {
+        "type": "string",   
+        "value": "[variables('storageAccountName')]"
+      }
+    }
+  }
+  
