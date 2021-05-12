@@ -298,12 +298,13 @@
     "virtualNetworkName": "[concat(variables('resourceNamePrefix'),'-vnet')]",
     "serviceBusNamespaceName": "[concat(variables('resourceNamePrefix'),'-sbn')]",
     "mgmtManagementSubnetCount": 1,
-    "redisSubnetCount": 1,
+    "redisCacheSubnetCount": 1,
     "elasticSku": {
       "name": "ElasticPool",
       "tier": "Standard"
     },
-    "redisPrivateEndpoint": {
+    "redisCachePrivateEndpoint": {
+      "deployRedisCachePrivateEndpoint": false,
       "privateDnsZoneName": "privatelink.redis.cache.windows.net",
       "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
       "privateEndpointName": "[concat(parameters('redisCacheName'),'-', 'redis-sn-0', '-pe')]",
@@ -504,14 +505,15 @@
             "value": "[parameters('redisCacheSku')]"
           },
           "publicNetworkAccess": {
-            "value": "[variables('redisPrivateEndpoint').publicNetworkAccess]"
+            "value": "[variables('redisCachePrivateEndpoint').publicNetworkAccess]"
           }
         }
       }
     },
     {
+      "condition": "[variables('redisCachePrivateEndpoint').deployRedisCachePrivateEndpoint]",
       "apiVersion": "2019-07-01",
-      "name": "redis-private-endpoint",
+      "name": "redis-cache-private-endpoint",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -523,19 +525,19 @@
             "value": "[parameters('templatesBaseUri')]"
           },
           "privateEndpointName": {
-            "value": "[variables('redisPrivateEndpoint').privateEndpointName]"
+            "value": "[variables('redisCachePrivateEndpoint').privateEndpointName]"
           },
           "privateLinkResource": {
-            "value": "[variables('redisPrivateEndpoint').privateLinkResource]"
+            "value": "[variables('redisCachePrivateEndpoint').privateLinkResource]"
           },
           "privateEndpointSubnetId": {
-            "value": "[variables('redisPrivateEndpoint').privateEndpointSubnetId]"
+            "value": "[variables('redisCachePrivateEndpoint').privateEndpointSubnetId]"
           },
           "privateDnsZoneName": {
-            "value": "[variables('redisPrivateEndpoint').privateDnsZoneName]"
+            "value": "[variables('redisCachePrivateEndpoint').privateDnsZoneName]"
           },
           "virtualNetworkId": {
-            "value": "[variables('redisPrivateEndpoint').virtualNetworkId]"
+            "value": "[variables('redisCachePrivateEndpoint').virtualNetworkId]"
           }
         }
       },
@@ -807,7 +809,7 @@
             "value": "[variables('mgmtManagementSubnetCount')]"
           },
           "redisSubnetCount": {
-            "value": "[variables('redisSubnetCount')]"
+            "value": "[variables('redisCacheSubnetCount')]"
           },
           "virtualNetworkAddressSpacePrefix": {
             "value": "10.0"
