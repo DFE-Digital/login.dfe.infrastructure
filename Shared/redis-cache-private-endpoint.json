@@ -40,12 +40,12 @@
       "type": "string"
     },
     "redisCacheSku": {
-      "type": "string"
+      "type": "object"
     }
   },
   "resources": [
     {
-      "apiVersion": "2019-07-01",
+      "apiVersion": "2020-10-01",
       "name": "private-endpoint",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -70,7 +70,7 @@
       }
     },
     {
-      "apiVersion": "2019-07-01",
+      "apiVersion": "2020-10-01",
       "name": "redis-cache-public-access",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -92,7 +92,7 @@
       ]
     },
     {
-      "apiVersion": "2019-07-01",
+      "apiVersion": "2020-10-01",
       "name": "private-dns-zones",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -111,7 +111,7 @@
       ]
     },
     {
-      "apiVersion": "2019-07-01",
+      "apiVersion": "2020-10-01",
       "name": "private-dns-zones-vnet-links",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -133,7 +133,7 @@
       ]
     },
     {
-      "apiVersion": "2019-07-01",
+      "apiVersion": "2020-10-01",
       "name": "private-dns-zone-groups",
       "type": "Microsoft.Resources/deployments",
       "properties": {
