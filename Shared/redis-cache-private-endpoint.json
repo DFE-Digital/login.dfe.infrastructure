@@ -1,0 +1,159 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "templatesBaseUri": {
+      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/master/"
+    },
+    "privateEndpointName": {
+      "type": "string"
+    },
+    "privateLinkResource": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource id of the resource you're connecting to"
+      }
+    },
+    "targetSubResource": {
+      "type": "array",
+      "defaultValue": [
+        "redisCache"
+      ],
+      "metadata": {
+        "description": "The type of sub-resource for the resource selected above that your private endpoint will be able to access."
+      }
+    },
+    "privateEndpointSubnetId": {
+      "type": "string",
+      "metadata": {
+        "description": "The subnet resource id to attach the private endpoint to"
+      }
+    },
+    "privateDnsZoneName": {
+      "type": "string"
+    },
+    "virtualNetworkId": {
+      "type": "string"
+    },
+    "redisCacheName": {
+      "type": "string"
+    },
+    "redisCacheSku": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2019-07-01",
+      "name": "private-endpoint",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/private-endpoint.json')]"
+        },
+        "parameters": {
+          "privateEndpointName": {
+            "value": "[parameters('privateEndpointName')]"
+          },
+          "privateLinkResource": {
+            "value": "[parameters('privateLinkResource')]"
+          },
+          "targetSubResource": {
+            "value": "[parameters('targetSubResource')]"
+          },
+          "privateEndpointSubnetId": {
+            "value": "[parameters('privateEndpointSubnetId')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2019-07-01",
+      "name": "redis-cache-public-access",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/redis-cache.json')]"
+        },
+        "parameters": {
+          "redisCacheName": {
+            "value": "[parameters('redisCacheName')]"
+          },
+          "redisCacheSku": {
+            "value": "[parameters('redisCacheSku')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'private-endpoint')]"
+      ]
+    },
+    {
+      "apiVersion": "2019-07-01",
+      "name": "private-dns-zones",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/private-dns-zones.json')]"
+        },
+        "parameters": {
+          "privateDnsZoneName": {
+            "value": "[parameters('privateDnsZoneName')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'private-endpoint')]"
+      ]
+    },
+    {
+      "apiVersion": "2019-07-01",
+      "name": "private-dns-zones-vnet-links",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/private-dns-zones-vnet-links.json')]"
+        },
+        "parameters": {
+          "privateDnsZoneName": {
+            "value": "[parameters('privateDnsZoneName')]"
+          },
+          "virtualNetworkId": {
+            "value": "[parameters('virtualNetworkId')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'private-dns-zones')]"
+      ]
+    },
+    {
+      "apiVersion": "2019-07-01",
+      "name": "private-dns-zone-groups",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/private-dns-zone-groups.json')]"
+        },
+        "parameters": {
+          "privateEndpointName": {
+            "value": "[parameters('privateEndpointName')]"
+          },
+          "privateDnsZoneName": {
+            "value": "[parameters('privateDnsZoneName')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'private-endpoint')]",
+        "[resourceId('Microsoft.Resources/deployments', 'private-dns-zones')]"
+      ]
+    }
+  ]
+}
