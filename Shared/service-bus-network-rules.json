@@ -1,0 +1,60 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "serviceBusNamespaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the server to add firewall rules to"
+      }
+    },
+    "subnetResourceIdList": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "A list of subnet resource ids to add to the firewall rules"
+      }
+    },
+    "ipAddresses": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Array of IP addresses to whitelist against the Service Bus namespace"
+      }
+    }
+  },
+  "variables": {
+    "copy": [
+      {
+        "name": "virtualNetworkRules",
+        "count": "[if(greater(length(parameters('subnetResourceIdList')), 0), length(parameters('subnetResourceIdList')), 1)]",
+        "input": {
+          "subnet": {
+            "id": "[parameters('subnetResourceIdList')[copyIndex('virtualNetworkRules')]]"
+          }
+        }
+      },
+      {
+        "name": "ipRules",
+        "count": "[if(greater(length(parameters('ipAddresses')), 0), length(parameters('ipAddresses')), 1)]",
+        "input": {
+          "ipMask": "[parameters('ipAddresses')[copyIndex('ipRules')]]",
+          "action": "Allow"
+        }
+      }
+    ]
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-01-01-preview",
+      "name": "[concat(parameters('serviceBusNamespaceName'), '/default')]",
+      "type": "Microsoft.ServiceBus/namespaces/networkRuleSets",
+      "properties": {
+        "defaultAction": "Deny",
+        "virtualNetworkRules": "[variables('virtualNetworkRules')]",
+        "ipRules": "[variables('ipRules')]"
+      }
+    }
+  ],
+  "outputs": {}
+}
