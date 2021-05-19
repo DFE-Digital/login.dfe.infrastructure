@@ -27,7 +27,7 @@
     "copy": [
       {
         "name": "virtualNetworkRules",
-        "count": "[if(greater(length(parameters('subnetResourceIdList')), 0), length(parameters('subnetResourceIdList')), 1)]",
+        "count": "[length(parameters('subnetResourceIdList'))]",
         "input": {
           "subnet": {
             "id": "[parameters('subnetResourceIdList')[copyIndex('virtualNetworkRules')]]"
@@ -36,7 +36,7 @@
       },
       {
         "name": "ipRules",
-        "count": "[if(greater(length(parameters('ipAddresses')), 0), length(parameters('ipAddresses')), 1)]",
+        "count": "[length(parameters('ipAddresses'))]",
         "input": {
           "ipMask": "[parameters('ipAddresses')[copyIndex('ipRules')]]",
           "action": "Allow"
