@@ -119,7 +119,7 @@
         "description": "The number of shared backend app subnets to provision."
       }
     },
-    "appSubnets": {
+    "applicationSubnets": {
       "type": "array",
       "defaultValue": [],
       "metadata": {
@@ -240,12 +240,12 @@
         }
       },
       {
-        "name": "appSubnetCopy",
-        "count": "[if(empty(parameters('appSubnets')), 0, length(parameters('appSubnets')))]",
+        "name": "applicationSubnetCopy",
+        "count": "[if(empty(parameters('applicationSubnets')), 0, length(parameters('applicationSubnets')))]",
         "input": {
-          "name": "[concat(parameters('appSubnets')[copyIndex('appSubnetCopy')], '-sn')]",
+          "name": "[parameters('applicationSubnets')[copyIndex('applicationSubnetCopy')]]",
           "properties": {
-            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 35, copyIndex('appSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
+            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 35, copyIndex('applicationSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
             "serviceEndpointList": "[parameters('serviceEndpointList')]",
             "delegations": "[variables('subnetDelegations')]",
             "networkSecurityGroup": "[variables('emptyObject')]",
@@ -258,8 +258,8 @@
     "frontendSubnet": "[if(greater(parameters('frontendSubnetCount'), 0), variables('frontendSubnetCopy'), variables('emptyArray'))]",
     "backendSubnet": "[if(greater(parameters('backendSubnetCount'), 0), variables('backendSubnetCopy'), variables('emptyArray'))]",
     "redisSubnet": "[if(greater(parameters('redisSubnetCount'), 0), variables('redisSubnetCopy'), variables('emptyArray'))]",
-    "appSubnet": "[if(greater(length(parameters('appSubnets')), 0), variables('appSubnetCopy'), variables('emptyArray'))]",
-    "subnetConfiguration": "[concat(variables('managementSubnetCopy'), variables('gatewaySubnet'), variables('frontendSubnet'), variables('backendSubnet'), variables('redisSubnet'), variables('appSubnet'))]"
+    "applicationSubnets": "[if(greater(length(parameters('applicationSubnets')), 0), variables('applicationSubnetCopy'), variables('emptyArray'))]",
+    "subnetConfiguration": "[concat(variables('managementSubnetCopy'), variables('gatewaySubnet'), variables('frontendSubnet'), variables('backendSubnet'), variables('redisSubnet'), variables('applicationSubnets'))]"
   },
   "functions": [
     {
@@ -369,9 +369,9 @@
       "type": "array",
       "value": "[variables('backendSubnet')]"
     },
-    "appSubnetConfiguration": {
+    "applicationSubnetConfiguration": {
       "type": "array",
-      "value": "[variables('appSubnet')]"
+      "value": "[variables('applicationSubnets')]"
     }
   }
 }
