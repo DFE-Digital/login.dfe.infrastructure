@@ -26,7 +26,7 @@
         "description": "The CIDR notation of the Vnet address space"
       }
     },
-    "virtualNetworkDeploy": {
+    "distructiveVirtualNetworkDeploy": {
       "type": "string",
       "defaultValue": "Disabled",
       "allowedValues": [
@@ -172,12 +172,12 @@
         "name": "gatewaySubnetCopy",
         "count": "[if(greater(parameters('gatewaySubnetCount'), 0), parameters('gatewaySubnetCount'), 1)]",
         "input": {
-          "name": "[concat(parameters('gatewaySubnetNamePrefix'), '-', copyIndex('gatewaySubnetCopy'))]",
+          "name": "[concat(parameters('gatewaySubnetNamePrefix'), '-', copyIndex('gatewaySubnetCopy', 1))]",
           "properties": {
-            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 0, copyIndex('gatewaySubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
+            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 0, copyIndex('gatewaySubnetCopy', 1), parameters('subnetAddressSpaceCIDR'))]",
             "serviceEndpointList": "[parameters('serviceEndpointList')]",
             "delegations": "[variables('emptyArray')]",
-            "networkSecurityGroup": "[if(and(not(bool(equals(parameters('firewallsNsgName'),'Disabled'))), bool(equals(copyIndex('gatewaySubnetCopy'), 0))), variables('firewallNsgId'), json('null'))]",
+            "networkSecurityGroup": "[if(and(not(bool(equals(parameters('firewallsNsgName'),'Disabled'))), bool(equals(copyIndex('gatewaySubnetCopy', 1), 0))), variables('firewallNsgId'), json('null'))]",
             "routeTable": "[variables('emptyObject')]"
           }
         }
@@ -186,9 +186,9 @@
         "name": "managementSubnetCopy",
         "count": "[if(greater(parameters('managementSubnetCount'), 0), parameters('managementSubnetCount'), 1)]",
         "input": {
-          "name": "[concat(parameters('managementSubnetNamePrefix'), '-', copyIndex('managementSubnetCopy'))]",
+          "name": "[concat(parameters('managementSubnetNamePrefix'), '-', copyIndex('managementSubnetCopy', 1))]",
           "properties": {
-            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 5, copyIndex('managementSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
+            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 5, copyIndex('managementSubnetCopy',1), parameters('subnetAddressSpaceCIDR'))]",
             "serviceEndpointList": "[variables('emptyArray')]",
             "delegations": "[variables('emptyArray')]",
             "networkSecurityGroup": "[variables('emptyObject')]",
@@ -200,9 +200,9 @@
         "name": "redisSubnetCopy",
         "count": "[if(greater(parameters('redisSubnetCount'), 0), parameters('redisSubnetCount'), 1)]",
         "input": {
-          "name": "[concat(parameters('redisSubnetNamePrefix'), '-', copyIndex('redisSubnetCopy'))]",
+          "name": "[concat(parameters('redisSubnetNamePrefix'), '-', copyIndex('redisSubnetCopy', 1))]",
           "properties": {
-            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 10, copyIndex('redisSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
+            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 10, copyIndex('redisSubnetCopy', 1), parameters('subnetAddressSpaceCIDR'))]",
             "serviceEndpointList": "[variables('emptyArray')]",
             "delegations": "[variables('emptyArray')]",
             "networkSecurityGroup": "[variables('emptyObject')]",
@@ -215,9 +215,9 @@
         "name": "frontendSubnetCopy",
         "count": "[if(greater(parameters('frontendSubnetCount'), 0), parameters('frontendSubnetCount'), 1)]",
         "input": {
-          "name": "[concat(parameters('frontendSubnetNamePrefix'), '-', copyIndex('frontendSubnetCopy'))]",
+          "name": "[concat(parameters('frontendSubnetNamePrefix'), '-', copyIndex('frontendSubnetCopy', 1))]",
           "properties": {
-            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 15, copyIndex('frontendSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
+            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 15, copyIndex('frontendSubnetCopy', 1), parameters('subnetAddressSpaceCIDR'))]",
             "serviceEndpointList": "[parameters('serviceEndpointList')]",
             "delegations": "[variables('subnetDelegations')]",
             "networkSecurityGroup": "[variables('emptyObject')]",
@@ -229,9 +229,9 @@
         "name": "backendSubnetCopy",
         "count": "[if(greater(parameters('backendSubnetCount'), 0), parameters('backendSubnetCount'), 1)]",
         "input": {
-          "name": "[concat(parameters('backendSubnetNamePrefix'), '-', copyIndex('backendSubnetCopy'))]",
+          "name": "[concat(parameters('backendSubnetNamePrefix'), '-', copyIndex('backendSubnetCopy', 1))]",
           "properties": {
-            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 25, copyIndex('backendSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
+            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 25, copyIndex('backendSubnetCopy', 1), parameters('subnetAddressSpaceCIDR'))]",
             "serviceEndpointList": "[parameters('serviceEndpointList')]",
             "delegations": "[variables('subnetDelegations')]",
             "networkSecurityGroup": "[variables('emptyObject')]",
@@ -296,7 +296,7 @@
     {
       "apiVersion": "2020-10-01",
       "name": "vnet",
-      "condition": "[equals(parameters('virtualNetworkDeploy'), 'Enabled')]",
+      "condition": "[equals(parameters('distructiveVirtualNetworkDeploy'), 'Enabled')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
