@@ -60,6 +60,7 @@
     },
     "databaseNames": {
       "type": "array",
+      "defaultValue": [],
       "metadata": {
         "description": "Azure DevOps variable format: [{\"name\":\"temp-signin-audit-db\",\"maxSizeBytes\":\"1073741824\"} N.B. use without backslash"
       }
@@ -217,7 +218,7 @@
         "environmentVariable": "keyVaultApplicationObjectId"
       }
     },
-    "distructiveVirtualNetworkDeploy": {
+    "destructiveVirtualNetworkDeploy": {
       "type": "string",
       "defaultValue": "Disabled",
       "allowedValues": [
@@ -226,7 +227,7 @@
       ],
       "metadata": {
         "description": "Deploys the Virtual Network and deletes all subnets if Enabled https://github.com/Azure/azure-quickstart-templates/issues/2786",
-        "environmentVariable": "distructiveVirtualNetworkDeploy"
+        "environmentVariable": "destructiveVirtualNetworkDeploy"
       }
     },
     "applicationSubnets": {
@@ -346,17 +347,20 @@
     "azureCdnName": "[concat(variables('resourceNamePrefix'),'-cdn')]",
     "virtualNetworkName": "[concat(variables('resourceNamePrefix'),'-vnet')]",
     "serviceBusNamespaceName": "[concat(variables('resourceNamePrefix'),'-sbn')]",
-    "redisSubnetName": "redis-sn-1",
+    "redisSubnetName": [
+      "redis-sn-1"
+    ],
     "elasticSku": {
       "name": "ElasticPool",
       "tier": "Standard"
     },
+    "emptyArray": [],
     "redisCachePrivateEndpoint": {
       "privateDnsZoneName": "privatelink.redis.cache.windows.net",
       "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-      "privateEndpointName": "[concat(parameters('redisCacheName'),'-', variables('redisSubnetName'), '-pe')]",
+      "privateEndpointName": "[concat(parameters('redisCacheName'),'-', variables('redisSubnetName')[0], '-pe')]",
       "privateLinkResource": "[resourceId('Microsoft.Cache/Redis', parameters('redisCacheName'))]",
-      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('redisSubnetName'))]"
+      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('redisSubnetName')[0])]"
     },
     "keyVaultAccessPolicies": [
       {
@@ -627,6 +631,7 @@
       }
     },
     {
+      "condition": "[parameters('deployVirtualNetwork')]",
       "apiVersion": "2020-10-01",
       "name": "sql-server-firewall-rule",
       "type": "Microsoft.Resources/deployments",
@@ -641,7 +646,7 @@
             "value": "[parameters('sqlserverName')]"
           },
           "subnetResourceIdList": {
-            "value": "[reference('get-subnet-resourceid-list').outputs.subnetResourceIdList.value]"
+            "value": "[if(parameters('deployVirtualNetwork'), reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value, variables('emptyArray'))]"
           }
         }
       },
@@ -650,7 +655,8 @@
       ]
     },
     {
-      "name": "[parameters('databaseNames')[copyIndex()].name]",
+      "condition": "[not(empty(parameters('databaseNames')))]",
+      "name": "[if(empty(parameters('databaseNames')),'no-databases-to-deploy',parameters('databaseNames')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "properties": {
@@ -852,8 +858,8 @@
           "virtualNetworkName": {
             "value": "[variables('virtualNetworkName')]"
           },
-          "distructiveVirtualNetworkDeploy": {
-            "value": "[parameters('distructiveVirtualNetworkDeploy')]"
+          "destructiveVirtualNetworkDeploy": {
+            "value": "[parameters('destructiveVirtualNetworkDeploy')]"
           },
           "redisSubnet": {
             "value": "[variables('redisSubnetName')]"
@@ -868,6 +874,7 @@
       }
     },
     {
+      "condition": "[parameters('deployVirtualNetwork')]",
       "apiVersion": "2020-10-01",
       "name": "get-subnet-resourceid-list",
       "type": "Microsoft.Resources/deployments",
@@ -882,7 +889,7 @@
             "value": "[variables('virtualNetworkName')]"
           },
           "subnetConfiguration": {
-            "value": "[reference('virtual-network', '2020-10-01').outputs.applicationSubnetConfiguration.value]"
+            "value": "[if(parameters('deployVirtualNetwork'), reference('virtual-network').outputs.applicationSubnetConfiguration.value, variables('emptyArray'))]"
           }
         }
       }
@@ -909,6 +916,7 @@
       }
     },
     {
+      "condition": "[and(parameters('deployVirtualNetwork'), parameters('deployServiceBus'))]",
       "apiVersion": "2020-10-01",
       "name": "service-bus-firewall-rule",
       "type": "Microsoft.Resources/deployments",
@@ -923,7 +931,7 @@
             "value": "[variables('serviceBusNamespaceName')]"
           },
           "subnetResourceIdList": {
-            "value": "[reference('get-subnet-resourceid-list').outputs.subnetResourceIdList.value]"
+            "value": "[if(parameters('deployVirtualNetwork'), reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value, variables('emptyArray'))]"
           }
         }
       },
