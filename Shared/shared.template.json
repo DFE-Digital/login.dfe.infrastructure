@@ -347,9 +347,7 @@
     "azureCdnName": "[concat(variables('resourceNamePrefix'),'-cdn')]",
     "virtualNetworkName": "[concat(variables('resourceNamePrefix'),'-vnet')]",
     "serviceBusNamespaceName": "[concat(variables('resourceNamePrefix'),'-sbn')]",
-    "redisSubnetName": [
-      "redis-sn-1"
-    ],
+    "redisSubnetName": "redis-sn-1",
     "elasticSku": {
       "name": "ElasticPool",
       "tier": "Standard"
@@ -358,9 +356,9 @@
     "redisCachePrivateEndpoint": {
       "privateDnsZoneName": "privatelink.redis.cache.windows.net",
       "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-      "privateEndpointName": "[concat(parameters('redisCacheName'),'-', variables('redisSubnetName')[0], '-pe')]",
+      "privateEndpointName": "[concat(parameters('redisCacheName'),'-', variables('redisSubnetName'), '-pe')]",
       "privateLinkResource": "[resourceId('Microsoft.Cache/Redis', parameters('redisCacheName'))]",
-      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('redisSubnetName')[0])]"
+      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('redisSubnetName'))]"
     },
     "keyVaultAccessPolicies": [
       {
@@ -862,7 +860,7 @@
             "value": "[parameters('destructiveVirtualNetworkDeploy')]"
           },
           "redisSubnet": {
-            "value": "[variables('redisSubnetName')]"
+            "value": "[array(variables('redisSubnetName'))]"
           },
           "applicationSubnets": {
             "value": "[parameters('applicationSubnets')]"

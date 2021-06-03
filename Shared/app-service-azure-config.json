@@ -42,7 +42,7 @@
         },
         "minTlsVersion": {
             "type": "string",
-            "defaultValue": "1.0",
+            "defaultValue": "1.2",
             "metadata": {
                 "description": "The minimum tls version for the service"
             }
@@ -77,6 +77,13 @@
             "metadata": {
                 "description": "This can be used to specify the path for the Health Check. If set it as empty string it will disable the Health Check"
             }
+        },
+        "subnetResourceId": {
+          "type": "string",
+          "defaultValue": "",
+          "metadata": {
+            "description": "Resource ID of the subnet used for vNet integration"
+          }
         }
     },
     "variables": {
@@ -156,6 +163,34 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
             ]
+        },
+        {
+          "type": "Microsoft.Web/sites/config",
+          "condition": "[not(empty(parameters('subnetResourceId')))]",
+          "name": "[concat(parameters('appServiceName'), '/virtualNetwork')]",
+          "apiVersion": "2018-11-01",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "subnetResourceId": "[parameters('subnetResourceId')]",
+            "swiftSupported": true
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
+          ]
+        },
+        {
+          "type": "Microsoft.Web/sites/slots/config",
+          "condition": "[and(not(empty(parameters('subnetResourceId'))), parameters('includeDeploymentSlot'))]",
+          "name": "[concat(parameters('appServiceName'), '/staging/virtualNetwork')]",
+          "apiVersion": "2018-11-01",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "subnetResourceId": "[parameters('subnetResourceId')]",
+            "swiftSupported": true
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites/slots', parameters('appServiceName'), 'staging')]"
+          ]
         }
     ],
     "outputs": {
