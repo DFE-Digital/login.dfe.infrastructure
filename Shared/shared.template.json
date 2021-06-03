@@ -95,6 +95,14 @@
         "description": "Name of the Azure Cdn Profile resource"
       }
     },
+    "azureCdnSku": {
+      "type": "string",
+      "defaultValue": "Standard_Verizon",
+      "allowedValues": [
+        "Standard_Verizon",
+        "Premium_Verizon"
+      ]
+    },
     "cdnEndpointName": {
       "type": "string"
     },
@@ -772,6 +780,9 @@
         "parameters": {
           "cdnProfileName": {
             "value": "[parameters('azureCdnName')]"
+          },
+          "azureCdnSku": {
+            "value": "[parameters('azureCdnSku')]"
           }
         }
       }
