@@ -37,7 +37,7 @@
     }
   },
   "variables": {
-    "deploySubscriptions": "[greater(length(parameters('serviceBusSubscriptions')), 0)]",
+    "deploySubscriptions": "[not(empty(parameters('serviceBusSubscriptions')))]",
     "emptyObject": {},
     "customTopicProperties": {
       "defaultMessageTimeToLive": "[if(empty(parameters('serviceBusTopicProperties')), '', parameters('serviceBusTopicProperties').defaultMessageTimeToLive)]",
