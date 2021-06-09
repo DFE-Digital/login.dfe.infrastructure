@@ -339,7 +339,7 @@
       "type": "bool",
       "defaultValue": false,
       "metadata": {
-        "description": "Whether to deploy the shared Service Bus resource"
+        "description": "Whether to deploy the virtual network template which includes the defined subnets"
       }
     }
   },
