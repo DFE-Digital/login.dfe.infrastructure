@@ -46,7 +46,7 @@
         "description": "The password of the admin user of the SQL Server"
       }
     },
-    "sqlserverName": {
+    "sqlServerName": {
       "type": "string",
       "metadata": {
         "description": "The name of the SQL Server"
@@ -341,13 +341,24 @@
       "metadata": {
         "description": "Whether to deploy the virtual network template which includes the defined subnets"
       }
+    },
+    "sqlFirewallRulesCopyMode": {
+      "type": "string",
+      "defaultValue": "Parallel",
+      "allowedValues": [
+        "Parallel",
+        "Serial"
+      ],
+      "metadata": {
+        "description": "Mode to use in the SQL firewall rule copy function. Using Serial for the initial deployment can help eliminate conflicts."
+      }
     }
   },
   "variables": {
     "resourceNamePrefix": "[concat(toLower(parameters('platformGlobalIdentifier')), toLower(parameters('environmentId')),'-', toLower(parameters('platformGlobalName')),'-', toLower(parameters('applicationName')))]",
     "appInsightsName": "[concat(variables('resourceNamePrefix'),'-ai')]",
     "redisCacheName": "[concat(variables('resourceNamePrefix'),'-rc')]",
-    "sqlserverName": "[concat(variables('resourceNamePrefix'),'-sql')]",
+    "sqlServerName": "[concat(variables('resourceNamePrefix'),'-sql')]",
     "elasticPoolName": "[concat(variables('resourceNamePrefix'),'-ep')]",
     "storageAccountName": "[concat(replace(variables('resourceNamePrefix'),'-',''),'str')]",
     "keyVaultName": "[concat(variables('resourceNamePrefix'),'-kv')]",
@@ -621,8 +632,8 @@
           "sqlAdministratorLoginPassword": {
             "value": "[parameters('sqlAdministratorLoginPassword')]"
           },
-          "sqlserverName": {
-            "value": "[parameters('sqlserverName')]"
+          "sqlServerName": {
+            "value": "[parameters('sqlServerName')]"
           },
           "elasticPoolName": {
             "value": "[parameters('elasticPoolName')]"
@@ -649,10 +660,13 @@
         },
         "parameters": {
           "serverName": {
-            "value": "[parameters('sqlserverName')]"
+            "value": "[parameters('sqlServerName')]"
           },
           "subnetResourceIdList": {
             "value": "[if(parameters('deployVirtualNetwork'), reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value, variables('emptyArray'))]"
+          },
+          "copyMode": {
+            "value": "[parameters('sqlFirewallRulesCopyMode')]"
           }
         }
       },
@@ -677,8 +691,8 @@
           "transparentDataEncryption": {
             "value": "[parameters('transparentDataEncryption')]"
           },
-          "sqlserverName": {
-            "value": "[parameters('sqlserverName')]"
+          "sqlServerName": {
+            "value": "[parameters('sqlServerName')]"
           },
           "elasticPoolName": {
             "value": "[parameters('elasticPoolName')]"
