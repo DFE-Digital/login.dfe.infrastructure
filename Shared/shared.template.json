@@ -366,6 +366,7 @@
     "azureCdnName": "[concat(variables('resourceNamePrefix'),'-cdn')]",
     "virtualNetworkName": "[concat(variables('resourceNamePrefix'),'-vnet')]",
     "serviceBusNamespaceName": "[concat(variables('resourceNamePrefix'),'-sbn')]",
+    "serviceBusApiVersion": "2017-04-01",
     "redisSubnetName": "redis-sn-1",
     "elasticSku": {
       "name": "ElasticPool",
@@ -937,6 +938,37 @@
           }
         }
       }
+    },
+    {
+      "condition": "[parameters('deployServiceBus')]",
+      "apiVersion": "2020-10-01",
+      "name": "service-bus-key-vault-secret",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/key-vault-secret.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "sharedServiceBusConnectionString"
+          },
+          "secretValue": {
+            "value": "[if(parameters('deployServiceBus'), listkeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespaceName'), 'RootManageSharedAccessKey'), variables('serviceBusApiVersion')).primaryConnectionString, '')]"
+          },
+          "contentType": {
+            "value": "Shared service bus connection string"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments','service-bus')]",
+        "[resourceId('Microsoft.Resources/deployments','key-vault')]"
+      ]
     },
     {
       "condition": "[and(parameters('deployVirtualNetwork'), parameters('deployServiceBus'))]",
