@@ -1,0 +1,34 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "privateEndpointName": {
+      "type": "string"
+    },
+    "privateDnsZoneName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "privateDnsZoneConfigsName": "[replace(parameters('privateDnsZoneName'), '.','-')]",
+    "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', parameters('privateDnsZoneName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+      "apiVersion": "2020-03-01",
+      "name": "[concat(parameters('privateEndpointName'), '/', 'default')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "privateDnsZoneConfigs": [
+          {
+            "name": "[variables('privateDnsZoneConfigsName')]",
+            "properties": {
+              "privateDnsZoneId": "[variables('privateDnsZoneId')]"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
