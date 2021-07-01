@@ -26,11 +26,13 @@
             ]
         }
     },
-    "variables": {},
+    "variables": {
+      "storageAccountName": "[replace(parameters('storageAccountName'), '-', '')]"
+    },
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts",
-            "name": "[replace(parameters('storageAccountName'), '-', '')]",
+            "name": "[variables('storageAccountName')]",
             "apiVersion": "2019-06-01",
             "location": "[resourceGroup().location]",
             "sku": {
@@ -58,7 +60,11 @@
     "outputs": {
         "PrimaryEndpoints": {
             "type": "object",
-            "value": "[reference(replace(parameters('storageAccountName'), '-', '')).primaryEndpoints]"
+            "value": "[reference(variables('storageAccountName')).primaryEndpoints]"
+        },
+        "storageAccountConnectionString": {
+            "type": "string",
+            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value)]"
         }
     }
 }

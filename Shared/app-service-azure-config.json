@@ -84,6 +84,13 @@
           "metadata": {
             "description": "Resource ID of the subnet used for vNet integration"
           }
+        },
+        "enablePrivateEndpointSupport": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Add app settings to support virtual network private endpoints"
+            }
         }
     },
     "variables": {
@@ -96,6 +103,11 @@
             "settings": "[parameters('appServiceConfigPath')]"
         },
         "combinedAppSettings": "[union(variables('baseAppSettings'), parameters('additionalAppSettings'))]",
+        "privateEndpointAppSettings": {
+            "WEBSITE_DNS_SERVER": "168.63.129.16",
+            "WEBSITE_VNET_ROUTE_ALL": 1
+        },
+        "privateEndpointEnabledAppSettings": "[union(variables('baseAppSettings'), parameters('additionalAppSettings'), variables('privateEndpointAppSettings'))]",
         "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]"
     },
     "resources": [
@@ -141,7 +153,7 @@
                             "dependsOn": [
                                 "[resourceId('Microsoft.Web/sites/slots/', parameters('appServiceName'), 'Staging')]"
                             ],
-                            "properties": "[variables('combinedAppSettings')]"
+                            "properties": "[if(parameters('enablePrivateEndpointSupport'), variables('privateEndpointEnabledAppSettings'), variables('combinedAppSettings'))]"
                         }
                     ],
                     "dependsOn": [
@@ -166,7 +178,7 @@
         },
         {
           "type": "Microsoft.Web/sites/config",
-          "condition": "[greater(length(parameters('subnetResourceId')), 0)]",
+          "condition": "[not(empty(parameters('subnetResourceId')))]",
           "name": "[concat(parameters('appServiceName'), '/virtualNetwork')]",
           "apiVersion": "2018-11-01",
           "location": "[resourceGroup().location]",
@@ -176,6 +188,20 @@
           },
           "dependsOn": [
             "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
+          ]
+        },
+        {
+          "type": "Microsoft.Web/sites/slots/config",
+          "condition": "[and(not(empty(parameters('subnetResourceId'))), parameters('includeDeploymentSlot'))]",
+          "name": "[concat(parameters('appServiceName'), '/staging/virtualNetwork')]",
+          "apiVersion": "2018-11-01",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "subnetResourceId": "[parameters('subnetResourceId')]",
+            "swiftSupported": true
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites/slots', parameters('appServiceName'), 'staging')]"
           ]
         }
     ],
