@@ -46,7 +46,7 @@
         "description": "The password of the admin user of the SQL Server"
       }
     },
-    "sqlserverName": {
+    "sqlServerName": {
       "type": "string",
       "metadata": {
         "description": "The name of the SQL Server"
@@ -60,6 +60,7 @@
     },
     "databaseNames": {
       "type": "array",
+      "defaultValue": [],
       "metadata": {
         "description": "Azure DevOps variable format: [{\"name\":\"temp-signin-audit-db\",\"maxSizeBytes\":\"1073741824\"} N.B. use without backslash"
       }
@@ -93,6 +94,14 @@
       "metadata": {
         "description": "Name of the Azure Cdn Profile resource"
       }
+    },
+    "azureCdnSku": {
+      "type": "string",
+      "defaultValue": "Standard_Verizon",
+      "allowedValues": [
+        "Standard_Verizon",
+        "Premium_Verizon"
+      ]
     },
     "cdnEndpointName": {
       "type": "string"
@@ -216,23 +225,161 @@
         "description": "Object Id of the Key Vault application",
         "environmentVariable": "keyVaultApplicationObjectId"
       }
+    },
+    "destructiveVirtualNetworkDeploy": {
+      "type": "string",
+      "defaultValue": "Disabled",
+      "allowedValues": [
+        "Disabled",
+        "Enabled"
+      ],
+      "metadata": {
+        "description": "Deploys the Virtual Network and deletes all subnets if Enabled https://github.com/Azure/azure-quickstart-templates/issues/2786",
+        "environmentVariable": "destructiveVirtualNetworkDeploy"
+      }
+    },
+    "applicationSubnets": {
+      "type": "array",
+      "defaultValue": [
+        "acc-sn",
+        "adtbus-sn",
+        "adtcln-sn",
+        "app-sn",
+        "ass-sn",
+        "dev-sn",
+        "dir-sn",
+        "hlp-sn",
+        "int-sn-1",
+        "int-sn-2",
+        "jobs-sn",
+        "mng-sn",
+        "oidc-sn-1",
+        "oidc-sn-2",
+        "org-sn",
+        "orgwkr-sn",
+        "papi-sn",
+        "pfl-sn",
+        "sch-sn",
+        "schwkr-sn",
+        "sup-sn-1",
+        "svc-sn",
+        "svc-sn-1",
+        "svc-sn-2"
+      ],
+      "metadata": {
+        "description": "Names of additional subnets to create for application integration"
+      }
+    },
+    "platformGlobalIdentifier": {
+      "type": "string",
+      "defaultValue": "s141"
+    },
+    "environmentId": {
+      "type": "string",
+      "allowedValues": [
+        "d01",
+        "t01",
+        "t02",
+        "t03",
+        "p01",
+        "p02"
+      ]
+    },
+    "platformGlobalName": {
+      "type": "string",
+      "defaultValue": "signin"
+    },
+    "applicationName": {
+      "type": "string",
+      "defaultValue": "shd"
+    },
+    "serviceEndpointList": {
+      "type": "array",
+      "defaultValue": [
+        "Microsoft.Web",
+        "Microsoft.Sql",
+        "Microsoft.Storage",
+        "Microsoft.KeyVault",
+        "Microsoft.ServiceBus"
+      ],
+      "allowedValues": [
+        "Microsoft.Web",
+        "Microsoft.Sql",
+        "Microsoft.Storage",
+        "Microsoft.KeyVault",
+        "Microsoft.ServiceBus"
+      ]
+    },
+    "serviceBusSku": {
+      "type": "string",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ],
+      "defaultValue": "Premium",
+      "metadata": {
+        "description": "The messaging tier for service Bus namespace"
+      }
+    },
+    "deployRedisCachePrivateEndpoint": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Whether to deploy a private endpoint to the Redis Cache instance"
+      }
+    },
+    "deployServiceBus": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Whether to deploy the shared Service Bus resource"
+      }
+    },
+    "deployVirtualNetwork": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Whether to deploy the virtual network template which includes the defined subnets"
+      }
+    },
+    "sqlFirewallRulesCopyMode": {
+      "type": "string",
+      "defaultValue": "Parallel",
+      "allowedValues": [
+        "Parallel",
+        "Serial"
+      ],
+      "metadata": {
+        "description": "Mode to use in the SQL firewall rule copy function. Using Serial for the initial deployment can help eliminate conflicts."
+      }
     }
   },
   "variables": {
-    "redisTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/redis-cache.json')]",
-    "appServicePlanTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-plan.json')]",
-    "azureSQLTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-sql.json')]",
-    "databaseTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/database.json')]",
-    "appInsightsTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/app-insights.json')]",
-    "storageAccountTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/storage-account.json')]",
-    "keyVaultTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/key-vault.json')]",
-    "azureSearchTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-search.json')]",
-    "azureCdnTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn.json')]",
-    "azureCdnEndpointTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn-endpoint.json')]",
-    "certificateTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-certificate.json')]",
+    "resourceNamePrefix": "[concat(toLower(parameters('platformGlobalIdentifier')), toLower(parameters('environmentId')),'-', toLower(parameters('platformGlobalName')),'-', toLower(parameters('applicationName')))]",
+    "appInsightsName": "[concat(variables('resourceNamePrefix'),'-ai')]",
+    "redisCacheName": "[concat(variables('resourceNamePrefix'),'-rc')]",
+    "sqlServerName": "[concat(variables('resourceNamePrefix'),'-sql')]",
+    "elasticPoolName": "[concat(variables('resourceNamePrefix'),'-ep')]",
+    "storageAccountName": "[concat(replace(variables('resourceNamePrefix'),'-',''),'str')]",
+    "keyVaultName": "[concat(variables('resourceNamePrefix'),'-kv')]",
+    "azureSearchName": "[concat(variables('resourceNamePrefix'),'-azs')]",
+    "azureCdnName": "[concat(variables('resourceNamePrefix'),'-cdn')]",
+    "virtualNetworkName": "[concat(variables('resourceNamePrefix'),'-vnet')]",
+    "serviceBusNamespaceName": "[concat(variables('resourceNamePrefix'),'-sbn')]",
+    "serviceBusApiVersion": "2017-04-01",
+    "redisSubnetName": "redis-sn-1",
     "elasticSku": {
       "name": "ElasticPool",
       "tier": "Standard"
+    },
+    "emptyArray": [],
+    "redisCachePrivateEndpoint": {
+      "privateDnsZoneName": "privatelink.redis.cache.windows.net",
+      "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+      "privateEndpointName": "[concat(parameters('redisCacheName'),'-', variables('redisSubnetName'), '-pe')]",
+      "privateLinkResource": "[resourceId('Microsoft.Cache/Redis', parameters('redisCacheName'))]",
+      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('redisSubnetName'))]"
     },
     "keyVaultAccessPolicies": [
       {
@@ -319,13 +466,13 @@
   "resources": [
     {
       "condition": "[greater(length(parameters('frontEndAppServicePlanName')), 0)]",
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2020-10-01",
       "name": "[concat('front-end-app-service-plan','-',parameters('frontEndAppServicePlanSku')[copyIndex()].id)]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('appServicePlanTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-plan.json')]"
         },
         "parameters": {
           "appServicePlanName": {
@@ -350,13 +497,13 @@
     },
     {
       "condition": "[greater(length(parameters('backEndAppServicePlanName')), 0)]",
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2020-10-01",
       "name": "[concat('back-end-app-service-plan','-',parameters('backEndAppServicePlanSku')[copyIndex()].id)]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('appServicePlanTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-plan.json')]"
         },
         "parameters": {
           "appServicePlanName": {
@@ -381,13 +528,13 @@
     },
     {
       "condition": "[greater(length(parameters('workerAppServicePlanName')), 0)]",
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2020-10-01",
       "name": "[concat('worker-app-service-plan','-',parameters('workerAppServicePlanSku')[copyIndex()].id)]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('appServicePlanTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-plan.json')]"
         },
         "parameters": {
           "appServicePlanName": {
@@ -411,13 +558,13 @@
       }
     },
     {
-      "apiVersion": "2019-07-01",
-      "name": "RedisCache",
+      "apiVersion": "2020-10-01",
+      "name": "redis-cache",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('redisTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/redis-cache.json')]"
         },
         "parameters": {
           "redisCacheName": {
@@ -430,13 +577,55 @@
       }
     },
     {
-      "name": "SQLServer",
+      "condition": "[parameters('deployRedisCachePrivateEndpoint')]",
+      "apiVersion": "2020-10-01",
+      "name": "redis-cache-private-endpoint",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2014-04-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('azureSQLTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/redis-cache-private-endpoint.json')]"
+        },
+        "parameters": {
+          "templatesBaseUri": {
+            "value": "[parameters('templatesBaseUri')]"
+          },
+          "privateEndpointName": {
+            "value": "[variables('redisCachePrivateEndpoint').privateEndpointName]"
+          },
+          "privateLinkResource": {
+            "value": "[variables('redisCachePrivateEndpoint').privateLinkResource]"
+          },
+          "privateEndpointSubnetId": {
+            "value": "[variables('redisCachePrivateEndpoint').privateEndpointSubnetId]"
+          },
+          "privateDnsZoneName": {
+            "value": "[variables('redisCachePrivateEndpoint').privateDnsZoneName]"
+          },
+          "virtualNetworkId": {
+            "value": "[variables('redisCachePrivateEndpoint').virtualNetworkId]"
+          },
+          "redisCacheName": {
+            "value": "[parameters('redisCacheName')]"
+          },
+          "redisCacheSku": {
+            "value": "[parameters('redisCacheSku')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'redis-cache')]",
+        "[resourceId('Microsoft.Resources/deployments', 'virtual-network')]"
+      ]
+    },
+    {
+      "name": "sql-server",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-sql.json')]"
         },
         "parameters": {
           "sqlAdministratorLogin": {
@@ -445,8 +634,8 @@
           "sqlAdministratorLoginPassword": {
             "value": "[parameters('sqlAdministratorLoginPassword')]"
           },
-          "sqlserverName": {
-            "value": "[parameters('sqlserverName')]"
+          "sqlServerName": {
+            "value": "[parameters('sqlServerName')]"
           },
           "elasticPoolName": {
             "value": "[parameters('elasticPoolName')]"
@@ -461,13 +650,41 @@
       }
     },
     {
-      "name": "[parameters('databaseNames')[copyIndex()].name]",
+      "condition": "[parameters('deployVirtualNetwork')]",
+      "apiVersion": "2020-10-01",
+      "name": "sql-server-firewall-rule",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2014-04-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('databaseTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/sql-server-firewall-rules.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "serverName": {
+            "value": "[parameters('sqlServerName')]"
+          },
+          "subnetResourceIdList": {
+            "value": "[if(parameters('deployVirtualNetwork'), reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value, variables('emptyArray'))]"
+          },
+          "copyMode": {
+            "value": "[parameters('sqlFirewallRulesCopyMode')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]"
+      ]
+    },
+    {
+      "condition": "[not(empty(parameters('databaseNames')))]",
+      "name": "[if(empty(parameters('databaseNames')),'no-databases-to-deploy',parameters('databaseNames')[copyIndex()].name)]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/database.json')]"
         },
         "parameters": {
           "databaseName": {
@@ -476,8 +693,8 @@
           "transparentDataEncryption": {
             "value": "[parameters('transparentDataEncryption')]"
           },
-          "sqlserverName": {
-            "value": "[parameters('sqlserverName')]"
+          "sqlServerName": {
+            "value": "[parameters('sqlServerName')]"
           },
           "elasticPoolName": {
             "value": "[parameters('elasticPoolName')]"
@@ -496,17 +713,17 @@
         "mode": "Parallel"
       },
       "dependsOn": [
-        "SQLServer"
+        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]"
       ]
     },
     {
-      "name": "AppInsights",
+      "name": "app-insights",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2014-04-01",
+      "apiVersion": "2020-10-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('appInsightsTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/app-insights.json')]"
         },
         "parameters": {
           "appInsightsName": {
@@ -517,30 +734,29 @@
       "dependsOn": []
     },
     {
-      "name": "StorageAccount",
+      "name": "storage-account",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2014-04-01",
+      "apiVersion": "2020-10-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('storageAccountTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/storage-account.json')]"
         },
         "parameters": {
           "storageAccountName": {
             "value": "[parameters('storageAccountName')]"
           }
         }
-      },
-      "dependsOn": []
+      }
     },
     {
-      "name": "KeyVault",
+      "name": "key-vault",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2014-04-01",
+      "apiVersion": "2020-10-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('keyVaultTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/key-vault.json')]"
         },
         "parameters": {
           "keyVaultName": {
@@ -550,50 +766,51 @@
             "value": "[variables('keyVaultAccessPolicies')]"
           }
         }
-      },
-      "dependsOn": []
+      }
     },
     {
-      "name": "AzureSearch",
+      "name": "azure-search",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2014-04-01",
+      "apiVersion": "2020-10-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('azureSearchTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-search.json')]"
         },
         "parameters": {
           "azureSearchName": {
             "value": "[parameters('azureSearchName')]"
           }
         }
-      },
-      "dependsOn": []
+      }
     },
     {
-      "name": "AzureCDN",
+      "name": "azure-cdn",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2014-04-01",
+      "apiVersion": "2020-10-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('azureCdnTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn.json')]"
         },
         "parameters": {
           "cdnProfileName": {
             "value": "[parameters('azureCdnName')]"
+          },
+          "azureCdnSku": {
+            "value": "[parameters('azureCdnSku')]"
           }
         }
       }
     },
     {
-      "name": "AzureCDNEndpoint",
+      "name": "azure-cdn-endpoint",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2019-03-01",
+      "apiVersion": "2020-10-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('azureCdnEndpointTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn-endpoint.json')]"
         },
         "parameters": {
           "cdnEndpointName": {
@@ -614,19 +831,19 @@
         }
       },
       "dependsOn": [
-        "StorageAccount",
-        "AzureCDN"
+        "[resourceId('Microsoft.Resources/deployments', 'storage-account')]",
+        "[resourceId('Microsoft.Resources/deployments', 'azure-cdn')]"
       ]
     },
     {
       "condition": "[greater(length(parameters('keyvaultCertificateNames')), 0)]",
-      "name": "[concat('AppServiceCertificates', copyIndex())]",
+      "name": "[concat('app-service-certificates', copyIndex())]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2014-04-01",
+      "apiVersion": "2020-10-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('certificateTemplateUri')]"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-certificate.json')]"
         },
         "parameters": {
           "keyVaultCertificateName": {
@@ -645,7 +862,137 @@
         "count": "[length(parameters('keyvaultCertificateNames'))]"
       },
       "dependsOn": [
-        "KeyVault"
+        "[resourceId('Microsoft.Resources/deployments', 'key-vault')]"
+      ]
+    },
+    {
+      "condition": "[parameters('deployVirtualNetwork')]",
+      "apiVersion": "2020-10-01",
+      "name": "virtual-network",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/network.template.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "templatesBaseUri": {
+            "value": "[parameters('templatesBaseUri')]"
+          },
+          "virtualNetworkName": {
+            "value": "[variables('virtualNetworkName')]"
+          },
+          "destructiveVirtualNetworkDeploy": {
+            "value": "[parameters('destructiveVirtualNetworkDeploy')]"
+          },
+          "redisSubnet": {
+            "value": "[array(variables('redisSubnetName'))]"
+          },
+          "applicationSubnets": {
+            "value": "[parameters('applicationSubnets')]"
+          },
+          "serviceEndpointList": {
+            "value": "[parameters('serviceEndpointList')]"
+          }
+        }
+      }
+    },
+    {
+      "condition": "[parameters('deployVirtualNetwork')]",
+      "apiVersion": "2020-10-01",
+      "name": "get-subnet-resourceid-list",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'utilities/getSubnetResourceIdList.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "virtualNetworkName": {
+            "value": "[variables('virtualNetworkName')]"
+          },
+          "subnetConfiguration": {
+            "value": "[if(parameters('deployVirtualNetwork'), reference('virtual-network').outputs.applicationSubnetConfiguration.value, variables('emptyArray'))]"
+          }
+        }
+      }
+    },
+    {
+      "condition": "[parameters('deployServiceBus')]",
+      "apiVersion": "2020-10-01",
+      "name": "service-bus",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/service-bus.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "serviceBusNamespaceName": {
+            "value": "[variables('serviceBusNamespaceName')]"
+          },
+          "serviceBusSku": {
+            "value": "[parameters('serviceBusSku')]"
+          }
+        }
+      }
+    },
+    {
+      "condition": "[parameters('deployServiceBus')]",
+      "apiVersion": "2020-10-01",
+      "name": "service-bus-key-vault-secret",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/key-vault-secret.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "sharedServiceBusConnectionString"
+          },
+          "secretValue": {
+            "value": "[if(parameters('deployServiceBus'), listkeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespaceName'), 'RootManageSharedAccessKey'), variables('serviceBusApiVersion')).primaryConnectionString, '')]"
+          },
+          "contentType": {
+            "value": "Shared service bus connection string"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments','service-bus')]",
+        "[resourceId('Microsoft.Resources/deployments','key-vault')]"
+      ]
+    },
+    {
+      "condition": "[and(parameters('deployVirtualNetwork'), parameters('deployServiceBus'))]",
+      "apiVersion": "2020-10-01",
+      "name": "service-bus-firewall-rule",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/service-bus-network-rules.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "serviceBusNamespaceName": {
+            "value": "[variables('serviceBusNamespaceName')]"
+          },
+          "subnetResourceIdList": {
+            "value": "[if(parameters('deployVirtualNetwork'), reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value, variables('emptyArray'))]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'service-bus')]"
       ]
     }
   ],
