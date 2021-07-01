@@ -85,6 +85,13 @@
           "metadata": {
             "description": "Resource ID of the subnet used for vNet integration"
           }
+        },
+        "enablePrivateEndpointSupport": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Add app settings to support virtual network private endpoints"
+            }
         }
     },
     "variables": {
@@ -99,10 +106,22 @@
                 "value": "[parameters('appServiceConfigPath')]"
             }
         ],
+        "privateEndpointAppSettings": [
+          {
+            "name": "WEBSITE_DNS_SERVER",
+            "value": "168.63.129.16"
+          },
+          {
+            "name": "WEBSITE_VNET_ROUTE_ALL",
+            "value": 1
+          }
+        ],
+        "addPrivateEndPointAppSettings": "[and(parameters('enablePrivateEndpointSupport'), not(empty(parameters('subnetResourceId'))))]",
+        "appSettings": "[if(variables('addPrivateEndPointAppSettings'), union(variables('appServiceSettings'), variables('privateEndpointAppSettings')), variables('appServiceSettings'))]",
         "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
         "siteConfigSettings": {
           "withAppServiceSettings": {
-            "appSettings": "[variables('appServiceSettings')]",
+            "appSettings": "[variables('appSettings')]",
             "alwaysOn": true,
             "minTlsVersion": "[parameters('minTlsVersion')]",
             "numberOfWorkers": "[parameters('numberOfWorkers')]",
