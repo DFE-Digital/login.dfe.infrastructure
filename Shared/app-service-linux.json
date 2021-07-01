@@ -101,7 +101,7 @@
         },
         {
           "type": "Microsoft.Web/sites/config",
-          "condition": "[greater(length(parameters('subnetResourceId')), 0)]",
+          "condition": "[not(empty(parameters('subnetResourceId')))]",
           "name": "[concat(parameters('appServiceName'), '/virtualNetwork')]",
           "apiVersion": "2018-11-01",
           "location": "[resourceGroup().location]",
@@ -111,6 +111,20 @@
           },
           "dependsOn": [
             "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
+          ]
+        },
+        {
+          "type": "Microsoft.Web/sites/slots/config",
+          "condition": "[not(empty(parameters('subnetResourceId')))]",
+          "name": "[concat(parameters('appServiceName'), '/staging/virtualNetwork')]",
+          "apiVersion": "2018-11-01",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "subnetResourceId": "[parameters('subnetResourceId')]",
+            "swiftSupported": true
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites/slots', parameters('appServiceName'), 'staging')]"
           ]
         }
     ]
