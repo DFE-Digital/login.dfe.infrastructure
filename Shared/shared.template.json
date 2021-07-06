@@ -968,7 +968,8 @@
       },
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments','service-bus')]",
-        "[resourceId('Microsoft.Resources/deployments','key-vault')]"
+        "[resourceId('Microsoft.Resources/deployments','key-vault')]",
+        "[resourceId('Microsoft.Resources/deployments','service-bus-firewall-rule')]"
       ]
     },
     {
