@@ -961,7 +961,7 @@
           "secretName": {
             "value": "sharedServiceBusConnectionString"
           },
-          "resourceId": {
+          "secretResourceId": {
             "value": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespaceName'), 'RootManageSharedAccessKey')]"
           },
           "contentType": {
@@ -981,7 +981,7 @@
             "secretName": {
               "type": "string"
             },
-            "resourceId": {
+            "secretResourceId": {
               "type": "string"
             },
             "contentType": {
@@ -1011,7 +1011,7 @@
                     "value": "[parameters('secretName')]"
                   },
                   "secretValue": {
-                    "value": "[listkeys(parameters('resourceId'), '2017-04-01').primaryConnectionString]"
+                    "value": "[listkeys(parameters('secretResourceId'), '2017-04-01').primaryConnectionString]"
                   },
                   "contentType": {
                     "value": "[parameters('contentType')]"
