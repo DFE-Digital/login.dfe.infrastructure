@@ -90,7 +90,7 @@
             "type": "bool",
             "defaultValue": false,
             "metadata": {
-                "description": "Add app settings to support virtual network private endpoints"
+                "description": "Sends traffic via the vnet and enables support virtual network private endpoints"
             }
         }
     },
@@ -106,32 +106,22 @@
                 "value": "[parameters('appServiceConfigPath')]"
             }
         ],
-        "privateEndpointAppSettings": [
-          {
-            "name": "WEBSITE_DNS_SERVER",
-            "value": "168.63.129.16"
-          },
-          {
-            "name": "WEBSITE_VNET_ROUTE_ALL",
-            "value": 1
-          }
-        ],
-        "addPrivateEndPointAppSettings": "[and(parameters('enablePrivateEndpointSupport'), not(empty(parameters('subnetResourceId'))))]",
-        "appSettings": "[if(variables('addPrivateEndPointAppSettings'), union(variables('appServiceSettings'), variables('privateEndpointAppSettings')), variables('appServiceSettings'))]",
         "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
         "siteConfigSettings": {
           "withAppServiceSettings": {
-            "appSettings": "[variables('appSettings')]",
+            "appSettings": "[variables('appServiceSettings')]",
             "alwaysOn": true,
             "minTlsVersion": "[parameters('minTlsVersion')]",
             "numberOfWorkers": "[parameters('numberOfWorkers')]",
-            "healthCheckPath": "[parameters('healthCheckPath')]"
+            "healthCheckPath": "[parameters('healthCheckPath')]",
+            "vnetRouteAllEnabled": "[parameters('enablePrivateEndpointSupport')]"
           },
           "withoutAppServiceSettings": {
             "alwaysOn": true,
             "minTlsVersion": "[parameters('minTlsVersion')]",
             "numberOfWorkers": "[parameters('numberOfWorkers')]",
-            "healthCheckPath": "[parameters('healthCheckPath')]"
+            "healthCheckPath": "[parameters('healthCheckPath')]",
+            "vnetRouteAllEnabled": "[parameters('enablePrivateEndpointSupport')]"
           }
         },
         "baseAppSettings": {},
@@ -141,7 +131,7 @@
         {
             "type": "Microsoft.Web/sites",
             "name": "[parameters('appServiceName')]",
-            "apiVersion": "2016-08-01",
+            "apiVersion": "2020-06-01",
             "location": "[resourceGroup().location]",
             "properties": {
                 "combinedAppSettings": "[variables('combinedAppSettings')]",
@@ -155,7 +145,7 @@
                     "condition": "[parameters('includeDeploymentSlot')]",
                     "name": "staging",
                     "type": "slots",
-                    "apiVersion": "2016-08-01",
+                    "apiVersion": "2020-06-01",
                     "location": "[resourceGroup().location]",
                     "properties": {
                         "serverFarmId": "[variables('appServicePlanId')]",
