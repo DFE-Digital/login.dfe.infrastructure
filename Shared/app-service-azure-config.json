@@ -103,24 +103,21 @@
             "settings": "[parameters('appServiceConfigPath')]"
         },
         "combinedAppSettings": "[union(variables('baseAppSettings'), parameters('additionalAppSettings'))]",
-        "privateEndpointAppSettings": {
-            "WEBSITE_DNS_SERVER": "168.63.129.16",
-            "WEBSITE_VNET_ROUTE_ALL": 1
-        },
-        "privateEndpointEnabledAppSettings": "[union(variables('baseAppSettings'), parameters('additionalAppSettings'), variables('privateEndpointAppSettings'))]",
-        "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]"
+        "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
+        "vnetRouteAllEnabled": "[parameters('enablePrivateEndpointSupport')]"
     },
     "resources": [
         {
             "type": "Microsoft.Web/sites",
             "name": "[parameters('appServiceName')]",
-            "apiVersion": "2016-08-01",
+            "apiVersion": "2020-06-01",
             "location": "[resourceGroup().location]",
             "properties": {
                 "serverFarmId": "[variables('resourceIds').appServicePlanId]",
                 "clientAffinityEnabled": false,
                 "httpsOnly": true,
                 "siteConfig": {
+                    "vnetRouteAllEnabled": "[variables('vnetRouteAllEnabled')]",
                     "alwaysOn": true,
                     "minTlsVersion": "[parameters('minTlsVersion')]",
                     "numberOfWorkers": "[parameters('numberOfWorkers')]",
@@ -132,13 +129,14 @@
                     "condition": "[parameters('includeDeploymentSlot')]",
                     "name": "staging",
                     "type": "slots",
-                    "apiVersion": "2016-08-01",
+                    "apiVersion": "2020-06-01",
                     "location": "[resourceGroup().location]",
                     "properties": {
                         "serverFarmId": "[variables('resourceIds').appServicePlanId]",
                         "clientAffinityEnabled": false,
                         "httpsOnly": true,
                         "siteConfig": {
+                            "vnetRouteAllEnabled": "[variables('vnetRouteAllEnabled')]",
                             "alwaysOn": true,
                             "minTlsVersion": "[parameters('minTlsVersion')]",
                             "numberOfWorkers": "[parameters('numberOfWorkers')]",
@@ -153,7 +151,7 @@
                             "dependsOn": [
                                 "[resourceId('Microsoft.Web/sites/slots/', parameters('appServiceName'), 'Staging')]"
                             ],
-                            "properties": "[if(parameters('enablePrivateEndpointSupport'), variables('privateEndpointEnabledAppSettings'), variables('combinedAppSettings'))]"
+                            "properties": "[variables('combinedAppSettings')]"
                         }
                     ],
                     "dependsOn": [
