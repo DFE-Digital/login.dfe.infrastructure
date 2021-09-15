@@ -162,6 +162,13 @@
           "metadata": {
             "description": "Resource ID of the subnet used for vNet integration"
           }
+        },
+        "vnetRouteAllEnabled": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Sends traffic via the vnet and enables support virtual network private endpoints"
+            }
         }
     },
     "variables": {
@@ -180,7 +187,7 @@
         {
             "type": "Microsoft.Web/sites",
             "name": "[parameters('appServiceName')]",
-            "apiVersion": "2016-08-01",
+            "apiVersion": "2020-06-01",
             "location": "[resourceGroup().location]",
             "properties": {
                 "serverFarmId": "[variables('resourceIds').appServicePlanId]",
@@ -189,7 +196,8 @@
                 "siteConfig": {
                     "alwaysOn": true,
                     "minTlsVersion": "[parameters('minTlsVersion')]",
-                    "numberOfWorkers": "[parameters('numberOfWorkers')]"
+                    "numberOfWorkers": "[parameters('numberOfWorkers')]",
+                    "vnetRouteAllEnabled": "[parameters('vnetRouteAllEnabled')]"
                 }
             },
             "resources": [
@@ -197,7 +205,7 @@
                     "condition": "[parameters('includeDeploymentSlot')]",
                     "name": "staging",
                     "type": "slots",
-                    "apiVersion": "2016-08-01",
+                    "apiVersion": "2020-06-01",
                     "location": "[resourceGroup().location]",
                     "properties": {
                         "serverFarmId": "[variables('resourceIds').appServicePlanId]",
@@ -206,7 +214,8 @@
                         "siteConfig": {
                             "alwaysOn": true,
                             "minTlsVersion": "[parameters('minTlsVersion')]",
-                            "numberOfWorkers": "[parameters('numberOfWorkers')]"
+                            "numberOfWorkers": "[parameters('numberOfWorkers')]",
+                            "vnetRouteAllEnabled": "[parameters('vnetRouteAllEnabled')]"
                         }
                     },
                     "resources": [

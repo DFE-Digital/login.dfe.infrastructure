@@ -67,6 +67,7 @@
         },
         "additionalAppSettings": {
             "type": "object",
+            "defaultValue": {},
             "metadata": {
                 "description": "Key/Value pair set of any azure config variables to be deployed with the slot"
             }
@@ -89,7 +90,7 @@
             "type": "bool",
             "defaultValue": false,
             "metadata": {
-                "description": "Add app settings to support virtual network private endpoints"
+                "description": "Sends traffic via the vnet and enables support virtual network private endpoints"
             }
         }
     },
@@ -103,8 +104,7 @@
             "settings": "[parameters('appServiceConfigPath')]"
         },
         "combinedAppSettings": "[union(variables('baseAppSettings'), parameters('additionalAppSettings'))]",
-        "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
-        "vnetRouteAllEnabled": "[parameters('enablePrivateEndpointSupport')]"
+        "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]"
     },
     "resources": [
         {
@@ -117,7 +117,7 @@
                 "clientAffinityEnabled": false,
                 "httpsOnly": true,
                 "siteConfig": {
-                    "vnetRouteAllEnabled": "[variables('vnetRouteAllEnabled')]",
+                    "vnetRouteAllEnabled": "[parameters('enablePrivateEndpointSupport')]",
                     "alwaysOn": true,
                     "minTlsVersion": "[parameters('minTlsVersion')]",
                     "numberOfWorkers": "[parameters('numberOfWorkers')]",
@@ -136,7 +136,7 @@
                         "clientAffinityEnabled": false,
                         "httpsOnly": true,
                         "siteConfig": {
-                            "vnetRouteAllEnabled": "[variables('vnetRouteAllEnabled')]",
+                            "vnetRouteAllEnabled": "[parameters('enablePrivateEndpointSupport')]",
                             "alwaysOn": true,
                             "minTlsVersion": "[parameters('minTlsVersion')]",
                             "numberOfWorkers": "[parameters('numberOfWorkers')]",

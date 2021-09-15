@@ -43,6 +43,13 @@
           "metadata": {
             "description": "Resource ID of the subnet used for vNet integration"
           }
+        },
+        "vnetRouteAllEnabled": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Sends traffic via the vnet and enables support virtual network private endpoints"
+            }
         }
     },
     "variables": {
@@ -54,7 +61,7 @@
             "type": "Microsoft.Web/sites",
             "name": "[parameters('appServiceName')]",
             "kind": "app,linux,container",
-            "apiVersion": "2016-08-01",
+            "apiVersion": "2020-06-01",
             "location": "[resourceGroup().location]",
             "properties": {
                 "clientAffinityEnabled": false,
@@ -62,21 +69,23 @@
                 "serverFarmId": "[variables('appServicePlanId')]",
                 "siteConfig": {
                     "alwaysOn": true,
-                    "linuxFxVersion": "[parameters('runtimeStack')]"
+                    "linuxFxVersion": "[parameters('runtimeStack')]",
+                    "vnetRouteAllEnabled": "[parameters('vnetRouteAllEnabled')]"
                 }
             },
             "resources": [
                 {
                     "name": "staging",
                     "type": "slots",
-                    "apiVersion": "2016-08-01",
+                    "apiVersion": "2020-06-01",
                     "location": "[resourceGroup().location]",
                     "properties": {
                         "clientAffinityEnabled": false,
                         "serverFarmId": "[variables('appServicePlanId')]",
                         "siteConfig": {
                             "alwaysOn": false,
-                            "linuxFxVersion": "[parameters('runtimeStack')]"
+                            "linuxFxVersion": "[parameters('runtimeStack')]",
+                            "vnetRouteAllEnabled": "[parameters('vnetRouteAllEnabled')]"
                         }
                     },
                     "dependsOn": [
