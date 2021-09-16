@@ -90,7 +90,14 @@
             "type": "bool",
             "defaultValue": false,
             "metadata": {
-                "description": "Sends traffic via the vnet and enables support virtual network private endpoints"
+                "description": "Sends traffic via the vnet and enables support virtual network private endpoints. Delete when OIDC and Interactions use vnetRouteAllEnabled param"
+            }
+        },
+        "vnetRouteAllEnabled": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Sends traffic via the vnet and enables support for virtual network private endpoints"
             }
         }
     },
@@ -114,18 +121,19 @@
             "minTlsVersion": "[parameters('minTlsVersion')]",
             "numberOfWorkers": "[parameters('numberOfWorkers')]",
             "healthCheckPath": "[parameters('healthCheckPath')]",
-            "vnetRouteAllEnabled": "[parameters('enablePrivateEndpointSupport')]"
+            "vnetRouteAllEnabled": "[variables('vnetRouteAllEnabled')]"
           },
           "withoutAppServiceSettings": {
             "alwaysOn": true,
             "minTlsVersion": "[parameters('minTlsVersion')]",
             "numberOfWorkers": "[parameters('numberOfWorkers')]",
             "healthCheckPath": "[parameters('healthCheckPath')]",
-            "vnetRouteAllEnabled": "[parameters('enablePrivateEndpointSupport')]"
+            "vnetRouteAllEnabled": "[variables('vnetRouteAllEnabled')]"
           }
         },
         "baseAppSettings": {},
-        "combinedAppSettings": "[union(variables('baseAppSettings'), parameters('additionalAppSettings'))]"
+        "combinedAppSettings": "[union(variables('baseAppSettings'), parameters('additionalAppSettings'))]",
+        "vnetRouteAllEnabled": "[or(parameters('enablePrivateEndpointSupport'), parameters('vnetRouteAllEnabled'))]"
     },
     "resources": [
         {

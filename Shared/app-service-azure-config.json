@@ -90,7 +90,14 @@
             "type": "bool",
             "defaultValue": false,
             "metadata": {
-                "description": "Sends traffic via the vnet and enables support virtual network private endpoints"
+                "description": "Sends traffic via the vnet and enables support virtual network private endpoints. Delete when OIDC and Interactions use vnetRouteAllEnabled param"
+            }
+        },
+        "vnetRouteAllEnabled": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Sends traffic via the vnet and enables support for virtual network private endpoints"
             }
         }
     },
@@ -104,7 +111,8 @@
             "settings": "[parameters('appServiceConfigPath')]"
         },
         "combinedAppSettings": "[union(variables('baseAppSettings'), parameters('additionalAppSettings'))]",
-        "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]"
+        "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
+        "vnetRouteAllEnabled": "[or(parameters('enablePrivateEndpointSupport'), parameters('vnetRouteAllEnabled'))]"
     },
     "resources": [
         {
@@ -117,7 +125,7 @@
                 "clientAffinityEnabled": false,
                 "httpsOnly": true,
                 "siteConfig": {
-                    "vnetRouteAllEnabled": "[parameters('enablePrivateEndpointSupport')]",
+                    "vnetRouteAllEnabled": "[variables('vnetRouteAllEnabled')]",
                     "alwaysOn": true,
                     "minTlsVersion": "[parameters('minTlsVersion')]",
                     "numberOfWorkers": "[parameters('numberOfWorkers')]",
@@ -136,7 +144,7 @@
                         "clientAffinityEnabled": false,
                         "httpsOnly": true,
                         "siteConfig": {
-                            "vnetRouteAllEnabled": "[parameters('enablePrivateEndpointSupport')]",
+                            "vnetRouteAllEnabled": "[variables('vnetRouteAllEnabled')]",
                             "alwaysOn": true,
                             "minTlsVersion": "[parameters('minTlsVersion')]",
                             "numberOfWorkers": "[parameters('numberOfWorkers')]",
