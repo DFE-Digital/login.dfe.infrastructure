@@ -167,7 +167,7 @@
             "type": "bool",
             "defaultValue": false,
             "metadata": {
-                "description": "Sends traffic via the vnet and enables support virtual network private endpoints"
+                "description": "Sends traffic via the vnet and enables support for virtual network private endpoints"
             }
         }
     },
