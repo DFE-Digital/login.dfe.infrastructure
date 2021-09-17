@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "appServiceName": {
@@ -46,6 +46,13 @@
           "metadata": {
             "description": "Resource ID of the subnet used for vNet integration"
           }
+        },
+        "vnetRouteAllEnabled": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Sends traffic via the vnet and enables support for virtual network private endpoints"
+            }
         }
     },
     "variables": {
@@ -57,7 +64,7 @@
             "type": "Microsoft.Web/sites",
             "name": "[parameters('appServiceName')]",
             "kind": "app,linux,container",
-            "apiVersion": "2018-02-01",
+            "apiVersion": "2020-06-01",
             "location": "[resourceGroup().location]",
             "properties": {
                 "clientAffinityEnabled": false,
@@ -65,14 +72,15 @@
                 "serverFarmId": "[variables('appServicePlanId')]",
                 "siteConfig": {
                     "alwaysOn": true,
-                    "linuxFxVersion": "[parameters('runtimeStack')]"
+                    "linuxFxVersion": "[parameters('runtimeStack')]",
+                    "vnetRouteAllEnabled": "[parameters('vnetRouteAllEnabled')]"
                 }
             },
             "resources": [
                 {
                     "name": "staging",
                     "type": "slots",
-                    "apiVersion": "2018-02-01",
+                    "apiVersion": "2020-06-01",
                     "location": "[resourceGroup().location]",
                     "properties": {
                         "clientAffinityEnabled": false,
@@ -80,7 +88,8 @@
                         "siteConfig": {
                             "alwaysOn": false,
                             "linuxFxVersion": "[parameters('runtimeStack')]",
-                            "nodeVersion": "[parameters('nodeVersion')]"
+                            "nodeVersion": "[parameters('nodeVersion')]",
+                            "vnetRouteAllEnabled": "[parameters('vnetRouteAllEnabled')]"
                         }
                     },
                     "dependsOn": [
