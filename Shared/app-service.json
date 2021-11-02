@@ -99,15 +99,23 @@
             "metadata": {
                 "description": "Sends traffic via the vnet and enables support for virtual network private endpoints"
             }
+        },
+        "runtimeStack": {
+            "type": "string",
+            "defaultValue": "NODE|12.9",
+            "allowedValues": [
+              "NODE|12.9",
+              "NODE|12-lts",
+              "NODE|14-lts"
+            ],
+            "metadata": {
+                "description": "The name of the runtime stack for the container e.g. NODE|12-lts"
+            }
         }
     },
     "variables": {
         "appServicePlanId": "[resourceId(parameters('appServicePlanRG'),'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
         "appServiceSettings": [
-            {
-                "name": "WEBSITE_NODE_DEFAULT_VERSION",
-                "value": "[parameters('nodeVersion')]"
-            },
             {
                 "name": "settings",
                 "value": "[parameters('appServiceConfigPath')]"
@@ -121,7 +129,8 @@
             "minTlsVersion": "[parameters('minTlsVersion')]",
             "numberOfWorkers": "[parameters('numberOfWorkers')]",
             "healthCheckPath": "[parameters('healthCheckPath')]",
-            "vnetRouteAllEnabled": "[variables('vnetRouteAllEnabled')]"
+            "vnetRouteAllEnabled": "[variables('vnetRouteAllEnabled')]",
+            "linuxFxVersion": "[parameters('runtimeStack')]"
           },
           "withoutAppServiceSettings": {
             "alwaysOn": true,
