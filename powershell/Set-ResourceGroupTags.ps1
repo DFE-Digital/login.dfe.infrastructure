@@ -46,17 +46,21 @@ param(
     [ValidateSet("IDAMS")]
     [string]$ServiceLine,
     [Parameter(Mandatory=$true)]
-    [ValidateSet("DfE Sign-in"")]
+    [ValidateSet("DfE Sign-in")]
     [string]$ServiceOffering,
     [Parameter]
     [ValidateSet("Authentication Services")]
-    [string]$Service,
+    [string]$Service
 )
 
 $Tags = @{
     Environment = $Environment
     'Parent Business' = $ParentBusiness
+    'Portfolio' = $Portfolio
+    'Product' = $Product
+    'ServiceLine' = $ServiceLine
     'Service Offering' = $ServiceOffering
+    'Service' = $Service
 }
 
 Write-Verbose -Message "Attempting to retrieve existing resource group $ResourceGroupName"
