@@ -34,11 +34,23 @@ param(
     [ValidateSet("Prod", "Pre-Prod", "Dev", "Test", "Integration")]
     [string]$Environment,
     [Parameter(Mandatory=$true)]
-    [ValidateSet("Shared IT core services", "Shared IT core services (PP)")]
+    [ValidateSet("Shared IT core services")]
     [string]$ParentBusiness,
+    [Parameter]
+    [ValidateSet("Digital and Technology")]
+    [string]$Portfolio,
+    [Parameter]
+    [ValidateSet("DfE Sign-in")]
+    [string]$Product,
+    [Parameter]
+    [ValidateSet("IDAMS")]
+    [string]$ServiceLine,
     [Parameter(Mandatory=$true)]
-    [ValidateSet("DfE Sign-in", "DfE Sign-in (PP)")]
-    [string]$ServiceOffering
+    [ValidateSet("DfE Sign-in"")]
+    [string]$ServiceOffering,
+    [Parameter]
+    [ValidateSet("Authentication Services")]
+    [string]$Service,
 )
 
 $Tags = @{
