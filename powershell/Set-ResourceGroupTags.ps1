@@ -36,19 +36,19 @@ param(
     [Parameter(Mandatory=$true)]
     [ValidateSet("Shared IT core services")]
     [string]$ParentBusiness,
-    [Parameter]
+    [Parameter()]
     [ValidateSet("Digital and Technology")]
     [string]$Portfolio,
-    [Parameter]
+    [Parameter()]
     [ValidateSet("DfE Sign-in")]
     [string]$Product,
-    [Parameter]
+    [Parameter()]
     [ValidateSet("IDAMS")]
     [string]$ServiceLine,
     [Parameter(Mandatory=$true)]
     [ValidateSet("DfE Sign-in")]
     [string]$ServiceOffering,
-    [Parameter]
+    [Parameter()]
     [ValidateSet("Authentication Services")]
     [string]$Service
 )
