@@ -255,7 +255,7 @@
               },
               {
                 "name": "GF_INSTALL_PLUGINS",
-                "value": "grafana-piechart-panel, redis-datasource"
+                "value": ""
               },
               {
                 "name": "GF_AUTH_GITHUB_ENABLED",
