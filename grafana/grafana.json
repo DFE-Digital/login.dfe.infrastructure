@@ -254,10 +254,6 @@
                 "value": "/etc/ssl/certs/ca-certificates.crt"
               },
               {
-                "name": "GF_INSTALL_PLUGINS",
-                "value": ""
-              },
-              {
                 "name": "GF_AUTH_GITHUB_ENABLED",
                 "value": "[parameters('grafanaGitHubEnabled')]"
               },
