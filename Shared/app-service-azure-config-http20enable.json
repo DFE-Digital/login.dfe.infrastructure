@@ -1,0 +1,229 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appServiceName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the App Service"
+            }
+        },
+        "appServicePlanName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the App Service Plan"
+            }
+        },
+        "appServicePlanRG": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource Group where the ASP lives"
+            }
+        },
+        "nodeVersion": {
+            "type": "string",
+            "defaultValue": "8.9.4",
+            "metadata": {
+                "description": "The default NodeJS version that the App Service will run"
+            }
+        },
+        "appServiceConfigPath": {
+            "type": "string",
+            "metadata": {
+                "description": "JSON string containing app config"
+            }
+        },
+        "includeDeploymentSlot": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Whether or not to include a staging deployment slot"
+            }
+        },
+        "minTlsVersion": {
+            "type": "string",
+            "defaultValue": "1.2",
+            "metadata": {
+                "description": "The minimum tls version for the service"
+            }
+        },
+        "http20Enabled": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "HTTP version to 2.0"
+            }
+        },
+        "numberOfWorkers": {
+            "type": "int",
+            "defaultValue": 1,
+            "metadata": {
+                "description": "The number of workers to assign to the app service within the app service plan"
+            }
+        },
+        "customHostName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "certificateThumbprint": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "This can be passed into the template via the reference function: [reference(resourceId(parameters('certificateResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
+            }
+        },
+        "additionalAppSettings": {
+            "type": "object",
+            "defaultValue": {},
+            "metadata": {
+                "description": "Key/Value pair set of any azure config variables to be deployed with the slot"
+            }
+        },
+        "healthCheckPath": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "This can be used to specify the path for the Health Check. If set it as empty string it will disable the Health Check"
+            }
+        },
+        "subnetResourceId": {
+          "type": "string",
+          "defaultValue": "",
+          "metadata": {
+            "description": "Resource ID of the subnet used for vNet integration"
+          }
+        },
+        "enablePrivateEndpointSupport": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Sends traffic via the vnet and enables support virtual network private endpoints. Delete when OIDC and Interactions use vnetRouteAllEnabled param"
+            }
+        },
+        "vnetRouteAllEnabled": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Sends traffic via the vnet and enables support for virtual network private endpoints"
+            }
+        }
+    },
+    "variables": {
+        "resourceIds": {
+            "appServicePlanId": "[resourceId(parameters('appServicePlanRG'),'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+            "appServiceId": "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
+        },
+        "baseAppSettings": {
+            "WEBSITE_NODE_DEFAULT_VERSION": "[parameters('nodeVersion')]",
+            "settings": "[parameters('appServiceConfigPath')]"
+        },
+        "combinedAppSettings": "[union(variables('baseAppSettings'), parameters('additionalAppSettings'))]",
+        "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
+        "vnetRouteAllEnabled": "[or(parameters('enablePrivateEndpointSupport'), parameters('vnetRouteAllEnabled'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/sites",
+            "name": "[parameters('appServiceName')]",
+            "apiVersion": "2020-06-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "serverFarmId": "[variables('resourceIds').appServicePlanId]",
+                "clientAffinityEnabled": false,
+                "httpsOnly": true,
+                "siteConfig": {
+                    "vnetRouteAllEnabled": "[variables('vnetRouteAllEnabled')]",
+                    "alwaysOn": true,
+                    "minTlsVersion": "[parameters('minTlsVersion')]",
+                    "numberOfWorkers": "[parameters('numberOfWorkers')]",
+                    "healthCheckPath": "[parameters('healthCheckPath')]",
+                    "http20Enabled": "[parameters('http20Enabled')]"
+                }
+            },
+            "resources": [
+                {
+                    "condition": "[parameters('includeDeploymentSlot')]",
+                    "name": "staging",
+                    "type": "slots",
+                    "apiVersion": "2020-06-01",
+                    "location": "[resourceGroup().location]",
+                    "properties": {
+                        "serverFarmId": "[variables('resourceIds').appServicePlanId]",
+                        "clientAffinityEnabled": false,
+                        "httpsOnly": true,
+                        "siteConfig": {
+                            "vnetRouteAllEnabled": "[variables('vnetRouteAllEnabled')]",
+                            "alwaysOn": true,
+                            "minTlsVersion": "[parameters('minTlsVersion')]",
+                            "numberOfWorkers": "[parameters('numberOfWorkers')]",
+                            "healthCheckPath": "[parameters('healthCheckPath')]",
+                            "http20Enabled": "[parameters('http20Enabled')]"
+                        }
+                    },
+                    "resources": [
+                        {
+                            "apiVersion": "2015-08-01",
+                            "name": "appsettings",
+                            "type": "config",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Web/sites/slots/', parameters('appServiceName'), 'Staging')]"
+                            ],
+                            "properties": "[variables('combinedAppSettings')]"
+                        }
+                    ],
+                    "dependsOn": [
+                        "[parameters('appServiceName')]"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/hostnameBindings",
+            "condition": "[variables('useCustomHostname')]",
+            "name": "[concat(parameters('appServiceName'), '/', if(variables('useCustomHostname'), parameters('customHostname'), 'placeholder'))]",
+            "apiVersion": "2016-08-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "sslState": "SniEnabled",
+                "thumbprint": "[parameters('certificateThumbprint')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
+            ]
+        },
+        {
+          "type": "Microsoft.Web/sites/config",
+          "condition": "[not(empty(parameters('subnetResourceId')))]",
+          "name": "[concat(parameters('appServiceName'), '/virtualNetwork')]",
+          "apiVersion": "2018-11-01",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "subnetResourceId": "[parameters('subnetResourceId')]",
+            "swiftSupported": true
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
+          ]
+        },
+        {
+          "type": "Microsoft.Web/sites/slots/config",
+          "condition": "[and(not(empty(parameters('subnetResourceId'))), parameters('includeDeploymentSlot'))]",
+          "name": "[concat(parameters('appServiceName'), '/staging/virtualNetwork')]",
+          "apiVersion": "2018-11-01",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "subnetResourceId": "[parameters('subnetResourceId')]",
+            "swiftSupported": true
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites/slots', parameters('appServiceName'), 'staging')]"
+          ]
+        }
+    ],
+    "outputs": {
+        "siteUri": {
+            "type": "string",
+            "value": "[concat('http://', reference(variables('resourceIds').appServiceId).hostnames[0])]"
+        }
+    }
+}
