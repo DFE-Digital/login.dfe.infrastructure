@@ -33,6 +33,8 @@
       "metadata": {
         "description": ""
       }
+    },"amplsName": {
+      "type": "string"
     },
     "sqlAdministratorLogin": {
       "type": "string",
@@ -329,6 +331,13 @@
         "description": "Whether to deploy a private endpoint to the Redis Cache instance"
       }
     },
+    "deployamplsPrivateEndpoint": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Whether to deploy a Azure Monitor private endpoint"
+      }
+    },
     "deployServiceBus": {
       "type": "bool",
       "defaultValue": false,
@@ -359,6 +368,7 @@
     "resourceNamePrefix": "[concat(toLower(parameters('platformGlobalIdentifier')), toLower(parameters('environmentId')),'-', toLower(parameters('platformGlobalName')),'-', toLower(parameters('applicationName')))]",
     "appInsightsName": "[concat(variables('resourceNamePrefix'),'-ai')]",
     "redisCacheName": "[concat(variables('resourceNamePrefix'),'-rc')]",
+    "amplsName": "[concat(variables('resourceNamePrefix'),'-ampls')]",
     "sqlServerName": "[concat(variables('resourceNamePrefix'),'-sql')]",
     "elasticPoolName": "[concat(variables('resourceNamePrefix'),'-ep')]",
     "storageAccountName": "[concat(replace(variables('resourceNamePrefix'),'-',''),'str')]",
@@ -379,6 +389,17 @@
       "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
       "privateEndpointName": "[concat(parameters('redisCacheName'),'-', variables('redisSubnetName'), '-pe')]",
       "privateLinkResource": "[resourceId('Microsoft.Cache/Redis', parameters('redisCacheName'))]",
+      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('redisSubnetName'))]"
+    },
+    "azureMonitorPrivateEndpoint": {
+      "amplsAzureAutomationPrivateDnsZoneName": "privatelink.agentsvc.azure-automation.net",
+      "amplsBlobPrivateDnsZoneName": "privatelink.blob.core.windows.net",
+      "amplsMonitorPrivateDnsZoneName": "privatelink.monitor.azure.com",
+      "amplsOPInsightODSPrivateDnsZoneName": "privatelink.ods.opinsights.azure.com",
+      "amplsOPInsightOMSPrivateDnsZoneName": "privatelink.oms.opinsights.azure.com",
+      "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+      "amplsprivateEndpointName": "[concat(parameters('amplsName'),'-', variables('redisSubnetName'), '-pe')]",
+      "azureMonitorPrivateLinkScopeResource": "[resourceId('Microsoft.Cache/Redis', parameters('amplsName'))]",
       "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('redisSubnetName'))]"
     },
     "keyVaultAccessPolicies": [
@@ -617,6 +638,22 @@
         "[resourceId('Microsoft.Resources/deployments', 'redis-cache')]",
         "[resourceId('Microsoft.Resources/deployments', 'virtual-network')]"
       ]
+    },
+    {
+      "apiVersion": "2020-10-01",
+      "name": "ampls",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/ampls.json')]"
+        },
+        "parameters": {
+          "amplsName": {
+            "value": "[parameters('amplsName')]"
+          }
+        }
+      }
     },
     {
       "name": "sql-server",

@@ -1,0 +1,42 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "amplsName": {
+            "type": "string"
+        },
+        "queryAccessMode": {
+          "type": "string",
+          "allowedValues": [
+            "PrivateOnly",
+            "Open"
+          ],
+          "defaultValue": "PrivateOnly"
+        },
+        "ingestionAccessMode": {
+          "type": "string",
+          "allowedValues": [
+            "PrivateOnly",
+            "Open"
+          ],
+          "defaultValue": "PrivateOnly"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "microsoft.insights/privatelinkscopes",
+            "name": "[parameters('amplsName')]",
+            "apiVersion": "2020-06-01",
+            "location": "global",
+            "properties": {
+                "accessModeSettings": {
+                    "queryAccessMode": "[parameters('queryAccessMode')]",
+                    "ingestionAccessMode": "[parameters('ingestionAccessMode')]",
+                    "exclusions": []
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
