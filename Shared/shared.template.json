@@ -4,7 +4,7 @@
   "parameters": {
     "templatesBaseUri": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/feature/DSI-4635/"
+      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/master/"
     },
     "appServicePlanOS": {
       "type": "string",
@@ -33,7 +33,8 @@
       "metadata": {
         "description": ""
       }
-    },"amplsName": {
+    },
+    "amplsName": {
       "type": "string"
     },
     "sqlAdministratorLogin": {
@@ -266,7 +267,8 @@
         "sup-sn-1",
         "svc-sn",
         "svc-sn-1",
-        "svc-sn-2"
+        "svc-sn-2",
+        "amlps-sn"
       ],
       "metadata": {
         "description": "Names of additional subnets to create for application integration"
