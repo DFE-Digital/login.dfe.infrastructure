@@ -48,6 +48,13 @@
                 "description": "The minimum tls version for the service"
             }
         },
+        "http20Enabled": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "HTTP version to 2.0"
+            }
+        },
         "numberOfWorkers": {
             "type": "int",
             "defaultValue": 1,
@@ -197,7 +204,8 @@
                     "alwaysOn": true,
                     "minTlsVersion": "[parameters('minTlsVersion')]",
                     "numberOfWorkers": "[parameters('numberOfWorkers')]",
-                    "vnetRouteAllEnabled": "[parameters('vnetRouteAllEnabled')]"
+                    "vnetRouteAllEnabled": "[parameters('vnetRouteAllEnabled')]",
+                    "http20Enabled": "[parameters('http20Enabled')]"
                 }
             },
             "resources": [
@@ -215,7 +223,8 @@
                             "alwaysOn": true,
                             "minTlsVersion": "[parameters('minTlsVersion')]",
                             "numberOfWorkers": "[parameters('numberOfWorkers')]",
-                            "vnetRouteAllEnabled": "[parameters('vnetRouteAllEnabled')]"
+                            "vnetRouteAllEnabled": "[parameters('vnetRouteAllEnabled')]",
+                            "http20Enabled": "[parameters('http20Enabled')]"
                         }
                     },
                     "resources": [
