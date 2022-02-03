@@ -653,6 +653,9 @@
         "parameters": {
           "amplsName": {
             "value": "[parameters('amplsName')]"
+          },
+          "appInsightsName": {
+            "value": "[parameters('appInsightsName')]"
           }
         },
         "dependsOn": [
