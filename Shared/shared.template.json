@@ -369,6 +369,7 @@
     "serviceBusNamespaceName": "[concat(variables('resourceNamePrefix'),'-sbn')]",
     "serviceBusApiVersion": "2017-04-01",
     "redisSubnetName": "redis-sn-1",
+    "searchSubnetName": "azs-sn",
     "elasticSku": {
       "name": "ElasticPool",
       "tier": "Standard"
@@ -380,6 +381,13 @@
       "privateEndpointName": "[concat(parameters('redisCacheName'),'-', variables('redisSubnetName'), '-pe')]",
       "privateLinkResource": "[resourceId('Microsoft.Cache/Redis', parameters('redisCacheName'))]",
       "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('redisSubnetName'))]"
+    },
+    "searchServicePrivateEndpoint": {
+      "privateDnsZoneName": "privatelink.search.windows.net",
+      "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+      "privateEndpointName": "[concat(parameters('azureSearchName'),'-', variables('searchSubnetName'), '-pe')]",
+      "privateLinkResource": "[resourceId('Microsoft.Search/searchServices', parameters('azureSearchName'))]",
+      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('searchSubnetName'))]"
     },
     "keyVaultAccessPolicies": [
       {
@@ -615,6 +623,47 @@
       },
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'redis-cache')]",
+        "[resourceId('Microsoft.Resources/deployments', 'virtual-network')]"
+      ]
+    },
+    {
+      "apiVersion": "2020-10-01",
+      "name": "search-service-private-endpoint",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/search-service-private-endpoint.json')]"
+        },
+        "parameters": {
+          "templatesBaseUri": {
+            "value": "[parameters('templatesBaseUri')]"
+          },
+          "privateEndpointName": {
+            "value": "[variables('searchServicePrivateEndpoint').privateEndpointName]"
+          },
+          "privateLinkResource": {
+            "value": "[variables('searchServicePrivateEndpoint').privateLinkResource]"
+          },
+          "privateEndpointSubnetId": {
+            "value": "[variables('searchServicerivateEndpoint').privateEndpointSubnetId]"
+          },
+          "privateDnsZoneName": {
+            "value": "[variables('searchServicePrivateEndpoint').privateDnsZoneName]"
+          },
+          "virtualNetworkId": {
+            "value": "[variables('searchServicePrivateEndpoint').virtualNetworkId]"
+          },
+          "searchServiceName": {
+            "value": "[parameters('searchServiceName')]"
+          },
+          "searchServiceSku": {
+            "value": "[parameters('searchServiceSku')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'search-service')]",
         "[resourceId('Microsoft.Resources/deployments', 'virtual-network')]"
       ]
     },
@@ -888,6 +937,9 @@
           },
           "redisSubnet": {
             "value": "[array(variables('redisSubnetName'))]"
+          },
+          "searchSubnet": {
+            "value": "[array(variables('searchSubnetName'))]"
           },
           "applicationSubnets": {
             "value": "[parameters('applicationSubnets')]"

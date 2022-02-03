@@ -110,6 +110,13 @@
       "metadata": {
         "description": "Name of the Redis Cache subnet. We only have one of these, but it uses an array and copy function so we can easily increase it going forward"
       }
+    },    
+    "searchSubnet": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Name of the Search Service subnet. We only have one of these, but it uses an array and copy function so we can easily increase it going forward"
+      }
     },
     "applicationSubnets": {
       "type": "array",
@@ -204,6 +211,21 @@
         }
       },
       {
+        "name": "searchSubnetCopy",
+        "count": "[if(empty(parameters('searchSubnet')), 0, 1)]",
+        "input": {
+          "name": "[parameters('searchSubnet')[copyIndex('searchSubnetCopy')]]",
+          "properties": {
+            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 10, copyIndex('searchSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
+            "serviceEndpointList": "[variables('emptyArray')]",
+            "delegations": "[variables('emptyArray')]",
+            "networkSecurityGroup": "[variables('emptyObject')]",
+            "routeTable": "[variables('emptyObject')]",
+            "privateEndpointNetworkPolicies": "Disabled"
+          }
+        }
+      },
+      {
         "name": "frontendSubnetCopy",
         "count": "[if(greater(parameters('frontendSubnetCount'), 0), parameters('frontendSubnetCount'), 1)]",
         "input": {
@@ -250,8 +272,9 @@
     "frontendSubnet": "[if(greater(parameters('frontendSubnetCount'), 0), variables('frontendSubnetCopy'), variables('emptyArray'))]",
     "backendSubnet": "[if(greater(parameters('backendSubnetCount'), 0), variables('backendSubnetCopy'), variables('emptyArray'))]",
     "redisSubnet": "[if(empty(parameters('redisSubnet')), variables('emptyArray'), variables('redisSubnetCopy'))]",
+    "searchSubnet": "[if(empty(parameters('searchSubnet')), variables('emptyArray'), variables('searchSubnetCopy'))]",
     "applicationSubnets": "[if(greater(length(parameters('applicationSubnets')), 0), variables('applicationSubnetCopy'), variables('emptyArray'))]",
-    "subnetConfiguration": "[concat(variables('managementSubnetCopy'), variables('gatewaySubnet'), variables('frontendSubnet'), variables('backendSubnet'), variables('redisSubnet'), variables('applicationSubnets'))]"
+    "subnetConfiguration": "[concat(variables('managementSubnetCopy'), variables('gatewaySubnet'), variables('frontendSubnet'), variables('backendSubnet'), variables('redisSubnet'), variables('searchSubnet'), variables('applicationSubnets'))]"
   },
   "functions": [
     {

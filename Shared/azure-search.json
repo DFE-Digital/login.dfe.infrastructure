@@ -51,17 +51,62 @@
     },
     "resources": [
         {
-            "apiVersion": "2015-08-19",
-            "name": "[parameters('azureSearchName')]",
             "type": "Microsoft.Search/searchServices",
+            "apiVersion": "2021-04-01-preview",
+            "name": "[parameters('subnetName')]",
             "location": "[resourceGroup().location]",
+            "tags": {
+                "Feature": "DfE Sign-in",
+                "Portfolio": "Digital and Technology",
+                "Service": "Authentication Services",
+                "Environment": "[parameters('subnetName')]",
+                "Created By": "DfE DevOps",
+                "Product": "DfE Sign-in",
+                "Resource": "global",
+                "Service Line": "IDAMS",
+                "Service Offering": "DfE Sign-in",
+                "displayName": "VNET",
+                "Parent Business": "Shared IT core services"
+            },
             "sku": {
                 "name": "[toLower(parameters('azureSearchSku'))]"
             },
             "properties": {
                 "replicaCount": "[parameters('azureSearchReplicaCount')]",
                 "partitionCount": "[parameters('azureSearchPartitionCount')]",
-                "hostingMode": "default"
+                "hostingMode": "default",
+                "publicNetworkAccess": "Disabled",
+                "networkRuleSet": {
+                    "ipRules": [],
+                    "bypass": "AzurePortal"
+                },
+                "encryptionWithCmk": {
+                    "enforcement": "Unspecified"
+                },
+                "disableLocalAuth": false,
+                "authOptions": {
+                    "apiKeyOnly": {}
+                },
+                "disabledDataExfiltrationOptions": [],
+                "semanticSearch": "disabled"
+            }
+        },
+        {
+            "type": "Microsoft.Search/searchServices/privateEndpointConnections",
+            "apiVersion": "2021-04-01-preview",
+            "name": "[concat(parameters('searchServicesEndpoint'), '/', parameters('searchServicesName), '-endpoint.0922d9da-4f99-49df-b2d5-556844948a07')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Search/searchServices', parameters('searchServicesName'))]"
+            ],
+            "properties": {
+                "privateEndpoint": {
+                    "id": "[parameters('privateEndpointsSearchServiceExternalId')]"
+                },
+                "privateLinkServiceConnectionState": {
+                    "status": "Approved",
+                    "description": "Auto-approved",
+                    "actionsRequired": "None"
+                }
             }
         }
     ]
