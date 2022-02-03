@@ -267,8 +267,7 @@
         "sup-sn-1",
         "svc-sn",
         "svc-sn-1",
-        "svc-sn-2",
-        "amlps-sn"
+        "svc-sn-2"
       ],
       "metadata": {
         "description": "Names of additional subnets to create for application integration"
@@ -337,7 +336,7 @@
       "type": "bool",
       "defaultValue": false,
       "metadata": {
-        "description": "Whether to deploy a Azure Monitor private endpoint"
+        "description": "Whether to deploy a Azure Monitor private link scope"
       }
     },
     "deployServiceBus": {
@@ -381,6 +380,7 @@
     "serviceBusNamespaceName": "[concat(variables('resourceNamePrefix'),'-sbn')]",
     "serviceBusApiVersion": "2017-04-01",
     "redisSubnetName": "redis-sn-1",
+    "amplsSubnetName": "ampls-sn-1",
     "elasticSku": {
       "name": "ElasticPool",
       "tier": "Standard"
@@ -400,9 +400,9 @@
       "amplsOPInsightODSPrivateDnsZoneName": "privatelink.ods.opinsights.azure.com",
       "amplsOPInsightOMSPrivateDnsZoneName": "privatelink.oms.opinsights.azure.com",
       "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-      "amplsprivateEndpointName": "[concat(parameters('amplsName'),'-', variables('redisSubnetName'), '-pe')]",
+      "amplsprivateEndpointName": "[concat(parameters('amplsName'),'-', variables('amplsSubnetName'), '-pe')]",
       "azureMonitorPrivateLinkScopeResource": "[resourceId('Microsoft.Cache/Redis', parameters('amplsName'))]",
-      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('redisSubnetName'))]"
+      "amplsprivateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('amplsSubnetName'))]"
     },
     "keyVaultAccessPolicies": [
       {
@@ -654,7 +654,10 @@
           "amplsName": {
             "value": "[parameters('amplsName')]"
           }
-        }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Resources/deployments', 'virtual-network')]"
+        ]
       }
     },
     {
@@ -927,6 +930,9 @@
           },
           "redisSubnet": {
             "value": "[array(variables('redisSubnetName'))]"
+          },
+          "amplsSubnet": {
+            "value": "[array(variables('amplsSubnetName'))]"
           },
           "applicationSubnets": {
             "value": "[parameters('applicationSubnets')]"

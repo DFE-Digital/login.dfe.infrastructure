@@ -111,6 +111,13 @@
         "description": "Name of the Redis Cache subnet. We only have one of these, but it uses an array and copy function so we can easily increase it going forward"
       }
     },
+    "amplsSubnet": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Name of the Azure Monitor Private Link Scope subnet. We only have one of these, but it uses an array and copy function so we can easily increase it going forward"
+      }
+    },
     "applicationSubnets": {
       "type": "array",
       "defaultValue": [],
@@ -244,6 +251,21 @@
             "routeTable": "[variables('emptyObject')]"
           }
         }
+      },
+      {
+        "name": "amplsSubnetCopy",
+        "count": "[if(empty(parameters('amplsSubnet')), 0, 1)]",
+        "input": {
+          "name": "[parameters('amplsSubnet')[copyIndex('amplsSubnetCopy')]]",
+          "properties": {
+            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 10, copyIndex('amplsSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
+            "serviceEndpointList": "[variables('emptyArray')]",
+            "delegations": "[variables('emptyArray')]",
+            "networkSecurityGroup": "[variables('emptyObject')]",
+            "routeTable": "[variables('emptyObject')]",
+            "privateEndpointNetworkPolicies": "Disabled"
+          }
+        }
       }
     ],
     "gatewaySubnet": "[if(greater(parameters('gatewaySubnetCount'), 0), variables('gatewaySubnetCopy'), variables('emptyArray'))]",
@@ -251,7 +273,8 @@
     "backendSubnet": "[if(greater(parameters('backendSubnetCount'), 0), variables('backendSubnetCopy'), variables('emptyArray'))]",
     "redisSubnet": "[if(empty(parameters('redisSubnet')), variables('emptyArray'), variables('redisSubnetCopy'))]",
     "applicationSubnets": "[if(greater(length(parameters('applicationSubnets')), 0), variables('applicationSubnetCopy'), variables('emptyArray'))]",
-    "subnetConfiguration": "[concat(variables('managementSubnetCopy'), variables('gatewaySubnet'), variables('frontendSubnet'), variables('backendSubnet'), variables('redisSubnet'), variables('applicationSubnets'))]"
+    "amplsSubnet": "[if(empty(parameters('amplsSubnet')), variables('emptyArray'), variables('amplsSubnetCopy'))]",
+    "subnetConfiguration": "[concat(variables('managementSubnetCopy'), variables('gatewaySubnet'), variables('frontendSubnet'), variables('backendSubnet'), variables('redisSubnet'), variables('applicationSubnets') , variables('amplsSubnet'))]"
   },
   "functions": [
     {
