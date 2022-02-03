@@ -36,6 +36,17 @@
                     "exclusions": []
                 }
             }
+        },
+        {
+            "type": "microsoft.insights/privatelinkscopes/scopedresources",
+            "apiVersion": "2021-07-01-preview",
+            "name": "[parameters('amplsName')]-[parameters('appInsightsName')]-LikedResource",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'ampls')]"
+            ],
+            "properties": {
+                "linkedResourceId": "[parameters('appInsightsName')]"
+            }
         }
     ],
     "outputs": {}
