@@ -20,6 +20,9 @@
             "Open"
           ],
           "defaultValue": "PrivateOnly"
+        },
+        "appInsightsName": {
+            "type": "string"
         }
     },
     "variables": {},
