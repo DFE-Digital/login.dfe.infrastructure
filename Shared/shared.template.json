@@ -659,7 +659,8 @@
           }
         },
         "dependsOn": [
-          "[resourceId('Microsoft.Resources/deployments', 'virtual-network')]"
+          "[resourceId('Microsoft.Resources/deployments', 'virtual-network')]",
+          "[resourceId('Microsoft.Resources/deployments', 'app-insights')]"
         ]
       }
     },
