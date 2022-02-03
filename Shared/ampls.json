@@ -45,7 +45,7 @@
             "apiVersion": "2021-07-01-preview",
             "name": "[concat(parameters('amplsName'),'/',parameters('appInsightsName'))]",
             "properties": {
-                "linkedResourceId": "[parameters('appInsightsName')]"
+                "linkedResourceId": "[resourceId('Microsoft.Insights/components', parameters('appInsightsName'))]"
             }
         }
     ],
