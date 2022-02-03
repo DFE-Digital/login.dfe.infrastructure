@@ -42,7 +42,8 @@
             "apiVersion": "2021-07-01-preview",
             "name": "[concat(parameters('amplsName'),'-',parameters('appInsightsName'),'- LikedResource')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', 'ampls')]"
+                "[resourceId('Microsoft.Resources/deployments', 'ampls')]",
+                "[resourceId('Microsoft.Resources/deployments', 'app-insights')]"
             ],
             "properties": {
                 "linkedResourceId": "[parameters('appInsightsName')]"
