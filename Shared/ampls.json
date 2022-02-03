@@ -40,7 +40,7 @@
         {
             "type": "microsoft.insights/privatelinkscopes/scopedresources",
             "apiVersion": "2021-07-01-preview",
-            "name": "[parameters('amplsName')]-[parameters('appInsightsName')]-LikedResource",
+            "name": "[concat([parameters('amplsName')],'-',[parameters('appInsightsName')],'-LikedResource')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', 'ampls')]"
             ],
