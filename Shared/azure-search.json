@@ -47,6 +47,12 @@
             "metadata": {
                 "description": "Partitions allow for scaling of document count as well as faster indexing by sharding your index over multiple Azure Search units."
             }
+        },
+        "privateEndpointsSearchServiceExternalId": {
+            "type": "string",
+            "metadata": {
+                "description": "Provides external resource identifier for private endpoint."
+            }
         }
     },
     "resources": [
@@ -94,7 +100,7 @@
         {
             "type": "Microsoft.Search/searchServices/privateEndpointConnections",
             "apiVersion": "2021-04-01-preview",
-            "name": "[concat(parameters('searchServicesEndpoint'), '/', parameters('searchServicesName), '-endpoint.0922d9da-4f99-49df-b2d5-556844948a07')]",
+            "name": "[concat(parameters('searchServicesEndpoint'), '/', parameters('searchServicesName)]",
             "dependsOn": [
                 "[resourceId('Microsoft.Search/searchServices', parameters('searchServicesName'))]"
             ],
