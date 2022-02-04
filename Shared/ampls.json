@@ -11,7 +11,7 @@
             "PrivateOnly",
             "Open"
           ],
-          "defaultValue": "PrivateOnly"
+          "defaultValue": "Open"
         },
         "ingestionAccessMode": {
           "type": "string",
@@ -19,11 +19,52 @@
             "PrivateOnly",
             "Open"
           ],
-          "defaultValue": "PrivateOnly"
+          "defaultValue": "Open"
         },
         "appInsightsName": {
             "type": "string"
+        },
+        "amplsPrivateDnsZoneName": {
+            "type": "string"
+        },
+        "amplsBlobPrivateDnsZoneName": {
+            "type": "string"
+        },
+        "amplsMonitorPrivateDnsZoneName": {
+            "type": "string"
+        },
+        "amplsOPInsightODSPrivateDnsZoneName": {
+            "type": "string"
+        },
+        "amplsOPInsightOMSPrivateDnsZoneName": {
+            "type": "string"
+        },
+        "amplsVirtualNetworkId": {
+            "type": "string"
+        },
+        "amplsPrivateEndpointName": {
+            "type": "string"
+        },
+        "amplsPrivateLinkResource": {
+            "type": "string"
+        },
+        "amplsPrivateEndpointSubnetId": {
+            "type": "string"
+        },
+        "applicationSecurityGroupsDeployment": {
+            "type": "string",
+            "value": "AddNewApplicationSecurityGroupsDeployment"
+        },
+        "applicationSecurityGroups": {
+            "type": "string"
+        },
+        "targetSubResource": {
+            "type": "string",
+            "value": [
+                "azuremonitor"
+            ]
         }
+
     },
     "variables": {},
     "resources": [
@@ -46,6 +87,105 @@
             "name": "[concat(parameters('amplsName'),'/',parameters('appInsightsName'))]",
             "properties": {
                 "linkedResourceId": "[resourceId('Microsoft.Insights/components', parameters('appInsightsName'))]"
+            }
+        },
+        {
+            "location": "[resourceGroup().location]",
+            "name": "[parameters('amplsPrivateEndpointName')]",
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2021-03-01",
+            "properties": {
+                "subnet": {
+                    "id": "[parameters('amplsPrivateEndpointSubnetId')]",
+                    "applicationSecurityGroups": "[parameters('applicationSecurityGroups')]"
+                },
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[parameters('amplsPrivateEndpointName')]",
+                        "properties": {
+                            "privateLinkServiceId": "[parameters('amplsPrivateLinkResource')]",
+                            "groupIds": "[parameters('targetSubResource')]"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[parameters('applicationSecurityGroupsDeployment')]"
+            ]
+        },
+        {
+            "apiVersion": "2021-04-01",
+            "type": "Microsoft.Resources/deployments",
+            "name": "[parameters('applicationSecurityGroupsDeployment')]",
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {},
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": []
+                }
+            },
+            "tags": {
+                "marketplaceItemId": "Microsoft.ApplicationSecurityGroup"
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[parameters('amplsPrivateDnsZoneName')]",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "[parameters('amplsPrivateEndpointName')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+                            "apiVersion": "2021-03-01",
+                            "name": "[concat(parameters('amplsPrivateEndpointName'), '/', 'default')]",
+                            "location": "[resourceGroup().location]",
+                            "properties": {
+                                "privateDnsZoneConfigs": [
+                                    {
+                                        "name": "[parameters('amplsMonitorPrivateDnsZoneName')]",
+                                        "properties": {
+                                            "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', parameters('amplsMonitorPrivateDnsZoneName'))]"
+                                        }
+                                    },
+                                    {
+                                        "name": "[parameters('amplsOPInsightOMSPrivateDnsZoneName')]",
+                                        "properties": {
+                                            "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', parameters('amplsOPInsightOMSPrivateDnsZoneName'))]"
+                                        }
+                                    },
+                                    {
+                                        "name": "[parameters('amplsOPInsightODSPrivateDnsZoneName')]",
+                                        "properties": {
+                                            "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', parameters('amplsOPInsightODSPrivateDnsZoneName'))]"
+                                        }
+                                    },
+                                    {
+                                        "name": "[parameters('amplsPrivateDnsZoneName')]",
+                                        "properties": {
+                                            "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', parameters('amplsPrivateDnsZoneName'))]"
+                                        }
+                                    },
+                                    {
+                                        "name": "[parameters('amplsBlobPrivateDnsZoneName')]",
+                                        "properties": {
+                                            "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', parameters('amplsBlobPrivateDnsZoneName'))]"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
             }
         }
     ],
