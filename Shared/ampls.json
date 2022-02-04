@@ -53,14 +53,14 @@
         },
         "applicationSecurityGroupsDeployment": {
             "type": "string",
-            "value": "AddNewApplicationSecurityGroupsDeployment"
+            "defaultValue": "AddNewApplicationSecurityGroupsDeployment"
         },
         "applicationSecurityGroups": {
             "type": "string"
         },
         "targetSubResource": {
             "type": "string",
-            "value": [
+            "defaultValue": [
                 "azuremonitor"
             ]
         }
