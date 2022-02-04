@@ -674,6 +674,9 @@
           },
           "amplsOPInsightODSPrivateDnsZoneName": {
             "value": "[variables('azureMonitorPrivateEndpoint').amplsOPInsightODSPrivateDnsZoneName]"
+          }, 
+          "amplsOPInsightOMSPrivateDnsZoneName": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsOPInsightOMSPrivateDnsZoneName]"
           },
           "amplsPrivateEndpointSubnetId": {
             "value": "[variables('azureMonitorPrivateEndpoint').amplsprivateEndpointSubnetId]"
