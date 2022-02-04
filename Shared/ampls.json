@@ -56,7 +56,8 @@
             "defaultValue": "AddNewApplicationSecurityGroupsDeployment"
         },
         "applicationSecurityGroups": {
-            "type": "string"
+            "type": "string",
+            "defaultValue":""
         },
         "targetSubResource": {
             "type": "string",
