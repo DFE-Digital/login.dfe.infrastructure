@@ -401,7 +401,7 @@
       "amplsOPInsightOMSPrivateDnsZoneName": "privatelink.oms.opinsights.azure.com",
       "amplsVirtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
       "amplsPrivateEndpointName": "[concat(parameters('amplsName'),'-', variables('amplsSubnetName'), '-pe')]",
-      "amplsPrivateLinkResource": "[resourceId('Microsoft.Cache/Redis', parameters('amplsName'))]",
+      "amplsPrivateLinkResource": "[resourceId('Microsoft.insights/privateLinkScopes', parameters('amplsName'))]",
       "amplsPrivateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('amplsSubnetName'))]"
     },
     "keyVaultAccessPolicies": [

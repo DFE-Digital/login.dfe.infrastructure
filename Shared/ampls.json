@@ -59,7 +59,7 @@
             "type": "string",
             "defaultValue":""
         },
-       "targetSubResource": {
+       "amplsTargetSubResource": {
             "type": "array",
             "defaultValue": [
               "azuremonitor"
@@ -108,7 +108,7 @@
                         "name": "[parameters('amplsPrivateEndpointName')]",
                         "properties": {
                             "privateLinkServiceId": "[parameters('amplsPrivateLinkResource')]",
-                            "groupIds": "[parameters('targetSubResource')]"
+                            "groupIds": "[parameters('amplsTargetSubResource')]"
                         }
                     }
                 ]
