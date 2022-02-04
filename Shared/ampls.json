@@ -59,11 +59,14 @@
             "type": "string",
             "defaultValue":""
         },
-        "targetSubResource": {
-            "type": "string",
+       "targetSubResource": {
+            "type": "array",
             "defaultValue": [
-                "azuremonitor"
-            ]
+              "azuremonitor"
+            ],
+            "metadata": {
+              "description": "The type of sub-resource for the resource selected above that your private endpoint will be able to access."
+            }
         }
 
     },
