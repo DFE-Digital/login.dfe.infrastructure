@@ -394,15 +394,15 @@
       "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('redisSubnetName'))]"
     },
     "azureMonitorPrivateEndpoint": {
-      "amplsAzureAutomationPrivateDnsZoneName": "privatelink.agentsvc.azure-automation.net",
+      "amplsPrivateDnsZoneName": "privatelink.agentsvc.azure-automation.net",
       "amplsBlobPrivateDnsZoneName": "privatelink.blob.core.windows.net",
       "amplsMonitorPrivateDnsZoneName": "privatelink.monitor.azure.com",
       "amplsOPInsightODSPrivateDnsZoneName": "privatelink.ods.opinsights.azure.com",
       "amplsOPInsightOMSPrivateDnsZoneName": "privatelink.oms.opinsights.azure.com",
-      "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-      "amplsprivateEndpointName": "[concat(parameters('amplsName'),'-', variables('amplsSubnetName'), '-pe')]",
-      "azureMonitorPrivateLinkScopeResource": "[resourceId('Microsoft.Cache/Redis', parameters('amplsName'))]",
-      "amplsprivateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('amplsSubnetName'))]"
+      "amplsVirtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+      "amplsPrivateEndpointName": "[concat(parameters('amplsName'),'-', variables('amplsSubnetName'), '-pe')]",
+      "amplsPrivateLinkResource": "[resourceId('Microsoft.Cache/Redis', parameters('amplsName'))]",
+      "amplsPrivateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('amplsSubnetName'))]"
     },
     "keyVaultAccessPolicies": [
       {
@@ -656,6 +656,30 @@
           },
           "appInsightsName": {
             "value": "[parameters('appInsightsName')]"
+          },
+          "amplsPrivateEndpointName": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsprivateEndpointName]"
+          },
+          "amplsPrivateLinkResource": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsprivateLinkResource]"
+          },
+          "amplsPrivateDnsZoneName": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsprivateDnsZoneName]"
+          },
+          "amplsBlobPrivateDnsZoneName": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsBlobPrivateDnsZoneName]"
+          },
+          "amplsMonitorPrivateDnsZoneName": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsMonitorPrivateDnsZoneName]"
+          },
+          "amplsOPInsightODSPrivateDnsZoneName": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsOPInsightODSPrivateDnsZoneName]"
+          },
+          "amplsPrivateEndpointSubnetId": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsprivateEndpointSubnetId]"
+          },
+          "amplsVirtualNetworkId": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsvirtualNetworkId]"
           }
         },
         "dependsOn": [
