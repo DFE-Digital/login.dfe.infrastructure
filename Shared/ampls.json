@@ -25,7 +25,9 @@
             "type": "string"
         },
         "amplsPrivateDnsZoneName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "AMPLS Private Dns ZoneGroups"
+
         },
         "amplsBlobPrivateDnsZoneName": {
             "type": "string"
@@ -34,6 +36,9 @@
             "type": "string"
         },
         "amplsOPInsightODSPrivateDnsZoneName": {
+            "type": "string"
+        },
+        "amplsAgentsvcPrivateDnsZoneName": {
             "type": "string"
         },
         "amplsOPInsightOMSPrivateDnsZoneName": {
@@ -231,7 +236,7 @@
                                         {
                                             "type": "Microsoft.Network/privateDnsZones",
                                             "apiVersion": "2018-09-01",
-                                            "name": "[parameters('amplsPrivateDnsZoneName')]",
+                                            "name": "[parameters('amplsAgentsvcPrivateDnsZoneName')]",
                                             "location": "global",
                                             "tags": {},
                                             "properties": {}
@@ -452,9 +457,9 @@
                                         }
                                     },
                                     {
-                                        "name": "[parameters('amplsPrivateDnsZoneName')]",
+                                        "name": "[parameters('amplsAgentsvcPrivateDnsZoneName')]",
                                         "properties": {
-                                            "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', parameters('amplsPrivateDnsZoneName'))]"
+                                            "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', parameters('amplsAgentsvcPrivateDnsZoneName'))]"
                                         }
                                     },
                                     {
