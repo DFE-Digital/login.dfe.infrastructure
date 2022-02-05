@@ -25,9 +25,7 @@
             "type": "string"
         },
         "amplsPrivateDnsZoneName": {
-            "type": "string",
-            "defaultValue": "AMPLS Private Dns ZoneGroups"
-
+            "type": "string"
         },
         "amplsBlobPrivateDnsZoneName": {
             "type": "string"
