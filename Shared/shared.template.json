@@ -394,7 +394,7 @@
       "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('redisSubnetName'))]"
     },
     "azureMonitorPrivateEndpoint": {
-      "amplsPrivateDnsZoneName": "privatelink.agentsvc.azure-automation.net",
+      "amplsAgentsvcPrivateDnsZoneName": "privatelink.agentsvc.azure-automation.net",
       "amplsBlobPrivateDnsZoneName": "privatelink.blob.core.windows.net",
       "amplsMonitorPrivateDnsZoneName": "privatelink.monitor.azure.com",
       "amplsOPInsightODSPrivateDnsZoneName": "privatelink.ods.opinsights.azure.com",
@@ -665,6 +665,9 @@
           },
           "amplsPrivateDnsZoneName": {
             "value": "[variables('azureMonitorPrivateEndpoint').amplsprivateDnsZoneName]"
+          },
+          "amplsAgentsvcPrivateDnsZoneName": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsAgentsvcPrivateDnsZoneName]"
           },
           "amplsBlobPrivateDnsZoneName": {
             "value": "[variables('azureMonitorPrivateEndpoint').amplsBlobPrivateDnsZoneName]"
