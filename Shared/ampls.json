@@ -67,6 +67,10 @@
             "metadata": {
               "description": "The type of sub-resource for the resource selected above that your private endpoint will be able to access."
             }
+        },
+        "amplsprivateDnsDeploymentName": {
+            "type": "string",
+            "defaultValue":"amplsprivateDnsDeployment"
         }
 
     },
@@ -133,6 +137,280 @@
             },
             "tags": {
                 "marketplaceItemId": "Microsoft.ApplicationSecurityGroup"
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[parameters('amplsprivateDnsDeploymentName')]",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "[parameters('amplsPrivateEndpointName')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "apiVersion": "2017-05-10",
+                            "name": "PrivateDnsZone-237e52b4-7894-47be-9970-b999f8af008e",
+                            "type": "Microsoft.Resources/deployments",
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Network/privateDnsZones",
+                                            "apiVersion": "2018-09-01",
+                                            "name": "[parameters('amplsMonitorPrivateDnsZoneName')]",
+                                            "location": "global",
+                                            "tags": {},
+                                            "properties": {}
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "apiVersion": "2017-05-10",
+                            "name": "PrivateDnsZone-237e52b4-7894-47be-9970-b999f8af008f",
+                            "type": "Microsoft.Resources/deployments",
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Network/privateDnsZones",
+                                            "apiVersion": "2018-09-01",
+                                            "name": "[parameters('amplsOPInsightOMSPrivateDnsZoneName')]",
+                                            "location": "global",
+                                            "tags": {},
+                                            "properties": {}
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "apiVersion": "2017-05-10",
+                            "name": "PrivateDnsZone-237e52b4-7894-47be-9970-b999f8af0090",
+                            "type": "Microsoft.Resources/deployments",
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Network/privateDnsZones",
+                                            "apiVersion": "2018-09-01",
+                                            "name": "[parameters('amplsOPInsightODSPrivateDnsZoneName')]",
+                                            "location": "global",
+                                            "tags": {},
+                                            "properties": {}
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "apiVersion": "2017-05-10",
+                            "name": "PrivateDnsZone-237e52b4-7894-47be-9970-b999f8af0091",
+                            "type": "Microsoft.Resources/deployments",
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Network/privateDnsZones",
+                                            "apiVersion": "2018-09-01",
+                                            "name": "[parameters('amplsPrivateDnsZoneName')]",
+                                            "location": "global",
+                                            "tags": {},
+                                            "properties": {}
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "apiVersion": "2017-05-10",
+                            "name": "PrivateDnsZone-237e52b4-7894-47be-9970-b999f8af0092",
+                            "type": "Microsoft.Resources/deployments",
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Network/privateDnsZones",
+                                            "apiVersion": "2018-09-01",
+                                            "name": "[parameters('amplsBlobPrivateDnsZoneName')]",
+                                            "location": "global",
+                                            "tags": {},
+                                            "properties": {}
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "VirtualNetworkLink-20220204203919",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "[parameters('amplsprivateDnsDeploymentName')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "apiVersion": "2017-05-10",
+                            "name": "VirtualNetworklink-237e52b4-7894-47be-9970-b999f8af0093",
+                            "type": "Microsoft.Resources/deployments",
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+                                            "apiVersion": "2018-09-01",
+                                            "name": "[concat('privatelink.monitor.azure.com', '/', uniqueString(parameters('amplsVirtualNetworkId')))]",
+                                            "location": "global",
+                                            "properties": {
+                                                "virtualNetwork": {
+                                                    "id": "[parameters('amplsVirtualNetworkId')]"
+                                                },
+                                                "registrationEnabled": false
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "apiVersion": "2017-05-10",
+                            "name": "VirtualNetworklink-237e52b4-7894-47be-9970-b999f8af0094",
+                            "type": "Microsoft.Resources/deployments",
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+                                            "apiVersion": "2018-09-01",
+                                            "name": "[concat('privatelink.oms.opinsights.azure.com', '/', uniqueString(parameters('amplsVirtualNetworkId')))]",
+                                            "location": "global",
+                                            "properties": {
+                                                "virtualNetwork": {
+                                                    "id": "[parameters('amplsVirtualNetworkId')]"
+                                                },
+                                                "registrationEnabled": false
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "apiVersion": "2017-05-10",
+                            "name": "VirtualNetworklink-237e52b4-7894-47be-9970-b999f8af0095",
+                            "type": "Microsoft.Resources/deployments",
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+                                            "apiVersion": "2018-09-01",
+                                            "name": "[concat('privatelink.ods.opinsights.azure.com', '/', uniqueString(parameters('amplsVirtualNetworkId')))]",
+                                            "location": "global",
+                                            "properties": {
+                                                "virtualNetwork": {
+                                                    "id": "[parameters('amplsVirtualNetworkId')]"
+                                                },
+                                                "registrationEnabled": false
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "apiVersion": "2017-05-10",
+                            "name": "VirtualNetworklink-237e52b4-7894-47be-9970-b999f8af0096",
+                            "type": "Microsoft.Resources/deployments",
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+                                            "apiVersion": "2018-09-01",
+                                            "name": "[concat('privatelink.agentsvc.azure-automation.net', '/', uniqueString(parameters('amplsVirtualNetworkId')))]",
+                                            "location": "global",
+                                            "properties": {
+                                                "virtualNetwork": {
+                                                    "id": "[parameters('amplsVirtualNetworkId')]"
+                                                },
+                                                "registrationEnabled": false
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "apiVersion": "2017-05-10",
+                            "name": "VirtualNetworklink-237e52b4-7894-47be-9970-b999f8af0097",
+                            "type": "Microsoft.Resources/deployments",
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+                                            "apiVersion": "2018-09-01",
+                                            "name": "[concat('privatelink.blob.core.windows.net', '/', uniqueString(parameters('amplsVirtualNetworkId')))]",
+                                            "location": "global",
+                                            "properties": {
+                                                "virtualNetwork": {
+                                                    "id": "[parameters('amplsVirtualNetworkId')]"
+                                                },
+                                                "registrationEnabled": false
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
             }
         },
         {
