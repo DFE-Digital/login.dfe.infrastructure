@@ -88,7 +88,14 @@
                 "accessModeSettings": {
                     "queryAccessMode": "[parameters('queryAccessMode')]",
                     "ingestionAccessMode": "[parameters('ingestionAccessMode')]",
-                    "exclusions": []
+                    "exclusions": [
+                        {
+                            "privateEndpointConnectionName": "[parameters('amplsPrivateEndpointName')]",
+                            "queryAccessMode": "PrivateOnly",
+                            "ingestionAccessMode": "PrivateOnly"
+                        }
+
+                    ]
                 }
             }
         },
