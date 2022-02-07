@@ -79,57 +79,72 @@
     },
     "variables": {},
     "resources": [
+        
         {
-            "type": "microsoft.insights/privatelinkscopes",
-            "name": "[parameters('amplsName')]",
-            "apiVersion": "2021-07-01-preview",
-            "location": "global",
+            "apiVersion": "2021-04-01",
+            "type": "Microsoft.Resources/deployments",
+            "name": "amplsPrivateEndpointDeployment",
             "properties": {
-                "accessModeSettings": {
-                    "queryAccessMode": "[parameters('queryAccessMode')]",
-                    "ingestionAccessMode": "[parameters('ingestionAccessMode')]",
-                    "exclusions": [
+                "mode": "Incremental",
+                "parameters": {},
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
                         {
-                            "privateEndpointConnectionName": "[parameters('amplsPrivateEndpointName')]",
-                            "queryAccessMode": "PrivateOnly",
-                            "ingestionAccessMode": "PrivateOnly"
+                            "type": "microsoft.insights/privatelinkscopes",
+                            "name": "[parameters('amplsName')]",
+                            "apiVersion": "2021-07-01-preview",
+                            "location": "global",
+                            "properties": {
+                                "accessModeSettings": {
+                                    "queryAccessMode": "[parameters('queryAccessMode')]",
+                                    "ingestionAccessMode": "[parameters('ingestionAccessMode')]",
+                                    "exclusions": []
+                                }
+                            }
+                        },
+                        {
+                            "type": "microsoft.insights/privatelinkscopes/scopedresources",
+                            "apiVersion": "2021-07-01-preview",
+                            "name": "[concat(parameters('amplsName'),'/',parameters('appInsightsName'))]",
+                            "properties": {
+                                "linkedResourceId": "[resourceId('Microsoft.Insights/components', parameters('appInsightsName'))]"
+                            }
+                        },
+                        {
+                            "location": "[resourceGroup().location]",
+                            "name": "[parameters('amplsPrivateEndpointName')]",
+                            "type": "Microsoft.Network/privateEndpoints",
+                            "apiVersion": "2021-03-01",
+                            "properties": {
+                                "subnet": {
+                                    "id": "[parameters('amplsPrivateEndpointSubnetId')]",
+                                    "applicationSecurityGroups": "[parameters('applicationSecurityGroups')]"
+                                },
+                                "privateLinkServiceConnections": [
+                                    {
+                                        "name": "[parameters('amplsPrivateEndpointName')]",
+                                        "properties": {
+                                            "privateLinkServiceId": "[parameters('amplsPrivateLinkResource')]",
+                                            "groupIds": "[parameters('amplsTargetSubResource')]"
+                                            
+                
+                                        }
+                                    }
+                                ]
+                            },
+                            "dependsOn": [
+                                "[parameters('applicationSecurityGroupsDeployment')]"
+                            ]
                         }
-
                     ]
                 }
-            }
-        },
-        {
-            "type": "microsoft.insights/privatelinkscopes/scopedresources",
-            "apiVersion": "2021-07-01-preview",
-            "name": "[concat(parameters('amplsName'),'/',parameters('appInsightsName'))]",
-            "properties": {
-                "linkedResourceId": "[resourceId('Microsoft.Insights/components', parameters('appInsightsName'))]"
-            }
-        },
-        {
-            "location": "[resourceGroup().location]",
-            "name": "[parameters('amplsPrivateEndpointName')]",
-            "type": "Microsoft.Network/privateEndpoints",
-            "apiVersion": "2021-03-01",
-            "properties": {
-                "subnet": {
-                    "id": "[parameters('amplsPrivateEndpointSubnetId')]",
-                    "applicationSecurityGroups": "[parameters('applicationSecurityGroups')]"
-                },
-                "privateLinkServiceConnections": [
-                    {
-                        "name": "[parameters('amplsPrivateEndpointName')]",
-                        "properties": {
-                            "privateLinkServiceId": "[parameters('amplsPrivateLinkResource')]",
-                            "groupIds": "[parameters('amplsTargetSubResource')]"
-                        }
-                    }
-                ]
             },
-            "dependsOn": [
-                "[parameters('applicationSecurityGroupsDeployment')]"
-            ]
+            "tags": {
+                "marketplaceItemId": "Microsoft.ApplicationSecurityGroup"
+            }
         },
         {
             "apiVersion": "2021-04-01",
