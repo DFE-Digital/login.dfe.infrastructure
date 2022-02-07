@@ -54,10 +54,6 @@
         "amplsPrivateEndpointSubnetId": {
             "type": "string"
         },
-        "applicationSecurityGroupsDeployment": {
-            "type": "string",
-            "defaultValue": "AddNewApplicationSecurityGroupsDeployment"
-        },
         "applicationSecurityGroups": {
             "type": "string",
             "defaultValue":""
@@ -112,7 +108,26 @@
                             "properties": {
                                 "linkedResourceId": "[resourceId('Microsoft.Insights/components', parameters('appInsightsName'))]"
                             }
-                        },
+                        }
+                        
+                    ]
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "ampls private end point link",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "[parameters('amplsPrivateEndpointName')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+
                         {
                             "location": "[resourceGroup().location]",
                             "name": "[parameters('amplsPrivateEndpointName')]",
@@ -134,34 +149,10 @@
                                         }
                                     }
                                 ]
-                            },
-                            "dependsOn": [
-                                "[parameters('applicationSecurityGroupsDeployment')]"
-                            ]
+                            }
                         }
                     ]
                 }
-            },
-            "tags": {
-                "marketplaceItemId": "Microsoft.ApplicationSecurityGroup"
-            }
-        },
-        {
-            "apiVersion": "2021-04-01",
-            "type": "Microsoft.Resources/deployments",
-            "name": "[parameters('applicationSecurityGroupsDeployment')]",
-            "properties": {
-                "mode": "Incremental",
-                "parameters": {},
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {},
-                    "resources": []
-                }
-            },
-            "tags": {
-                "marketplaceItemId": "Microsoft.ApplicationSecurityGroup"
             }
         },
         {
