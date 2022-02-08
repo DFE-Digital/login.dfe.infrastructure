@@ -76,7 +76,7 @@
         },
         "applicationSecurityGroupsDeployment": {
             "type": "string",
-            "value": "AddNewApplicationSecurityGroupsDeployment"
+            "defaultValue": "AddNewApplicationSecurityGroupsDeployment"
         }
 
     },
