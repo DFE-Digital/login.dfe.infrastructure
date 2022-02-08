@@ -105,6 +105,9 @@
                             "type": "microsoft.insights/privatelinkscopes/scopedresources",
                             "apiVersion": "2021-07-01-preview",
                             "name": "[concat(parameters('amplsName'),'/',parameters('appInsightsName'))]",
+                            "dependsOn": [
+                                "[resourceId('microsoft.insights/privatelinkscopes', parameters('amplsName'))]"
+                            ],
                             "properties": {
                                 "linkedResourceId": "[resourceId('Microsoft.Insights/components', parameters('appInsightsName'))]"
                             }
@@ -116,7 +119,7 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "ampls private end point link",
+            "name": "ampls-private-end-point-link-deployment",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -157,7 +160,7 @@
             "name": "[parameters('amplsprivateDnsDeploymentName')]",
             "type": "Microsoft.Resources/deployments",
             "dependsOn": [
-                "ampls private end point link"
+                "ampls-private-end-point-link-deployment"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -431,7 +434,7 @@
             "name": "[parameters('amplsPrivateDnsZoneName')]",
             "type": "Microsoft.Resources/deployments",
             "dependsOn": [
-                "ampls private end point link"
+                "ampls-private-end-point-link-deployment"
             ],
             "properties": {
                 "mode": "Incremental",
