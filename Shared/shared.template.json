@@ -401,6 +401,7 @@
       "amplsOPInsightODSPrivateDnsZoneName": "privatelink.ods.opinsights.azure.com",
       "amplsOPInsightOMSPrivateDnsZoneName": "privatelink.oms.opinsights.azure.com",
       "amplsVirtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+      "amplsVirtualNetworkName": "[variables('virtualNetworkName')]",
       "amplsPrivateEndpointName": "[concat(parameters('amplsName'),'-', variables('amplsSubnetName'), '-pe')]",
       "amplsPrivateLinkResource": "[resourceId('Microsoft.insights/privateLinkScopes', parameters('amplsName'))]",
       "amplsPrivateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('amplsSubnetName'))]"
@@ -687,6 +688,9 @@
           },
           "amplsVirtualNetworkId": {
             "value": "[variables('azureMonitorPrivateEndpoint').amplsvirtualNetworkId]"
+          },
+          "amplsVirtualNetworkName": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsVirtualNetworkName]"
           }
         },
         "dependsOn": [
