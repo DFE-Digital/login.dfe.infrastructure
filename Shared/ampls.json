@@ -118,9 +118,6 @@
             "apiVersion": "2017-05-10",
             "name": "ampls private end point link",
             "type": "Microsoft.Resources/deployments",
-            "dependsOn": [
-                "[parameters('amplsPrivateEndpointName')]"
-            ],
             "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -160,7 +157,7 @@
             "name": "[parameters('amplsprivateDnsDeploymentName')]",
             "type": "Microsoft.Resources/deployments",
             "dependsOn": [
-                "[parameters('amplsPrivateEndpointName')]"
+                "ampls private end point link"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -434,7 +431,7 @@
             "name": "[parameters('amplsPrivateDnsZoneName')]",
             "type": "Microsoft.Resources/deployments",
             "dependsOn": [
-                "[parameters('amplsPrivateEndpointName')]"
+                "ampls private end point link"
             ],
             "properties": {
                 "mode": "Incremental",
