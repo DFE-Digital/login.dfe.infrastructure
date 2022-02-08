@@ -158,7 +158,6 @@
                             "apiVersion": "2021-03-01",
                             "dependsOn": [
                                 "[parameters('applicationSecurityGroupsDeployment')]",
-                                "[resourceId('Microsoft.Network/virtualNetworks', parameters('amplsVirtualNetworkName'))]",
                                 "amplsPrivateEndpointDeployment"
                             ],
                             "properties": {
@@ -244,7 +243,6 @@
             "type": "Microsoft.Resources/deployments",
             "dependsOn": [
                 "[parameters('amplsprivateDnsDeploymentName')]",
-                "[resourceId('Microsoft.Network/virtualNetworks', parameters('amplsVirtualNetworkName'))]",
                 "amplsPrivateEndpointDeployment"
             ],
             "properties": {
