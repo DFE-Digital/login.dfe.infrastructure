@@ -135,13 +135,14 @@
                       ],
                     "resources": [
                         {
+                            
+                            "location": "[resourceGroup().location]",
                             "type": "Microsoft.Network/privateEndpoints",
                             "name": "[parameters('amplsPrivateEndpointName')]",
                             "apiVersion": "2021-03-01",
                             "properties": {
                                 "subnet": {
-                                    "id": "[parameters('amplsPrivateEndpointSubnetId')]",
-                                    "applicationSecurityGroups": "[parameters('applicationSecurityGroups')]"
+                                    "id": "[parameters('amplsPrivateEndpointSubnetId')]"
                                 },
                                 "privateLinkServiceConnections": [
                                     {
