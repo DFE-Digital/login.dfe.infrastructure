@@ -81,7 +81,7 @@
         {
             "apiVersion": "2021-04-01",
             "type": "Microsoft.Resources/deployments",
-            "name": "amplsPrivateEndpointDeployment",
+            "name": "azureMonitorPrivateLinkScopeDeployment",
             "properties": {
                 "mode": "Incremental",
                 "parameters": {},
@@ -113,11 +113,30 @@
                             "properties": {
                                 "linkedResourceId": "[resourceId('Microsoft.Insights/components', parameters('appInsightsName'))]"
                             }
-                        },
+                        }
+                        
+                    ]
+                }
+            }
+        },
+        {
+            "apiVersion": "2021-04-01",
+            "type": "Microsoft.Resources/deployments",
+            "name": "amplsPrivateEndpointDeployment",
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {},
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Resources/deployments', 'azureMonitorPrivateLinkScopeDeployment')]"
+                      ],
+                    "resources": [
                         {
-                            "location": "[resourceGroup().location]",
-                            "name": "[parameters('amplsPrivateEndpointName')]",
                             "type": "Microsoft.Network/privateEndpoints",
+                            "name": "[parameters('amplsPrivateEndpointName')]",
                             "apiVersion": "2021-03-01",
                             "properties": {
                                 "subnet": {
@@ -281,7 +300,7 @@
             "name": "amplsPrivateDnsZoneGroupsDeployment",
             "type": "Microsoft.Resources/deployments",
             "dependsOn": [
-                "[resourceId('microsoft.insights/privatelinkscopes', parameters('amplsName'))]",      
+                "[resourceId('Microsoft.Resources/deployments', 'azureMonitorPrivateLinkScopeDeployment')]",    
                 "amplsPrivateEndpointDeployment",
                 "[parameters('amplsprivateDnsDeploymentName')]"
             ],
