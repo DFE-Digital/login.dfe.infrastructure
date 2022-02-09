@@ -119,10 +119,6 @@
                             "name": "[parameters('amplsPrivateEndpointName')]",
                             "type": "Microsoft.Network/privateEndpoints",
                             "apiVersion": "2021-03-01",
-                            "dependsOn": [
-                                "[resourceId('microsoft.insights/privatelinkscopes', parameters('amplsName'))]"
-                                
-                            ],
                             "properties": {
                                 "subnet": {
                                     "id": "[parameters('amplsPrivateEndpointSubnetId')]",
