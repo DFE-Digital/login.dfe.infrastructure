@@ -123,6 +123,10 @@
                         "resourceFull": {
                             "type": "Object",
                             "value": "[reference(resourceId('microsoft.insights/privatelinkscopes', parameters('amplsName')), parameters('amplsApiVersion'), 'Full')]"
+                        },
+                        "privateEndpointConnectionsName": {
+                            "type": "Object",
+                            "value": "[reference(resourceId('microsoft.insights/privatelinkscopes', parameters('amplsName'))).privateEndpointConnections[0].name]"
                         }
                     }
                 }
