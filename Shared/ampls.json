@@ -103,11 +103,7 @@
                                 "accessModeSettings": {
                                     "queryAccessMode": "[parameters('queryAccessMode')]",
                                     "ingestionAccessMode": "[parameters('ingestionAccessMode')]",
-                                    "exclusions": [
-                                        {
-                                          
-                                        }
-                                    ]
+                                    "exclusions": []
                                 }
                             }
                         },
