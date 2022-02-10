@@ -73,6 +73,10 @@
         "amplsprivateDnsDeploymentName": {
             "type": "string",
             "defaultValue":"amplsprivateDnsDeployment"
+        },
+        "amplsApiVersion": {
+            "defaultValue": "2021-07-01-preview",
+            "type": "string"
         }
 
     },
@@ -120,9 +124,9 @@
                         }
                         
                     ],"outputs": {
-                        "amplsPrivateEndpointConnections": {
-                            "type": "string",
-                            "value": "[resourceId('microsoft.insights/privatelinkscopes', parameters('amplsName')).privateEndpointConnections[0].Name]"
+                        "resourceFull": {
+                            "type": "Object",
+                            "value": "[reference(resourceId('microsoft.insights/privatelinkscopes', parameters('amplsName')), parameters('amplsApiVersion'), 'Full')]"
                         }
                     }
                 }
