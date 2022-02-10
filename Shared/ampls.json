@@ -124,9 +124,9 @@
                             "type": "Object",
                             "value": "[reference(resourceId('microsoft.insights/privatelinkscopes', parameters('amplsName')), parameters('amplsApiVersion'), 'Full')]"
                         },
-                        "privateEndpointConnectionsName": {
-                            "type": "Object",
-                            "value": "[reference(resourceId('microsoft.insights/privatelinkscopes', parameters('amplsName'))).privateEndpointConnections[0].name]"
+                        "amplPrivateEndpointConnectionsName": {
+                            "type": "string",
+                            "value": "[reference(resourceId('microsoft.insights/privatelinkscopes', parameters('amplsName')), parameters('amplsApiVersion')).privateEndpointConnections[0].name]"
                         }
                     }
                 }
