@@ -106,6 +106,39 @@
                                     "exclusions": []
                                 }
                             }
+                        }
+                        
+                    ]
+                }
+            }
+        },
+        {
+            "apiVersion": "2021-04-01",
+            "type": "Microsoft.Resources/deployments",
+            "name": "azureMonitorPrivateLinkScopedResourceDeployment",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'azureMonitorPrivateLinkScopeDeployment')]"
+              ],
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {},
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "type": "microsoft.insights/privatelinkscopes",
+                            "name": "[parameters('amplsName')]",
+                            "apiVersion": "2021-07-01-preview",
+                            "location": "global",
+                            "properties": {
+                                "accessModeSettings": {
+                                    "queryAccessMode": "[parameters('queryAccessMode')]",
+                                    "ingestionAccessMode": "[parameters('ingestionAccessMode')]",
+                                    "exclusions": []
+                                }
+                            }
                         },
                         {
                             "type": "microsoft.insights/privatelinkscopes/scopedresources",
@@ -120,10 +153,6 @@
                         }
                         
                     ],"outputs": {
-                        "resourceFull": {
-                            "type": "Object",
-                            "value": "[reference(resourceId('microsoft.insights/privatelinkscopes', parameters('amplsName')), parameters('amplsApiVersion'), 'Full')]"
-                        },
                         "amplPrivateEndpointConnectionsName": {
                             "type": "string",
                             "value": "[reference(resourceId('microsoft.insights/privatelinkscopes', parameters('amplsName')), parameters('amplsApiVersion')).privateEndpointConnections[0].name]"
@@ -137,7 +166,7 @@
             "type": "Microsoft.Resources/deployments",
             "name": "azureMonitorPrivateLinkScopeConnectionUpdateDeployment",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', 'azureMonitorPrivateLinkScopeDeployment')]"
+                "[resourceId('Microsoft.Resources/deployments', 'azureMonitorPrivateLinkScopedResourceDeployment')]"
               ],
             "properties": {
                 "mode": "Incremental",
