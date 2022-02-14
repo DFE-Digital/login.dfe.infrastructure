@@ -19,7 +19,7 @@
             "PrivateOnly",
             "Open"
           ],
-          "defaultValue": "Open"
+          "defaultValue": "PrivateOnly"
         },
         "appInsightsName": {
             "type": "string"
@@ -119,7 +119,13 @@
                                     }
                                 
                                  }
-                                ]
+                                ],
+                                "outputs": {
+                                    "amplsConnectionName": {
+                                      "type": "string",
+                                      "value": "[reference(resourceId('microsoft.insights/privatelinkscopes', parameters('amplsName')), parameters('amplsApiVersion')).privateEndpointConnections[0].name]"
+                                    }
+                                  }
                         }
                         
                         
