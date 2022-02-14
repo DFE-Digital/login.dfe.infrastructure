@@ -118,26 +118,7 @@
                                         "linkedResourceId": "[resourceId('Microsoft.Insights/components', parameters('appInsightsName'))]"
                                     }
                                 
-                                 },
-                                 {
-                                    "type": "microsoft.insights/privatelinkscopes",
-                                    "name": "[parameters('amplsName')]",
-                                    "apiVersion": "2021-07-01-preview",
-                                    "location": "global",
-                                    "properties": {
-                                        "accessModeSettings": {
-                                            "queryAccessMode": "[parameters('queryAccessMode')]",
-                                            "ingestionAccessMode": "[parameters('ingestionAccessMode')]",
-                                            "exclusions": [
-                                                {
-                                                    "privateEndpointConnectionName": "[reference(resourceId('microsoft.insights/privatelinkscopes', parameters('amplsName'))).privateEndpointConnections[0].name]",
-                                                    "queryAccessMode": "PrivateOnly",
-                                                    "ingestionAccessMode": "PrivateOnly"
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
+                                 }
                                 ]
                         }
                         
