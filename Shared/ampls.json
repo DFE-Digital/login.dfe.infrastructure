@@ -123,13 +123,7 @@
                         }
                         
                         
-                    ],
-                    "outputs": {
-                        "amplsConnectionName": {
-                          "type": "string",
-                          "value": "[resource(parameters('amplsName')).privateEndpointConnections[0].name]"
-                        }
-                      }
+                    ]
                 }
             }
         },
