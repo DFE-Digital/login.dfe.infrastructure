@@ -402,7 +402,7 @@
       "amplsOPInsightOMSPrivateDnsZoneName": "privatelink.oms.opinsights.azure.com",
       "amplsVirtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
       "amplsVirtualNetworkName": "[variables('virtualNetworkName')]",
-      "amplsPrivateEndpointName": "[concat(parameters('amplsName'),'-', variables('amplsSubnetName'), '-pe')]",
+      "amplsPrivateEndpointName": "[concat(parameters('amplsName'), '-pe')]",
       "amplsPrivateLinkResource": "[resourceId('Microsoft.insights/privateLinkScopes', parameters('amplsName'))]",
       "amplsPrivateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('amplsSubnetName'))]"
     },
