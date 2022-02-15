@@ -5,6 +5,12 @@
         "storageAccountName": {
             "type": "string"
         },
+        "virtualNetworks": {
+            "type": "string"
+        },
+        "virtualNetworksSubNet": {
+            "type": "string"
+        },
         "storageAccountType": {
             "type": "string",
             "defaultValue": "Standard_LRS",
@@ -41,6 +47,19 @@
             "kind": "[parameters('storageKind')]",
             "properties": {
                 "minimumTlsVersion": "TLS1_2",
+                "networkAcls": {
+                    "resourceAccessRules": [],
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [
+                        {
+                            "id": "[concat(parameters('virtualNetworks'), '/subnets/parameters('virtualNetworksSubNet'')]",
+                            "action": "Allow",
+                            "state": "Succeeded"
+                        }
+                    ],
+                    "ipRules": [],
+                    "defaultAction": "Deny"
+                },
                 "supportsHttpsTrafficOnly": true,
                 "encryption": {
                     "keySource": "Microsoft.Storage",
