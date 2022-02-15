@@ -70,13 +70,9 @@
               "description": "The type of sub-resource for the resource selected above that your private endpoint will be able to access."
             }
         },
-        "amplsprivateDnsDeploymentName": {
+        "amplsPrivateDnsDeploymentName": {
             "type": "string",
-            "defaultValue":"amplsprivateDnsDeployment"
-        },
-        "amplsApiVersion": {
-            "defaultValue": "2021-07-01-preview",
-            "type": "string"
+            "defaultValue":"amplsPrivateDnsDeployment"
         }
 
     },
@@ -155,12 +151,9 @@
                                 "privateLinkServiceConnections": [
                                     {
                                         "name": "[parameters('amplsPrivateEndpointName')]",
-
                                         "properties": {
                                             "privateLinkServiceId": "[parameters('amplsPrivateLinkResource')]",
                                             "groupIds": "[parameters('amplsTargetSubResource')]"
-                                            
-                
                                         }
                                     }
                                 ]
@@ -173,7 +166,7 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "[parameters('amplsprivateDnsDeploymentName')]",
+            "name": "[parameters('amplsPrivateDnsDeploymentName')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -185,41 +178,31 @@
                             "type": "Microsoft.Network/privateDnsZones",
                             "apiVersion": "2018-09-01",
                             "name": "[parameters('amplsMonitorPrivateDnsZoneName')]",
-                            "location": "global",
-                            "tags": {},
-                            "properties": {}
+                            "location": "global"
                         },
                         {
                             "type": "Microsoft.Network/privateDnsZones",
                             "apiVersion": "2018-09-01",
                             "name": "[parameters('amplsOPInsightOMSPrivateDnsZoneName')]",
-                            "location": "global",
-                            "tags": {},
-                            "properties": {}
+                            "location": "global"
                         },
                         {
                             "type": "Microsoft.Network/privateDnsZones",
                             "apiVersion": "2018-09-01",
                             "name": "[parameters('amplsOPInsightODSPrivateDnsZoneName')]",
-                            "location": "global",
-                            "tags": {},
-                            "properties": {}
+                            "location": "global"
                         },
                         {
                             "type": "Microsoft.Network/privateDnsZones",
                             "apiVersion": "2018-09-01",
                             "name": "[parameters('amplsAgentsvcPrivateDnsZoneName')]",
-                            "location": "global",
-                            "tags": {},
-                            "properties": {}
+                            "location": "global"
                         },
                         {
                             "type": "Microsoft.Network/privateDnsZones",
                             "apiVersion": "2018-09-01",
                             "name": "[parameters('amplsBlobPrivateDnsZoneName')]",
-                            "location": "global",
-                            "tags": {},
-                            "properties": {}
+                            "location": "global"
                         }
                         
                     ]
@@ -231,7 +214,7 @@
             "name": "amplsVirtualNetworkLinkDeployment",
             "type": "Microsoft.Resources/deployments",
             "dependsOn": [
-                "[parameters('amplsprivateDnsDeploymentName')]",
+                "[parameters('amplsPrivateDnsDeploymentName')]",
                 "amplsPrivateEndpointDeployment"
             ],
             "properties": {
@@ -312,7 +295,7 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', 'azureMonitorPrivateLinkScopeDeployment')]",    
                 "amplsPrivateEndpointDeployment",
-                "[parameters('amplsprivateDnsDeploymentName')]"
+                "[parameters('amplsPrivateDnsDeploymentName')]"
             ],
             "properties": {
                 "mode": "Incremental",
