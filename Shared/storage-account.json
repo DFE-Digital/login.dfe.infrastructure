@@ -58,7 +58,7 @@
             "kind": "[parameters('storageKind')]",
             "properties": {
                 "minimumTlsVersion": "TLS1_2",
-                "networkAcls":"[if(equals(parameters('virtualNetworksSubNet'),'none'), {}, variables('networkAcls'))]",
+                "networkAcls":"[if(equals(parameters('virtualNetworksSubNet'),'none'), json('{}'), variables('networkAcls'))]",
                 "supportsHttpsTrafficOnly": true,
                 "encryption": {
                     "keySource": "Microsoft.Storage",
