@@ -47,19 +47,7 @@
             "kind": "[parameters('storageKind')]",
             "properties": {
                 "minimumTlsVersion": "TLS1_2",
-                "networkAcls": {
-                    "resourceAccessRules": [],
-                    "bypass": "AzureServices",
-                    "virtualNetworkRules": [
-                        {
-                            "id": "[parameters('virtualNetworksSubNet')]",
-                            "action": "Allow",
-                            "state": "Succeeded"
-                        }
-                    ],
-                    "ipRules": [],
-                    "defaultAction": "Deny"
-                },
+                "networkAcls": {},
                 "supportsHttpsTrafficOnly": true,
                 "encryption": {
                     "keySource": "Microsoft.Storage",
