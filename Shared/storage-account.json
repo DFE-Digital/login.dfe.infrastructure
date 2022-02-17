@@ -5,9 +5,22 @@
         "storageAccountName": {
             "type": "string"
         },
-        "virtualNetworksSubNet": {
+        "NetFirewall":{
+            "type": "bool",
+            "defaultValue": true
+        },
+        "resourceAccessRules": {
+            "type": "array"
+        },
+        "bypass": {
             "type": "string",
-            "defaultValue": "none"
+            "defaultValue": ""
+        },
+        "ipRules": {
+            "type": "array"
+        },
+        "virtualNetworksSubNet": {
+            "type": "array"
         },
         "storageAccountType": {
             "type": "string",
@@ -33,16 +46,10 @@
     "variables": {
       "storageAccountName": "[replace(parameters('storageAccountName'), '-', '')]",
       "networkAcls": {
-        "resourceAccessRules": [],
-        "bypass": "AzureServices",
-        "virtualNetworkRules": [
-            {
-                "id": "[parameters('virtualNetworksSubNet')]",
-                "action": "Allow",
-                "state": "Succeeded"
-            }
-        ],
-        "ipRules": [],
+        "resourceAccessRules": "[if(not(empty(createArray(parameters('resourceAccessRules'))[0]['tenantId'])), createArray(), createArray(parameters('resourceAccessRules')))]",
+        "bypass": "[parameters('bypass')]",
+        "virtualNetworkRules": "[createArray(parameters('virtualNetworksSubNet'))]",
+        "ipRules": "[if(not(empty(createArray(parameters('ipRules'))[0]['value'])), createArray(), createArray(parameters('resourceAccessRules')))]",
         "defaultAction": "Deny"
         }
     },
@@ -58,7 +65,7 @@
             "kind": "[parameters('storageKind')]",
             "properties": {
                 "minimumTlsVersion": "TLS1_2",
-                "networkAcls":"[if(equals(parameters('virtualNetworksSubNet'),'none'), json('{}'), variables('networkAcls'))]",
+                "networkAcls":"[if(NetFirewall), json('{}'), variables('networkAcls'))]",
                 "supportsHttpsTrafficOnly": true,
                 "encryption": {
                     "keySource": "Microsoft.Storage",
