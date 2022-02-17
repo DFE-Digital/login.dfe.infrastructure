@@ -644,6 +644,7 @@
       ]
     },
     {
+      "condition": "[parameters('deployamplsPrivateEndpoint')]",
       "apiVersion": "2020-10-01",
       "name": "ampls",
       "type": "Microsoft.Resources/deployments",
