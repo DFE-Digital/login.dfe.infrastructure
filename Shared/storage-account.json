@@ -85,6 +85,10 @@
         }
     ],
     "outputs": {
+        "networkAcls": {
+            "type": "object",
+            "value": "[variables('networkAcls')]"
+        },
         "PrimaryEndpoints": {
             "type": "object",
             "value": "[reference(variables('storageAccountName')).primaryEndpoints]"
