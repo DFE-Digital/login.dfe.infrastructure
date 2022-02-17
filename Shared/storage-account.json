@@ -67,7 +67,7 @@
             "kind": "[parameters('storageKind')]",
             "properties": {
                 "minimumTlsVersion": "TLS1_2",
-                "networkAcls":"[if(parameters('NetFirewall'), variables('networkAcls'), json('null'))]",
+                "networkAcls": "[if(parameters('NetFirewall'), variables('networkAcls'), json('null'))]",
                 "supportsHttpsTrafficOnly": true,
                 "encryption": {
                     "keySource": "Microsoft.Storage",
@@ -85,10 +85,6 @@
         }
     ],
     "outputs": {
-        "networkAcls": {
-            "type": "object",
-            "value": "[variables('networkAcls')]"
-        },
         "PrimaryEndpoints": {
             "type": "object",
             "value": "[reference(variables('storageAccountName')).primaryEndpoints]"
