@@ -67,7 +67,7 @@
             "kind": "[parameters('storageKind')]",
             "properties": {
                 "minimumTlsVersion": "TLS1_2",
-                "networkAcls":"[if(NetFirewall, json('{}'), variables('networkAcls'))]",
+                "networkAcls":"[if(NetFirewall, true, json(null), variables('networkAcls'))]",
                 "supportsHttpsTrafficOnly": true,
                 "encryption": {
                     "keySource": "Microsoft.Storage",
