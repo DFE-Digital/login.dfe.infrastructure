@@ -10,14 +10,16 @@
             "defaultValue": true
         },
         "resourceAccessRules": {
-            "type": "array"
+            "type": "array",
+            "defaultValue": []
         },
         "bypass": {
             "type": "string",
             "defaultValue": ""
         },
         "ipRules": {
-            "type": "array"
+            "type": "array",
+            "defaultValue": []
         },
         "virtualNetworksSubNet": {
             "type": "array"
@@ -46,10 +48,10 @@
     "variables": {
       "storageAccountName": "[replace(parameters('storageAccountName'), '-', '')]",
       "networkAcls": {
-        "resourceAccessRules": "[if(not(empty(parameters('resourceAccessRules')[0].tenantId)), createArray(), parameters('resourceAccessRules'))]",
+        "resourceAccessRules": "[if(empty(parameters('resourceAccessRules')), createArray(), parameters('resourceAccessRules'))]",
         "bypass": "[parameters('bypass')]",
         "virtualNetworkRules": "[parameters('virtualNetworksSubNet')]",
-        "ipRules": "[if(not(empty(parameters('ipRules'))[0]['value']), createArray(), parameters('ipRules'))]",
+        "ipRules": "[if(empty(parameters('ipRules')), createArray(), parameters('ipRules'))]",
         "defaultAction": "Deny"
         }
     },
