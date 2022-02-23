@@ -22,7 +22,8 @@
             "defaultValue": []
         },
         "virtualNetworksSubNet": {
-            "type": "array"
+            "type": "array",
+            "defaultValue": []
         },
         "storageAccountType": {
             "type": "string",
