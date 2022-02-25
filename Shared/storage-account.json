@@ -50,7 +50,7 @@
       "storageAccountName": "[replace(parameters('storageAccountName'), '-', '')]",
       "networkAcls": {
         "resourceAccessRules": "[if(empty(parameters('resourceAccessRules')), createArray(), parameters('resourceAccessRules'))]",
-        "bypass": "[if(empty(parameters('bypass')), 'None', parameters('bypass'))]",
+        "bypass": "[if(empty(parameters('bypass')), '', parameters('bypass'))]",
         "virtualNetworkRules": "[if(empty(parameters('virtualNetworksSubNet')), createArray(), parameters('virtualNetworksSubNet'))]",
         "ipRules": "[if(empty(parameters('ipRules')), createArray(), parameters('ipRules'))]",
         "defaultAction": "Deny"
