@@ -244,6 +244,7 @@
         "acc-sn",
         "adtbus-sn",
         "adtcln-sn",
+        "auth-sn",
         "app-sn",
         "ass-sn",
         "dev-sn",
@@ -745,6 +746,9 @@
         "parameters": {
           "storageAccountName": {
             "value": "[parameters('storageAccountName')]"
+          },
+          "ipRules": {
+            "value": ["147.243.0.0/16"]
           }
         }
       }
