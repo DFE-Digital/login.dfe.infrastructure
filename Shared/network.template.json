@@ -244,6 +244,20 @@
         "input": {
           "name": "[parameters('applicationSubnets')[copyIndex('applicationSubnetCopy')]]",
           "properties": {
+            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 30, copyIndex('applicationSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
+            "serviceEndpointList": "[parameters('serviceEndpointList')]",
+            "delegations": "[variables('subnetDelegations')]",
+            "networkSecurityGroup": "[variables('emptyObject')]",
+            "routeTable": "[variables('emptyObject')]"
+          }
+        }
+      },
+      {
+        "name": "applicationSubnetCopy",
+        "count": "[if(empty(parameters('applicationSubnets')), 0, length(parameters('applicationSubnets')))]",
+        "input": {
+          "name": "[parameters('applicationSubnets')[copyIndex('applicationSubnetCopy')]]",
+          "properties": {
             "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 35, copyIndex('applicationSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
             "serviceEndpointList": "[parameters('serviceEndpointList')]",
             "delegations": "[variables('subnetDelegations')]",
