@@ -244,7 +244,7 @@
         "input": {
           "name": "[parameters('applicationSubnets')[copyIndex('applicationSubnetCopy')]]",
           "properties": {
-            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 33, copyIndex('applicationSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
+            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 34, copyIndex('applicationSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
             "serviceEndpointList": "[parameters('serviceEndpointList')]",
             "delegations": "[variables('subnetDelegations')]",
             "networkSecurityGroup": "[variables('emptyObject')]",
