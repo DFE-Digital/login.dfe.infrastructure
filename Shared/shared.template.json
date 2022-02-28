@@ -823,7 +823,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/tree/feature/DSI-2942/Shared/storage-account.json"
+          "uri": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/feature/DSI-2942/Shared/storage-account.json"
         },
         "parameters": {
           "storageAccountName": {
