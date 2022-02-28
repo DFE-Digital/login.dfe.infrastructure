@@ -244,7 +244,7 @@
         "input": {
           "name": "[parameters('applicationSubnets')[copyIndex('applicationSubnetCopy')]]",
           "properties": {
-            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 35, copyIndex('applicationSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
+            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 34, copyIndex('applicationSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
             "serviceEndpointList": "[parameters('serviceEndpointList')]",
             "delegations": "[variables('subnetDelegations')]",
             "networkSecurityGroup": "[variables('emptyObject')]",
@@ -258,7 +258,7 @@
         "input": {
           "name": "[parameters('amplsSubnet')[copyIndex('amplsSubnetCopy')]]",
           "properties": {
-            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 61, copyIndex('amplsSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
+            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 60, copyIndex('amplsSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
             "serviceEndpointList": "[variables('emptyArray')]",
             "delegations": "[variables('emptyArray')]",
             "networkSecurityGroup": "[variables('emptyObject')]",
