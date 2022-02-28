@@ -830,7 +830,10 @@
             "value": "[parameters('storageAccountName')]"
           },
           "ipRules": {
-            "value": ["147.243.0.0/16"]
+            "value": [{
+              "value": "147.243.0.0/16",
+              "action": "Allow"
+            }]
           },
           "NetFirewall":{
               "value": true
