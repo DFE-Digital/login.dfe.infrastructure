@@ -487,7 +487,8 @@
           ]
         }
       }
-    ]
+    ],
+    "NetFirewall": true
   },
   "resources": [
     {
@@ -833,7 +834,7 @@
             "value": ["147.243.0.0/16"]
           },
           "NetFirewall":{
-              "value": "[parameters('NetFirewall')]"
+              "value": "[variables('NetFirewall')]"
           }
         }
       }
