@@ -246,8 +246,7 @@
       "defaultValue": [
         "acc-sn",
         "adtbus-sn",
-        "adtcln-sn",
-        "auth-sn",
+        "adtcln-sn",        
         "app-sn",
         "ass-sn",
         "dev-sn",
@@ -268,7 +267,8 @@
         "sup-sn-1",
         "svc-sn",
         "svc-sn-1",
-        "svc-sn-2"
+        "svc-sn-2",
+        "auth-sn"
       ],
       "metadata": {
         "description": "Names of additional subnets to create for application integration"
