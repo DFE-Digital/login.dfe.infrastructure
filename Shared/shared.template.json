@@ -487,8 +487,7 @@
           ]
         }
       }
-    ],
-    "NetFirewall": true
+    ]
   },
   "resources": [
     {
@@ -824,7 +823,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/storage-account.json')]"
+          "uri": "https://github.com/DFE-Digital/login.dfe.infrastructure/tree/feature/DSI-2942/Shared/storage-account.json"
         },
         "parameters": {
           "storageAccountName": {
@@ -834,7 +833,7 @@
             "value": ["147.243.0.0/16"]
           },
           "NetFirewall":{
-              "value": "[variables('NetFirewall')]"
+              "value": true
           }
         }
       }
