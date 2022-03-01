@@ -34,6 +34,9 @@
         "description": ""
       }
     },
+    "amplsName": {
+      "type": "string"
+    },
     "sqlAdministratorLogin": {
       "type": "string",
       "metadata": {
@@ -243,7 +246,7 @@
       "defaultValue": [
         "acc-sn",
         "adtbus-sn",
-        "adtcln-sn",
+        "adtcln-sn",        
         "app-sn",
         "ass-sn",
         "dev-sn",
@@ -264,7 +267,8 @@
         "sup-sn-1",
         "svc-sn",
         "svc-sn-1",
-        "svc-sn-2"
+        "svc-sn-2",
+        "auth-sn"
       ],
       "metadata": {
         "description": "Names of additional subnets to create for application integration"
@@ -329,6 +333,13 @@
         "description": "Whether to deploy a private endpoint to the Redis Cache instance"
       }
     },
+    "deployamplsPrivateEndpoint": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Whether to deploy a Azure Monitor private link scope"
+      }
+    },
     "deployServiceBus": {
       "type": "bool",
       "defaultValue": false,
@@ -359,6 +370,7 @@
     "resourceNamePrefix": "[concat(toLower(parameters('platformGlobalIdentifier')), toLower(parameters('environmentId')),'-', toLower(parameters('platformGlobalName')),'-', toLower(parameters('applicationName')))]",
     "appInsightsName": "[concat(variables('resourceNamePrefix'),'-ai')]",
     "redisCacheName": "[concat(variables('resourceNamePrefix'),'-rc')]",
+    "amplsName": "[concat(variables('resourceNamePrefix'),'-ampls')]",
     "sqlServerName": "[concat(variables('resourceNamePrefix'),'-sql')]",
     "elasticPoolName": "[concat(variables('resourceNamePrefix'),'-ep')]",
     "storageAccountName": "[concat(replace(variables('resourceNamePrefix'),'-',''),'str')]",
@@ -369,6 +381,7 @@
     "serviceBusNamespaceName": "[concat(variables('resourceNamePrefix'),'-sbn')]",
     "serviceBusApiVersion": "2017-04-01",
     "redisSubnetName": "redis-sn-1",
+    "amplsSubnetName": "ampls-sn-1",
     "elasticSku": {
       "name": "ElasticPool",
       "tier": "Standard"
@@ -380,6 +393,19 @@
       "privateEndpointName": "[concat(parameters('redisCacheName'),'-', variables('redisSubnetName'), '-pe')]",
       "privateLinkResource": "[resourceId('Microsoft.Cache/Redis', parameters('redisCacheName'))]",
       "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('redisSubnetName'))]"
+    },
+    "azureMonitorPrivateEndpoint": {
+      "amplsPrivateDNSZoneName": "[concat(parameters('amplsName'), '-Private-DNS-Zone')]",
+      "amplsAgentsvcPrivateDnsZoneName": "privatelink.agentsvc.azure-automation.net",
+      "amplsBlobPrivateDnsZoneName": "privatelink.blob.core.windows.net",
+      "amplsMonitorPrivateDnsZoneName": "privatelink.monitor.azure.com",
+      "amplsOPInsightODSPrivateDnsZoneName": "privatelink.ods.opinsights.azure.com",
+      "amplsOPInsightOMSPrivateDnsZoneName": "privatelink.oms.opinsights.azure.com",
+      "amplsVirtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+      "amplsVirtualNetworkName": "[variables('virtualNetworkName')]",
+      "amplsPrivateEndpointName": "[concat(parameters('amplsName'), '-pe')]",
+      "amplsPrivateLinkResource": "[resourceId('Microsoft.insights/privateLinkScopes', parameters('amplsName'))]",
+      "amplsPrivateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('amplsSubnetName'))]"
     },
     "keyVaultAccessPolicies": [
       {
@@ -619,6 +645,63 @@
       ]
     },
     {
+      "condition": "[parameters('deployamplsPrivateEndpoint')]",
+      "apiVersion": "2020-10-01",
+      "name": "ampls",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/ampls.json')]"
+        },
+        "parameters": {
+          "amplsName": {
+            "value": "[parameters('amplsName')]"
+          },
+          "appInsightsName": {
+            "value": "[parameters('appInsightsName')]"
+          },
+          "amplsPrivateEndpointName": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsprivateEndpointName]"
+          },
+          "amplsPrivateLinkResource": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsprivateLinkResource]"
+          },
+          "amplsPrivateDnsZoneName": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsprivateDnsZoneName]"
+          },
+          "amplsAgentsvcPrivateDnsZoneName": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsAgentsvcPrivateDnsZoneName]"
+          },
+          "amplsBlobPrivateDnsZoneName": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsBlobPrivateDnsZoneName]"
+          },
+          "amplsMonitorPrivateDnsZoneName": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsMonitorPrivateDnsZoneName]"
+          },
+          "amplsOPInsightODSPrivateDnsZoneName": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsOPInsightODSPrivateDnsZoneName]"
+          }, 
+          "amplsOPInsightOMSPrivateDnsZoneName": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsOPInsightOMSPrivateDnsZoneName]"
+          },
+          "amplsPrivateEndpointSubnetId": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsprivateEndpointSubnetId]"
+          },
+          "amplsVirtualNetworkId": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsvirtualNetworkId]"
+          },
+          "amplsVirtualNetworkName": {
+            "value": "[variables('azureMonitorPrivateEndpoint').amplsVirtualNetworkName]"
+          }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Resources/deployments', 'virtual-network')]",
+          "[resourceId('Microsoft.Resources/deployments', 'app-insights')]"
+        ]
+      }
+    },
+    {
       "name": "sql-server",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
@@ -740,11 +823,20 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/storage-account.json')]"
+          "uri": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/feature/DSI-2942/Shared/storage-account.json"
         },
         "parameters": {
           "storageAccountName": {
             "value": "[parameters('storageAccountName')]"
+          },
+          "ipRules": {
+            "value": [{
+              "value": "147.243.0.0/16",
+              "action": "Allow"
+            }]
+          },
+          "NetFirewall":{
+              "value": true
           }
         }
       }
@@ -888,6 +980,9 @@
           },
           "redisSubnet": {
             "value": "[array(variables('redisSubnetName'))]"
+          },
+          "amplsSubnet": {
+            "value": "[array(variables('amplsSubnetName'))]"
           },
           "applicationSubnets": {
             "value": "[parameters('applicationSubnets')]"
