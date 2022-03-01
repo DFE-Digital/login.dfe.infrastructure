@@ -99,6 +99,13 @@
             "metadata": {
                 "description": "Sends traffic via the vnet and enables support for virtual network private endpoints"
             }
+        },
+        "http20Enabled": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "HTTP version to 2.0"
+            }
         }
     },
     "variables": {
@@ -121,14 +128,16 @@
             "minTlsVersion": "[parameters('minTlsVersion')]",
             "numberOfWorkers": "[parameters('numberOfWorkers')]",
             "healthCheckPath": "[parameters('healthCheckPath')]",
-            "vnetRouteAllEnabled": "[variables('vnetRouteAllEnabled')]"
+            "vnetRouteAllEnabled": "[variables('vnetRouteAllEnabled')]",
+            "http20Enabled": "[parameters('http20Enabled')]"
           },
           "withoutAppServiceSettings": {
             "alwaysOn": true,
             "minTlsVersion": "[parameters('minTlsVersion')]",
             "numberOfWorkers": "[parameters('numberOfWorkers')]",
             "healthCheckPath": "[parameters('healthCheckPath')]",
-            "vnetRouteAllEnabled": "[variables('vnetRouteAllEnabled')]"
+            "vnetRouteAllEnabled": "[variables('vnetRouteAllEnabled')]",
+            "http20Enabled": "[parameters('http20Enabled')]"
           }
         },
         "baseAppSettings": {},
