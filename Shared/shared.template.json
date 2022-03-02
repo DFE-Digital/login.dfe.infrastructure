@@ -838,7 +838,7 @@
               "action": "Allow"
             }]
           },
-          "copy": [{
+          "copy": {
             "name": "virtualNetworksSubNet",
             "count": "[length(parameters('applicationSubnets'))]",
             "input": {
@@ -846,7 +846,7 @@
               "action": "Allow",
               "state": "Succeeded"
             }
-          }]
+          }
         }
       }
     },
