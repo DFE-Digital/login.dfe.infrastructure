@@ -838,15 +838,14 @@
               "action": "Allow"
             }]
           },
-          "copy": {
-            "name": "virtualNetworksSubNet",
+          "virtualNetworksSubNet": [{
             "count": "[length(parameters('applicationSubnets'))]",
             "input": {
               "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), parameters('applicationSubnets')[copyIndex('virtualNetworksSubNet')])]",
               "action": "Allow",
               "state": "Succeeded"
             }
-          }
+          }]
         }
       }
     },
