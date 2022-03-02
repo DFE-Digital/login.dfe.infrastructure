@@ -244,6 +244,7 @@
     "applicationSubnets": {
       "type": "array",
       "defaultValue": [
+        "auth-sn",
         "acc-sn",
         "adtbus-sn",
         "adtcln-sn",        
@@ -267,8 +268,7 @@
         "sup-sn-1",
         "svc-sn",
         "svc-sn-1",
-        "svc-sn-2",
-        "auth-sn"
+        "svc-sn-2"        
       ],
       "metadata": {
         "description": "Names of additional subnets to create for application integration"
@@ -829,15 +829,24 @@
           "storageAccountName": {
             "value": "[parameters('storageAccountName')]"
           },
+          "NetFirewall":{
+              "value": true
+          },
           "ipRules": {
             "value": [{
               "value": "147.243.0.0/16",
               "action": "Allow"
             }]
           },
-          "NetFirewall":{
-              "value": true
-          }
+          "copy": [{
+            "name": "virtualNetworksSubNet",
+            "count": "[length(parameters('applicationSubnets'))]",
+            "input": {
+              "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), parameters('applicationSubnets')[copyIndex('virtualNetworksSubNet')])]",
+              "action": "Allow",
+              "state": "Succeeded"
+            }
+          }]
         }
       }
     },
