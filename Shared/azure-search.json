@@ -61,7 +61,12 @@
             "properties": {
                 "replicaCount": "[parameters('azureSearchReplicaCount')]",
                 "partitionCount": "[parameters('azureSearchPartitionCount')]",
-                "hostingMode": "default"
+                "hostingMode": "default",
+                "publicNetworkAccess": "Disabled",
+                "networkRuleSet": {
+                    "ipRules": [],
+                    "bypass": "AzurePortal"
+                }
             }
         }
     ]
