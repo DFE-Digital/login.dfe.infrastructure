@@ -64,7 +64,6 @@
                 "hostingMode": "default",
                 "publicNetworkAccess": "Disabled",
                 "networkRuleSet": {
-                    "ipRules": [],
                     "bypass": "AzurePortal"
                 }
             }
