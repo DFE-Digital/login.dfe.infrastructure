@@ -832,7 +832,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/feature/DSI-2942/Shared/storage-account.json"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/storage-account.json')]"
         },
         "parameters": {
           "storageAccountName": {
@@ -851,7 +851,10 @@
             "value": "[variables('virtualNetworksSubNet')]"
           }
         }
-      }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'virtual-network')]"
+      ]
     },
     {
       "name": "key-vault",
