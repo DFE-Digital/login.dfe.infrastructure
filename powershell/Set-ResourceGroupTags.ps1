@@ -50,7 +50,7 @@ param(
     [string]$ServiceOffering,
     [Parameter]
     [ValidateSet("Authentication Services")]
-    [string]$Service,
+    [string]$Service
 )
 
 $Tags = @{
