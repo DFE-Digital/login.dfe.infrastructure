@@ -404,7 +404,7 @@
     "azureSearchPrivateEndpoint": {
       "privateDnsZoneName": "privatelink.search.windows.net",
       "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-      "privateEndpointName": "[concat(parameters('azureSearcheName'),'-', variables('azureSearchSubnetName'), '-pe')]",
+      "privateEndpointName": "[concat(parameters('azureSearchName'),'-', variables('azureSearchSubnetName'), '-pe')]",
       "privateLinkResource": "[resourceId('Microsoft.Search/searchServices', parameters('azureSearchName'))]",
       "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('azureSearchSubnetName'))]"
     },
