@@ -111,6 +111,13 @@
         "description": "Name of the Redis Cache subnet. We only have one of these, but it uses an array and copy function so we can easily increase it going forward"
       }
     },
+    "azureSearchSubnet": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Name of the Azure Search subnet. We only have one of these, but it uses an array and copy function so we can easily increase it going forward"
+      }
+    },
     "amplsSubnet": {
       "type": "array",
       "defaultValue": [],
@@ -211,6 +218,21 @@
         }
       },
       {
+        "name": "azureSearchSubnetCopy",
+        "count": "[if(empty(parameters('azureSearchSubnet')), 0, 1)]",
+        "input": {
+          "name": "[parameters('azureSearchSubnet')[copyIndex('azureSearchSubnetCopy')]]",
+          "properties": {
+            "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 61, copyIndex('azureSearchSubnetCopy'), parameters('subnetAddressSpaceCIDR'))]",
+            "serviceEndpointList": "[variables('emptyArray')]",
+            "delegations": "[variables('emptyArray')]",
+            "networkSecurityGroup": "[variables('emptyObject')]",
+            "routeTable": "[variables('emptyObject')]",
+            "privateEndpointNetworkPolicies": "Disabled"
+          }
+        }
+      },
+      {
         "name": "frontendSubnetCopy",
         "count": "[if(greater(parameters('frontendSubnetCount'), 0), parameters('frontendSubnetCount'), 1)]",
         "input": {
@@ -272,9 +294,10 @@
     "frontendSubnet": "[if(greater(parameters('frontendSubnetCount'), 0), variables('frontendSubnetCopy'), variables('emptyArray'))]",
     "backendSubnet": "[if(greater(parameters('backendSubnetCount'), 0), variables('backendSubnetCopy'), variables('emptyArray'))]",
     "redisSubnet": "[if(empty(parameters('redisSubnet')), variables('emptyArray'), variables('redisSubnetCopy'))]",
+    "azureSearchSubnet": "[if(empty(parameters('azureSearchSubnet')), variables('emptyArray'), variables('azureSearchSubnetCopy'))]",
     "applicationSubnets": "[if(greater(length(parameters('applicationSubnets')), 0), variables('applicationSubnetCopy'), variables('emptyArray'))]",
     "amplsSubnet": "[if(empty(parameters('amplsSubnet')), variables('emptyArray'), variables('amplsSubnetCopy'))]",
-    "subnetConfiguration": "[concat(variables('managementSubnetCopy'), variables('gatewaySubnet'), variables('frontendSubnet'), variables('backendSubnet'), variables('redisSubnet'), variables('applicationSubnets') , variables('amplsSubnet'))]"
+    "subnetConfiguration": "[concat(variables('managementSubnetCopy'), variables('gatewaySubnet'), variables('frontendSubnet'), variables('backendSubnet'), variables('redisSubnet'),variables('azureSearchSubnet'), variables('applicationSubnets') , variables('amplsSubnet'))]"
   },
   "functions": [
     {
