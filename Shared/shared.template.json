@@ -849,7 +849,7 @@
             "value": "[array(parameters('ipRules'))]"
           },
           "virtualNetworksSubNet": {
-            "value": "[variables('virtualNetworksSubNet')]"
+            "value": []
           }
         }
       },
