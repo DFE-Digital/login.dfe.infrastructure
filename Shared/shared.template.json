@@ -366,8 +366,8 @@
       }
     },
     "ipRules": {
-        "type": "array",
-        "defaultValue": []
+        "type": "string",
+        "defaultValue": ""
     }
   },
   "variables": {
@@ -846,7 +846,7 @@
               "value": true
           },
           "ipRules": {
-            "value": "[parameters('ipRules')]"
+            "value": "[array(parameters('ipRules'))]"
           },
           "virtualNetworksSubNet": {
             "value": "[variables('virtualNetworksSubNet')]"
