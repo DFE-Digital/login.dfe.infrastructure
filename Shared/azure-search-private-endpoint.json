@@ -68,25 +68,6 @@
     },
     {
       "apiVersion": "2020-10-01",
-      "name": "azure-search-public-access",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'Shared/azure-search.json')]"
-        },
-        "parameters": {
-          "azureSearchName": {
-            "value": "[parameters('azureSearchName')]"
-          }
-        }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'azure-search-private-endpoint')]"
-      ]
-    },
-    {
-      "apiVersion": "2020-10-01",
       "name": "azure-search-private-dns-zones",
       "type": "Microsoft.Resources/deployments",
       "properties": {
