@@ -846,7 +846,7 @@
               "value": true
           },
           "ipRules": {
-            "value": "[array(replace(parameters('ipRules'),'\\\"','\"'))]"
+            "value": "[json(parameters('ipRules'))]"
           },
           "virtualNetworksSubNet": {
             "value": []
