@@ -43,7 +43,7 @@
   "resources": [
     {
       "apiVersion": "2020-10-01",
-      "name": "azure-search-private-endpoint",
+      "name": "azure-search-private-endpoint-1",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -82,7 +82,7 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'azure-search-private-endpoint')]"
+        "[resourceId('Microsoft.Resources/deployments', 'azure-search-private-endpoint-1')]"
       ]
     },
     {
@@ -126,7 +126,7 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'azure-search-private-endpoint')]",
+        "[resourceId('Microsoft.Resources/deployments', 'azure-search-private-endpoint-1')]",
         "[resourceId('Microsoft.Resources/deployments', 'azure-search-private-dns-zones')]"
       ]
     }
