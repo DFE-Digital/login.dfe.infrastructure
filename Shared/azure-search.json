@@ -62,7 +62,7 @@
                 "replicaCount": "[parameters('azureSearchReplicaCount')]",
                 "partitionCount": "[parameters('azureSearchPartitionCount')]",
                 "hostingMode": "default",
-                "publicNetworkAccess": "Disabled",
+                "publicNetworkAccess": "disabled",
                 "networkRuleSet": {
                     "bypass": "AzurePortal"
                 }
