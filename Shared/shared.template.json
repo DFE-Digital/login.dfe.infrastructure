@@ -332,6 +332,13 @@
         "description": "Whether to deploy a private endpoint to the Redis Cache instance"
       }
     },
+    "deployAzureSearch": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Whether to deploy the Azure Search instance"
+      }
+    },
     "deployAzureSearchPrivateEndpoint": {
       "type": "bool",
       "defaultValue": false,
@@ -866,6 +873,7 @@
       }
     },
     {
+      "condition": "[parameters('deployAzureSearch')]",
       "name": "azure-search",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
@@ -916,7 +924,6 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'azure-search')]",
         "[resourceId('Microsoft.Resources/deployments', 'virtual-network')]"
       ]
     },
