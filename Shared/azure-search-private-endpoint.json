@@ -72,7 +72,10 @@
     "location": "global",
     "dependsOn": [],
     "tags": {},
-    "properties": {}
+    "properties": {},
+    "dependsOn": [
+        "[parameters('privateEndpointName')]"
+    ]
   },
   {
     "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
@@ -84,7 +87,10 @@
         "id": "[parameters('virtualNetworkId')]"
       },
       "registrationEnabled": false
-    }
+    },
+    "dependsOn": [
+        "[parameters('privateDnsZoneName')]"
+    ]
   },
   {
     "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
@@ -100,7 +106,11 @@
           }
         }
       ]
-    }
+    },
+    "dependsOn": [
+        "[parameters('privateEndpointName')]",
+        "[parameters('privateDnsZoneName')]"
+    ]
   }
   ]
 }
