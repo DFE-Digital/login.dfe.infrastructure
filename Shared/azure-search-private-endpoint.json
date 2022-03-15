@@ -40,95 +40,67 @@
       "type": "string"
     }
   },
+  "variables": {
+    "privateDnsZoneConfigsName": "[replace(parameters('privateDnsZoneName'), '.','-')]",
+    "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', parameters('privateDnsZoneName'))]"
+  },
   "resources": [
     {
-      "apiVersion": "2020-10-01",
-      "name": "azure-search-private-endpoint-1",
-      "type": "Microsoft.Resources/deployments",
+      "location": "[resourceGroup().location]",
+      "name": "[parameters('privateEndpointName')]",
+      "type": "Microsoft.Network/privateEndpoints",
+      "apiVersion": "2021-03-01",
       "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'Shared/private-endpoint.json')]"
-        },
-        "parameters": {
-          "privateEndpointName": {
-            "value": "[parameters('privateEndpointName')]"
+          "subnet": {
+            "id": "[parameters('privateEndpointSubnetId')]"
           },
-          "privateLinkResource": {
-            "value": "[parameters('privateLinkResource')]"
-          },
-          "targetSubResource": {
-            "value": "[parameters('targetSubResource')]"
-          },
-          "privateEndpointSubnetId": {
-            "value": "[parameters('privateEndpointSubnetId')]"
-          }
-        }
+          "privateLinkServiceConnections": [
+              {
+                  "name": "[parameters('privateEndpointName')]",
+                  "properties": {
+                      "privateLinkServiceId": "[parameters('privateLinkResource')]",
+                      "groupIds": "[parameters('targetSubResource')]"
+                  }
+              }
+          ]
       }
-    },
-    {
-      "apiVersion": "2020-10-01",
-      "name": "azure-search-private-dns-zones",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'Shared/private-dns-zones.json')]"
-        },
-        "parameters": {
-          "privateDnsZoneName": {
-            "value": "[parameters('privateDnsZoneName')]"
+  },
+  {
+    "apiVersion": "2018-09-01",
+    "type": "Microsoft.Network/privateDnsZones",
+    "name": "[parameters('privateDnsZoneName')]",
+    "location": "global",
+    "dependsOn": [],
+    "tags": {},
+    "properties": {}
+  },
+  {
+    "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+    "apiVersion": "2018-09-01",
+    "name": "[concat(parameters('privateDnsZoneName'), '/', uniqueString(parameters('virtualNetworkId')))]",
+    "location": "global",
+    "properties": {
+      "virtualNetwork": {
+        "id": "[parameters('virtualNetworkId')]"
+      },
+      "registrationEnabled": false
+    }
+  },
+  {
+    "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+    "apiVersion": "2021-03-01",
+    "name": "[concat(parameters('privateEndpointName'), '/', 'default')]",
+    "location": "[resourceGroup().location]",
+    "properties": {
+      "privateDnsZoneConfigs": [
+        {
+          "name": "[variables('privateDnsZoneConfigsName')]",
+          "properties": {
+            "privateDnsZoneId": "[variables('privateDnsZoneId')]"
           }
         }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'azure-search-private-endpoint-1')]"
-      ]
-    },
-    {
-      "apiVersion": "2020-10-01",
-      "name": "azure-search-private-dns-zones-vnet-links",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'Shared/private-dns-zones-vnet-links.json')]"
-        },
-        "parameters": {
-          "privateDnsZoneName": {
-            "value": "[parameters('privateDnsZoneName')]"
-          },
-          "virtualNetworkId": {
-            "value": "[parameters('virtualNetworkId')]"
-          }
-        }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'azure-search-private-dns-zones')]"
-      ]
-    },
-    {
-      "apiVersion": "2020-10-01",
-      "name": "azure-search-private-dns-zone-groups",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'Shared/private-dns-zone-groups.json')]"
-        },
-        "parameters": {
-          "privateEndpointName": {
-            "value": "[parameters('privateEndpointName')]"
-          },
-          "privateDnsZoneName": {
-            "value": "[parameters('privateDnsZoneName')]"
-          }
-        }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'azure-search-private-endpoint-1')]",
-        "[resourceId('Microsoft.Resources/deployments', 'azure-search-private-dns-zones')]"
       ]
     }
+  }
   ]
 }
