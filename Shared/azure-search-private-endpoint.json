@@ -18,7 +18,7 @@
     "targetSubResource": {
       "type": "array",
       "defaultValue": [
-        "azureSearch"
+        "searchService"
       ],
       "metadata": {
         "description": "The type of sub-resource for the resource selected above that your private endpoint will be able to access."
@@ -70,7 +70,6 @@
     "type": "Microsoft.Network/privateDnsZones",
     "name": "[parameters('privateDnsZoneName')]",
     "location": "global",
-    "dependsOn": [],
     "tags": {},
     "properties": {},
     "dependsOn": [
