@@ -1,5 +1,5 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "http://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "azureSearchName": {
@@ -51,7 +51,7 @@
     },
     "resources": [
         {
-            "apiVersion": "2015-08-19",
+            "apiVersion": "2020-03-13",
             "name": "[parameters('azureSearchName')]",
             "type": "Microsoft.Search/searchServices",
             "location": "[resourceGroup().location]",
