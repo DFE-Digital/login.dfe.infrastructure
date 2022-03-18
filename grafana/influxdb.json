@@ -114,9 +114,6 @@
       "apiVersion": "2020-10-01",
       "name": "subnet-influx-sn",
       "type": "Microsoft.Resources/deployments",
-      "dependsOn": [
-        "vnet"
-      ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
