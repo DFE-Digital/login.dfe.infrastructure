@@ -88,6 +88,45 @@
       "metadata": {
         "description": "Names of containers to create in the storage account."
       }
+    },
+    "serviceEndpointList": {
+      "type": "array",
+      "defaultValue": [
+        "Microsoft.Web",
+        "Microsoft.Sql",
+        "Microsoft.Storage",
+        "Microsoft.KeyVault",
+        "Microsoft.ServiceBus"
+      ],
+      "allowedValues": [
+        "Microsoft.Web",
+        "Microsoft.Sql",
+        "Microsoft.Storage",
+        "Microsoft.KeyVault",
+        "Microsoft.ServiceBus"
+      ]
+    },
+    "virtualNetworkAddressSpacePrefix": {
+      "type": "string",
+      "defaultValue": "10.0",
+      "metadata": {
+        "description": "Prefix address space of the Vnet"
+      }
+    },
+    "subnetAddressSpaceCIDR": {
+      "type": "string",
+      "defaultValue": "/24",
+      "metadata": {
+        "description": "The CIDR notation of the subnet address space"
+      }
+    },
+    "NetFirewall":{
+        "type": "bool",
+        "defaultValue": true
+    },
+    "bypass": {
+        "type": "string",
+        "defaultValue": "AzureServices"
     }
   },
   "variables": {
@@ -98,9 +137,69 @@
     "mySqlServerFQDN": "[concat(parameters('resourceEnvironmentName'), '-signin-gfa-msql.mysql.database.azure.com')]",
     "grafanaDatabaseName": "[concat(parameters('resourceEnvironmentName'), '_signin_gfa_db')]",
     "grafanaDatabaseUser": "[concat(parameters('mySqlAdminLogin'), '@',variables('mySqlServerName'))]",
-    "storageAccountName": "[concat(parameters('resourceEnvironmentName'), 'signingfastr')]"
+    "storageAccountName": "[concat(parameters('resourceEnvironmentName'), 'signingfastr')]",
+    "virtualNetworkName": "[concat(parameters('resourceEnvironmentName'), '-signin-shd-vnet')]",
+    "subnetTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/subnet.json')]",
+    "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 32, 0, parameters('subnetAddressSpaceCIDR'))]",
+    "subnetDelegations": [
+      {
+        "name": "webapp",
+        "properties": {
+          "serviceName": "Microsoft.Web/serverFarms",
+          "actions": [
+            "Microsoft.Network/virtualNetworks/subnets/action"
+          ]
+        }
+      }
+    ],
+    "subnetId": "[resourceId(concat(parameters('resourceEnvironmentName'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), 'graf-sn')]",
+    "virtualNetworkRules": [
+        {
+            "id": "[variables('subnetId')]",
+            "action": "Allow",
+            "state": "Succeeded"
+        }
+    ]
   },
   "resources": [
+    {
+      "apiVersion": "2020-10-01",
+      "name": "subnet-graf-sn",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "vnet"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('subnetTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "virtualNetworkName": {
+            "value": "[variables('virtualNetworkName')]"
+          },
+          "subnetName": {
+            "value": "graf-sn"
+          },
+          "subnetAddressPrefix": {
+            "value": "[variables('addressPrefix')]"
+          },
+          "serviceEndpointList": {
+            "value": "[parameters('serviceEndpointList')]"
+          },
+          "delegations": {
+            "value": "[variables('delegations')]"
+          },
+          "networkSecurityGroup": {
+            "value": {}
+          },
+          "routeTable": {
+            "value": {}
+          }
+        }
+      }
+    },
     {
       "name": "[variables('mySqlServerName')]",
       "type": "Microsoft.DBforMySQL/servers",
@@ -312,6 +411,9 @@
                 "type": "AzureFiles"
               }
             }
+          },
+          "subnetResourceId":{
+            "value": "[variables('subnetId')]"
           }
         }
       },
@@ -336,6 +438,15 @@
           },
           "storageKind": {
             "value": "Storage"
+          },
+          "NetFirewall":{
+              "value": "[parameters('NetFirewall')]"
+          },
+          "virtualNetworksSubNet": {
+              "value": "[variables('virtualNetworkRules')]"
+          },
+          "bypass":{
+              "value": "[parameters('bypass')]"
           }
         }
       }
