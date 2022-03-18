@@ -49,6 +49,20 @@
 		"azureStorageAccounts": {
 			"type": "object",
 			"defaultValue": {}
+        },
+        "subnetResourceId": {
+          "type": "string",
+          "defaultValue": "",
+          "metadata": {
+            "description": "Resource ID of the subnet used for vNet integration"
+          }
+        },
+        "minTlsVersion": {
+            "type": "string",
+            "defaultValue": "1.2",
+            "metadata": {
+                "description": "The minimum tls version for the service"
+            }
         }
     },
     "variables": {
@@ -60,14 +74,17 @@
 			"withAppServiceSettings": {
 				"alwaysOn": true,
 				"linuxFxVersion": "[parameters('runtimeStack')]",
-				"appSettings": "[parameters('appServiceAppSettings')]"
+				"appSettings": "[parameters('appServiceAppSettings')]",
+                "minTlsVersion": "[parameters('minTlsVersion')]"
 			},
 			"withoutAppServiceSettings": {
 				"alwaysOn": true,
-				"linuxFxVersion": "[parameters('runtimeStack')]"
+				"linuxFxVersion": "[parameters('runtimeStack')]",
+                "minTlsVersion": "[parameters('minTlsVersion')]"
 			},
 			"withoutLinuxFxVersion": {
-				"alwaysOn": true
+				"alwaysOn": true,
+                "minTlsVersion": "[parameters('minTlsVersion')]"
 			}
 		}
     },
@@ -93,6 +110,7 @@
                     "location": "[resourceGroup().location]",
                     "properties": {
                         "clientAffinityEnabled": false,
+                        "httpsOnly": true,
                         "serverFarmId": "[variables('appServicePlanId')]",
                         "siteConfig": "[if(variables('appServiceAppSettingsProvided'), variables('siteConfigSettings').withAppServiceSettings, variables('siteConfigSettings').withoutAppServiceSettings)]"
 					},
@@ -127,6 +145,34 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
             ]
+        },
+        {
+          "type": "Microsoft.Web/sites/config",
+          "condition": "[not(empty(parameters('subnetResourceId')))]",
+          "name": "[concat(parameters('appServiceName'), '/virtualNetwork')]",
+          "apiVersion": "2018-11-01",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "subnetResourceId": "[parameters('subnetResourceId')]",
+            "swiftSupported": true
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
+          ]
+        },
+        {
+          "type": "Microsoft.Web/sites/slots/config",
+          "condition": "[and(not(empty(parameters('subnetResourceId'))), parameters('deployStagingSlot'))]",
+          "name": "[concat(parameters('appServiceName'), '/staging/virtualNetwork')]",
+          "apiVersion": "2018-11-01",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "subnetResourceId": "[parameters('subnetResourceId')]",
+            "swiftSupported": true
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites/slots', parameters('appServiceName'), 'staging')]"
+          ]
         }
     ],
 	"outputs": {
