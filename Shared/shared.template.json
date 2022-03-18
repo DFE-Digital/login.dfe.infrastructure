@@ -924,7 +924,8 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'virtual-network')]"
+        "[resourceId('Microsoft.Resources/deployments', 'virtual-network')]",
+        "[resourceId('Microsoft.Resources/deployments', 'azure-search')]"
       ]
     },
     {

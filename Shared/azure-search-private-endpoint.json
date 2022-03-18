@@ -4,10 +4,13 @@
   "parameters": {
     "templatesBaseUri": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/feature/DSI-4604/"
+      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/master/"
     },
     "privateEndpointName": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "The Name of the Private Endpoint"
+      }
     },
     "privateLinkResource": {
       "type": "string",
@@ -34,10 +37,16 @@
       "type": "string"
     },
     "virtualNetworkId": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "The virtual network ID resource to attach the private endpoint to"
+      }
     },
     "azureSearchName": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Search Service"
+      }
     }
   },
   "variables": {
@@ -93,7 +102,7 @@
   },
   {
     "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
-    "apiVersion": "2021-03-01",
+    "apiVersion": "2020-03-01",
     "name": "[concat(parameters('privateEndpointName'), '/', 'default')]",
     "location": "[resourceGroup().location]",
     "properties": {
