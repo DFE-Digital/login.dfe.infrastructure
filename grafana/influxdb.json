@@ -100,7 +100,7 @@
           }
         }
       ],
-      "subnetId": "[resourceId(concat(parameters('projectIdentifier'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), 'graf-sn')]",
+      "subnetId": "[resourceId(concat(parameters('projectIdentifier'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), 'influx-sn')]",
       "virtualNetworkRules": [
           {
               "id": "[variables('subnetId')]",
@@ -112,7 +112,7 @@
     "resources": [
     {
       "apiVersion": "2020-10-01",
-      "name": "subnet-graf-sn",
+      "name": "subnet-influx-sn",
       "type": "Microsoft.Resources/deployments",
       "dependsOn": [
         "vnet"
@@ -128,7 +128,7 @@
             "value": "[variables('virtualNetworkName')]"
           },
           "subnetName": {
-            "value": "graf-sn"
+            "value": "influx-sn"
           },
           "subnetAddressPrefix": {
             "value": "[variables('addressPrefix')]"
