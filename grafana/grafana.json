@@ -166,9 +166,6 @@
       "apiVersion": "2020-10-01",
       "name": "subnet-graf-sn",
       "type": "Microsoft.Resources/deployments",
-      "dependsOn": [
-        "vnet"
-      ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
