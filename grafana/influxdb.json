@@ -87,7 +87,7 @@
       "appServiceRuntimeStack": "[concat('DOCKER|', 'influxdb:', parameters('influxdbVersion'))]",
       "storageAccountName": "[concat(parameters('projectIdentifier'), 'k6loadtest')]",
       "virtualNetworkName": "[concat(parameters('projectIdentifier'), '-signin-shd-vnet')]",
-      "subnetTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/subnet.json')]",
+      "subnetTemplateUri": "[concat(replace(parameters('deploymentUrlBase'),'grafana/',''), 'Shared/subnet.json')]",
       "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 33, 0, parameters('subnetAddressSpaceCIDR'))]",
       "subnetDelegations": [
         {

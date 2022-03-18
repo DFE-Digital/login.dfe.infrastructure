@@ -139,7 +139,7 @@
     "grafanaDatabaseUser": "[concat(parameters('mySqlAdminLogin'), '@',variables('mySqlServerName'))]",
     "storageAccountName": "[concat(parameters('resourceEnvironmentName'), 'signingfastr')]",
     "virtualNetworkName": "[concat(parameters('resourceEnvironmentName'), '-signin-shd-vnet')]",
-    "subnetTemplateUri": "[concat(parameters('templatesBaseUri'), 'Shared/subnet.json')]",
+    "subnetTemplateUri": "[concat(replace(parameters('deploymentUrlBase'),'grafana/',''), 'Shared/subnet.json')]",
     "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 32, 0, parameters('subnetAddressSpaceCIDR'))]",
     "subnetDelegations": [
       {
