@@ -35,9 +35,37 @@
                 "StorageV2",
                 "BlobStorage"
             ]
+        },
+        "NetFirewall":{
+            "type": "bool",
+            "defaultValue": true
+        },
+        "resourceAccessRules": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "bypass": {
+            "type": "string",
+            "defaultValue": "AzureServices"
+        },
+        "ipRules": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "virtualNetworksSubNet": {
+            "type": "array",
+            "defaultValue": []
         }
     },
-    "variables": {},
+    "variables": {
+    "networkAcls": {
+        "resourceAccessRules": "[if(empty(parameters('resourceAccessRules')), createArray(), parameters('resourceAccessRules'))]",
+        "bypass": "[if(empty(parameters('bypass')), '', parameters('bypass'))]",
+        "virtualNetworkRules": "[if(empty(parameters('virtualNetworksSubNet')), createArray(), parameters('virtualNetworksSubNet'))]",
+        "ipRules": "[if(empty(parameters('ipRules')), createArray(), parameters('ipRules'))]",
+        "defaultAction": "Deny"
+        }
+    },
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts",
@@ -49,6 +77,8 @@
             },
             "kind": "[parameters('storageKind')]",
             "properties": {
+                "minimumTlsVersion": "TLS1_2",
+                "networkAcls": "[if(parameters('NetFirewall'), variables('networkAcls'), json('null'))]",
                 "supportsHttpsTrafficOnly": true,
                 "encryption": {
                     "keySource": "Microsoft.Storage",
