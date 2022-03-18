@@ -110,7 +110,6 @@
                     "location": "[resourceGroup().location]",
                     "properties": {
                         "clientAffinityEnabled": false,
-                        "httpsOnly": true,
                         "serverFarmId": "[variables('appServicePlanId')]",
                         "siteConfig": "[if(variables('appServiceAppSettingsProvided'), variables('siteConfigSettings').withAppServiceSettings, variables('siteConfigSettings').withoutAppServiceSettings)]"
 					},
