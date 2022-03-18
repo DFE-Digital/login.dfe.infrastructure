@@ -88,7 +88,7 @@
       "storageAccountName": "[concat(parameters('projectIdentifier'), 'k6loadtest')]",
       "virtualNetworkName": "[concat(parameters('projectIdentifier'), '-signin-shd-vnet')]",
       "subnetTemplateUri": "[concat(replace(parameters('deploymentUrlBase'),'grafana/',''), 'Shared/subnet.json')]",
-      "addressPrefix": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 33, 0, parameters('subnetAddressSpaceCIDR'))]",
+      "addressPrefix": "[concat(parameters('virtualNetworkAddressSpacePrefix'), 33, 0, parameters('subnetAddressSpaceCIDR'))]",
       "subnetDelegations": [
         {
           "name": "webapp",
