@@ -186,7 +186,7 @@
             "value": "[parameters('serviceEndpointList')]"
           },
           "delegations": {
-            "value": "[variables('delegations')]"
+            "value": "[variables('subnetDelegations')]"
           },
           "networkSecurityGroup": {
             "value": {}
@@ -446,7 +446,10 @@
               "value": "[parameters('bypass')]"
           }
         }
-      }
+      },
+      "dependsOn": [
+        "subnet-graf-sn"
+      ]
     },
 
     {
