@@ -106,11 +106,36 @@
         "Microsoft.ServiceBus"
       ]
     },
+    "virtualNetworkName": {
+      "type": "string",
+      "defaultValue": "graf",
+      "metadata": {
+        "description": "The name of the virtual network."
+      }
+    },
     "virtualNetworkAddressSpacePrefix": {
       "type": "string",
-      "defaultValue": "10.0",
+      "defaultValue": "10.1",
       "metadata": {
         "description": "Prefix address space of the Vnet"
+      }
+    },
+    "virtualNetworkAddressSpaceCIDR": {
+      "type": "string",
+      "defaultValue": "/16",
+      "metadata": {
+        "description": "The CIDR notation of the Vnet address space"
+      }
+    },
+    "destructiveVirtualNetworkDeploy": {
+      "type": "string",
+      "defaultValue": "Disabled",
+      "allowedValues": [
+        "Disabled",
+        "Enabled"
+      ],
+      "metadata": {
+        "description": "Deploys the Virtual Network and deletes all subnets if Enabled https://github.com/Azure/azure-quickstart-templates/issues/2786"
       }
     },
     "subnetAddressSpaceCIDR": {
@@ -138,9 +163,9 @@
     "grafanaDatabaseName": "[concat(parameters('resourceEnvironmentName'), '_signin_gfa_db')]",
     "grafanaDatabaseUser": "[concat(parameters('mySqlAdminLogin'), '@',variables('mySqlServerName'))]",
     "storageAccountName": "[concat(parameters('resourceEnvironmentName'), 'signingfastr')]",
-    "virtualNetworkName": "[concat(parameters('resourceEnvironmentName'), '-signin-shd-vnet')]",
+    "virtualNetworkName": "[concat(parameters('resourceEnvironmentName'), '-signin-',parameters('virtualNetworkName') , '-vnet')]",
+    "vnetTemplateUri": "[concat(replace(parameters('deploymentUrlBase'),'grafana/',''), 'Shared/virtual-network.json')]",
     "subnetTemplateUri": "[concat(replace(parameters('deploymentUrlBase'),'grafana/',''), 'Shared/subnet.json')]",
-    "addressPrefix": "[concat(parameters('virtualNetworkAddressSpacePrefix'), '.32.', 0, parameters('subnetAddressSpaceCIDR'))]",
     "subnetDelegations": [
       {
         "name": "webapp",
@@ -164,9 +189,28 @@
   "resources": [
     {
       "apiVersion": "2020-10-01",
+      "name": "vnet",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('vnetTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "armVnetName": {
+            "value": "[variables('virtualNetworkName')]"
+          },
+          "armVnetAddressSpaceCIDR": {
+            "value": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 0, 0, parameters('subnetAddressSpaceCIDR'))]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2020-10-01",
       "name": "subnet-graf-sn",
       "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[concat(parameters('resourceEnvironmentName'),'-shd')]",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -181,7 +225,7 @@
             "value": "graf-sn"
           },
           "subnetAddressPrefix": {
-            "value": "[variables('addressPrefix')]"
+            "value": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 0, 0, parameters('virtualNetworkAddressSpaceCIDR'))]"
           },
           "serviceEndpointList": {
             "value": "[parameters('serviceEndpointList')]"
