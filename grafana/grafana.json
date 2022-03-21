@@ -202,7 +202,7 @@
             "value": "[variables('virtualNetworkName')]"
           },
           "armVnetAddressSpaceCIDR": {
-            "value": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 0, 0, parameters('subnetAddressSpaceCIDR'))]"
+            "value": "[concat(parameters('virtualNetworkAddressSpacePrefix'), '.0.', 0, parameters('virtualNetworkAddressSpaceCIDR'))]"
           }
         }
       }
@@ -225,7 +225,7 @@
             "value": "graf-sn"
           },
           "subnetAddressPrefix": {
-            "value": "[blocks.getNextAddressRange(parameters('virtualNetworkAddressSpacePrefix'), 0, 0, parameters('virtualNetworkAddressSpaceCIDR'))]"
+            "value": "[concat(parameters('virtualNetworkAddressSpacePrefix'), '.0.', 0, parameters('subnetAddressSpaceCIDR'))]"
           },
           "serviceEndpointList": {
             "value": "[parameters('serviceEndpointList')]"
