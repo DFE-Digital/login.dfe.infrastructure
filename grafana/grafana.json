@@ -177,7 +177,7 @@
         }
       }
     ],
-    "subnetId": "[resourceId(concat(parameters('resourceEnvironmentName'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), 'graf-sn')]",
+    "subnetId": "[resourceId(concat(parameters('resourceEnvironmentName'),'-gfa'), 'Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), 'graf-sn')]",
     "virtualNetworkRules": [
         {
             "id": "[variables('subnetId')]",
