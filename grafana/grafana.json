@@ -402,7 +402,7 @@
             "value": "Storage"
           },
           "NetFirewall":{
-              "value": true
+              "value": false
           }
         }
       }
