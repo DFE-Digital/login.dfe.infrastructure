@@ -36,19 +36,19 @@ param(
     [Parameter(Mandatory=$true)]
     [ValidateSet("Shared IT core services")]
     [string]$ParentBusiness,
-    [Parameter()]
+    [Parameter]
     [ValidateSet("Digital and Technology")]
     [string]$Portfolio,
-    [Parameter()]
+    [Parameter]
     [ValidateSet("DfE Sign-in")]
     [string]$Product,
-    [Parameter()]
+    [Parameter]
     [ValidateSet("IDAMS")]
     [string]$ServiceLine,
     [Parameter(Mandatory=$true)]
     [ValidateSet("DfE Sign-in")]
     [string]$ServiceOffering,
-    [Parameter()]
+    [Parameter]
     [ValidateSet("Authentication Services")]
     [string]$Service
 )
@@ -56,11 +56,7 @@ param(
 $Tags = @{
     Environment = $Environment
     'Parent Business' = $ParentBusiness
-    'Portfolio' = $Portfolio
-    'Product' = $Product
-    'ServiceLine' = $ServiceLine
     'Service Offering' = $ServiceOffering
-    'Service' = $Service
 }
 
 Write-Verbose -Message "Attempting to retrieve existing resource group $ResourceGroupName"
