@@ -162,86 +162,9 @@
     "mySqlServerFQDN": "[concat(parameters('resourceEnvironmentName'), '-signin-gfa-msql.mysql.database.azure.com')]",
     "grafanaDatabaseName": "[concat(parameters('resourceEnvironmentName'), '_signin_gfa_db')]",
     "grafanaDatabaseUser": "[concat(parameters('mySqlAdminLogin'), '@',variables('mySqlServerName'))]",
-    "storageAccountName": "[concat(parameters('resourceEnvironmentName'), 'signingfastr')]",
-    "virtualNetworkName": "[concat(parameters('resourceEnvironmentName'), '-signin-',parameters('virtualNetworkName') , '-vnet')]",
-    "vnetTemplateUri": "[concat(replace(parameters('deploymentUrlBase'),'grafana/',''), 'Shared/virtual-network.json')]",
-    "subnetTemplateUri": "[concat(replace(parameters('deploymentUrlBase'),'grafana/',''), 'Shared/subnet.json')]",
-    "subnetDelegations": [
-      {
-        "name": "webapp",
-        "properties": {
-          "serviceName": "Microsoft.Web/serverFarms",
-          "actions": [
-            "Microsoft.Network/virtualNetworks/subnets/action"
-          ]
-        }
-      }
-    ],
-    "subnetId": "[resourceId(concat(parameters('resourceEnvironmentName'),'-gfa'), 'Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), 'graf-sn')]",
-    "virtualNetworkRules": [
-        {
-            "id": "[variables('subnetId')]",
-            "action": "Allow",
-            "state": "Succeeded"
-        }
-    ]
+    "storageAccountName": "[concat(parameters('resourceEnvironmentName'), 'signingfastr')]"
   },
   "resources": [
-    {
-      "apiVersion": "2020-10-01",
-      "name": "vnet",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('vnetTemplateUri')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "armVnetName": {
-            "value": "[variables('virtualNetworkName')]"
-          },
-          "armVnetAddressSpaceCIDR": {
-            "value": "[concat(parameters('virtualNetworkAddressSpacePrefix'), '.0.', 0, parameters('virtualNetworkAddressSpaceCIDR'))]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2020-10-01",
-      "name": "subnet-graf-sn",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('subnetTemplateUri')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "virtualNetworkName": {
-            "value": "[variables('virtualNetworkName')]"
-          },
-          "subnetName": {
-            "value": "graf-sn"
-          },
-          "subnetAddressPrefix": {
-            "value": "[concat(parameters('virtualNetworkAddressSpacePrefix'), '.0.', 0, parameters('subnetAddressSpaceCIDR'))]"
-          },
-          "serviceEndpointList": {
-            "value": "[parameters('serviceEndpointList')]"
-          },
-          "delegations": {
-            "value": "[variables('subnetDelegations')]"
-          },
-          "networkSecurityGroup": {
-            "value": {}
-          },
-          "routeTable": {
-            "value": {}
-          }
-        }
-      }
-    },
     {
       "name": "[variables('mySqlServerName')]",
       "type": "Microsoft.DBforMySQL/servers",
@@ -453,9 +376,6 @@
                 "type": "AzureFiles"
               }
             }
-          },
-          "subnetResourceId":{
-            "value": "[variables('subnetId')]"
           }
         }
       },
@@ -482,21 +402,11 @@
             "value": "Storage"
           },
           "NetFirewall":{
-              "value": "[parameters('NetFirewall')]"
-          },
-          "virtualNetworksSubNet": {
-              "value": "[variables('virtualNetworkRules')]"
-          },
-          "bypass":{
-              "value": "[parameters('bypass')]"
+              "value": false
           }
         }
-      },
-      "dependsOn": [
-        "subnet-graf-sn"
-      ]
+      }
     },
-
     {
       "name": "[concat('storage-fileshare-', parameters('storageContainers')[copyIndex()])]",
       "type": "Microsoft.Resources/deployments",
@@ -537,6 +447,10 @@
     "storageAccountName": {
       "type": "string",
       "value": "[variables('storageAccountName')]"
+    },
+    "outboundIpAddresses": {
+      "type": "array",
+      "value": "[reference('app-service').outputs.possibleOutboundIpAddresses.value]"
     }
   }
 }
