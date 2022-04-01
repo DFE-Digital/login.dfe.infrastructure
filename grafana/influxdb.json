@@ -40,16 +40,113 @@
         "metadata": {
           "description": "Names of containers to create in the storage account."
         }
+      },
+      "serviceEndpointList": {
+        "type": "array",
+        "defaultValue": [
+          "Microsoft.Web",
+          "Microsoft.Sql",
+          "Microsoft.Storage",
+          "Microsoft.KeyVault",
+          "Microsoft.ServiceBus"
+        ],
+        "allowedValues": [
+          "Microsoft.Web",
+          "Microsoft.Sql",
+          "Microsoft.Storage",
+          "Microsoft.KeyVault",
+          "Microsoft.ServiceBus"
+        ]
+      },
+      "virtualNetworkAddressSpacePrefix": {
+        "type": "string",
+        "defaultValue": "10.0",
+        "metadata": {
+          "description": "Prefix address space of the Vnet"
+        }
+      },
+      "subnetAddressSpaceCIDR": {
+        "type": "string",
+        "defaultValue": "/24",
+        "metadata": {
+          "description": "The CIDR notation of the subnet address space"
+        }
+      },
+      "NetFirewall":{
+          "type": "bool",
+          "defaultValue": true
+      },
+      "bypass": {
+          "type": "string",
+          "defaultValue": "AzureServices"
       }
     },
     "variables": {
       "appServiceName": "[concat(parameters('projectIdentifier'), '-signin-infx',if(contains(parameters('projectIdentifier'),'s141'),'','-as'))]",
       "appServicePlanName": "[concat(parameters('projectIdentifier'), '-signin-infx-asp')]",
       "appServiceRuntimeStack": "[concat('DOCKER|', 'influxdb:', parameters('influxdbVersion'))]",
-      "storageAccountName": "[concat(parameters('projectIdentifier'), 'k6loadtest')]"
+      "storageAccountName": "[concat(parameters('projectIdentifier'), 'k6loadtest')]",
+      "virtualNetworkName": "[concat(parameters('projectIdentifier'), '-signin-shd-vnet')]",
+      "subnetTemplateUri": "[concat(replace(parameters('deploymentUrlBase'),'grafana/',''), 'Shared/subnet.json')]",
+      "addressPrefix": "[concat(parameters('virtualNetworkAddressSpacePrefix'), '.33.', 0, parameters('subnetAddressSpaceCIDR'))]",
+      "subnetDelegations": [
+        {
+          "name": "webapp",
+          "properties": {
+            "serviceName": "Microsoft.Web/serverFarms",
+            "actions": [
+              "Microsoft.Network/virtualNetworks/subnets/action"
+            ]
+          }
+        }
+      ],
+      "subnetId": "[resourceId(concat(parameters('projectIdentifier'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), 'influx-sn')]",
+      "virtualNetworkRules": [
+          {
+              "id": "[variables('subnetId')]",
+              "action": "Allow",
+              "state": "Succeeded"
+          }
+      ]
     },
     "resources": [
-      {
+    {
+      "apiVersion": "2020-10-01",
+      "name": "subnet-influx-sn",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[concat(parameters('projectIdentifier'),'-shd')]", 
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('subnetTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "virtualNetworkName": {
+            "value": "[variables('virtualNetworkName')]"
+          },
+          "subnetName": {
+            "value": "influx-sn"
+          },
+          "subnetAddressPrefix": {
+            "value": "[variables('addressPrefix')]"
+          },
+          "serviceEndpointList": {
+            "value": "[parameters('serviceEndpointList')]"
+          },
+          "delegations": {
+            "value": "[variables('subnetDelegations')]"
+          },
+          "networkSecurityGroup": {
+            "value": {}
+          },
+          "routeTable": {
+            "value": {}
+          }
+        }
+      }
+    },
+    {
         "name": "app-service-plan",
         "type": "Microsoft.Resources/deployments",
         "apiVersion": "2017-05-10",
@@ -140,6 +237,9 @@
                   "type": "AzureFiles"
                 }
               }
+            },
+            "subnetResourceId":{
+              "value": "[variables('subnetId')]"
             }
           }
         },
@@ -164,9 +264,21 @@
             },
             "storageKind": {
               "value": "Storage"
+            },
+            "NetFirewall":{
+                "value": "[parameters('NetFirewall')]"
+            },
+            "virtualNetworksSubNet": {
+                "value": "[variables('virtualNetworkRules')]"
+            },
+            "bypass":{
+                "value": "[parameters('bypass')]"
             }
           }
-        }
+        },
+        "dependsOn": [
+          "subnet-influx-sn"
+        ]
       },
       {
         "name": "[concat('storage-fileshare-', parameters('storageContainers')[copyIndex()])]",
