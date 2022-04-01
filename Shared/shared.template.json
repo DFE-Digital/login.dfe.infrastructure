@@ -333,6 +333,20 @@
         "description": "Whether to deploy a private endpoint to the Redis Cache instance"
       }
     },
+    "deployAzureSearch": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Whether to deploy the Azure Search instance"
+      }
+    },
+    "deployAzureSearchPrivateEndpoint": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Whether to deploy a private endpoint to the Azure Search instance"
+      }
+    },
     "deployamplsPrivateEndpoint": {
       "type": "bool",
       "defaultValue": false,
@@ -385,6 +399,7 @@
     "serviceBusNamespaceName": "[concat(variables('resourceNamePrefix'),'-sbn')]",
     "serviceBusApiVersion": "2017-04-01",
     "redisSubnetName": "redis-sn-1",
+    "azureSearchSubnetName": "azureSearch-sn-1",
     "amplsSubnetName": "ampls-sn-1",
     "elasticSku": {
       "name": "ElasticPool",
@@ -397,6 +412,13 @@
       "privateEndpointName": "[concat(parameters('redisCacheName'),'-', variables('redisSubnetName'), '-pe')]",
       "privateLinkResource": "[resourceId('Microsoft.Cache/Redis', parameters('redisCacheName'))]",
       "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('redisSubnetName'))]"
+    },
+    "azureSearchPrivateEndpoint": {
+      "privateDnsZoneName": "privatelink.search.windows.net",
+      "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+      "privateEndpointName": "[concat(parameters('azureSearchName'),'-', variables('azureSearchSubnetName'), '-pe')]",
+      "privateLinkResource": "[resourceId('Microsoft.Search/searchServices', parameters('azureSearchName'))]",
+      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('azureSearchSubnetName'))]"
     },
     "azureMonitorPrivateEndpoint": {
       "amplsPrivateDNSZoneName": "[concat(parameters('amplsName'), '-Private-DNS-Zone')]",
@@ -877,6 +899,7 @@
       }
     },
     {
+      "condition": "[parameters('deployAzureSearch')]",
       "name": "azure-search",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
@@ -891,6 +914,45 @@
           }
         }
       }
+    },
+    {
+      "condition": "[parameters('deployAzureSearchPrivateEndpoint')]",
+      "apiVersion": "2020-10-01",
+      "name": "azure-search-private-endpoint",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/azure-search-private-endpoint.json')]"
+        },
+        "parameters": {
+          "templatesBaseUri": {
+            "value": "[parameters('templatesBaseUri')]"
+          },
+          "privateEndpointName": {
+            "value": "[variables('azureSearchPrivateEndpoint').privateEndpointName]"
+          },
+          "privateLinkResource": {
+            "value": "[variables('azureSearchPrivateEndpoint').privateLinkResource]"
+          },
+          "privateEndpointSubnetId": {
+            "value": "[variables('azureSearchPrivateEndpoint').privateEndpointSubnetId]"
+          },
+          "privateDnsZoneName": {
+            "value": "[variables('azureSearchPrivateEndpoint').privateDnsZoneName]"
+          },
+          "virtualNetworkId": {
+            "value": "[variables('azureSearchPrivateEndpoint').virtualNetworkId]"
+          },
+          "azureSearchName": {
+            "value": "[parameters('azureSearchName')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'virtual-network')]",
+        "[resourceId('Microsoft.Resources/deployments', 'azure-search')]"
+      ]
     },
     {
       "name": "azure-cdn",
@@ -996,6 +1058,9 @@
           },
           "redisSubnet": {
             "value": "[array(variables('redisSubnetName'))]"
+          },
+          "azureSearchSubnet": {
+            "value": "[array(variables('azureSearchSubnetName'))]"
           },
           "amplsSubnet": {
             "value": "[array(variables('amplsSubnetName'))]"
