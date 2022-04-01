@@ -4,7 +4,7 @@
   "parameters": {
     "templatesBaseUri": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/feature/DSI-3165-Set-HTTP-version-2.0-Interactions/"
+      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/master/"
     },
     "appServicePlanOS": {
       "type": "string",
