@@ -4,7 +4,7 @@
   "parameters": {
     "templatesBaseUri": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/master/"
+      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/feature/DSI-3165-Set-HTTP-version-2.0-Interactions/"
     },
     "appServicePlanOS": {
       "type": "string",
@@ -244,9 +244,10 @@
     "applicationSubnets": {
       "type": "array",
       "defaultValue": [
+        "auth-sn",
         "acc-sn",
         "adtbus-sn",
-        "adtcln-sn",
+        "adtcln-sn",        
         "app-sn",
         "ass-sn",
         "dev-sn",
@@ -267,7 +268,7 @@
         "sup-sn-1",
         "svc-sn",
         "svc-sn-1",
-        "svc-sn-2"
+        "svc-sn-2"        
       ],
       "metadata": {
         "description": "Names of additional subnets to create for application integration"
@@ -377,6 +378,10 @@
       "metadata": {
         "description": "Mode to use in the SQL firewall rule copy function. Using Serial for the initial deployment can help eliminate conflicts."
       }
+    },
+    "ipRules": {
+        "type": "string",
+        "defaultValue": ""
     }
   },
   "variables": {
@@ -508,7 +513,16 @@
           ]
         }
       }
-    ]
+    ],
+    "copy": [{
+      "name": "virtualNetworksSubNet",
+      "count": "[length(parameters('applicationSubnets'))]",
+      "input": {
+        "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), parameters('applicationSubnets')[copyIndex('virtualNetworksSubNet')])]",
+        "action": "Allow",
+        "state": "Succeeded"
+      }
+    }]
   },
   "resources": [
     {
@@ -849,9 +863,21 @@
         "parameters": {
           "storageAccountName": {
             "value": "[parameters('storageAccountName')]"
+          },
+          "NetFirewall":{
+              "value": true
+          },
+          "ipRules": {
+            "value": "[json(parameters('ipRules'))]"
+          },
+          "virtualNetworksSubNet": {
+            "value": []
           }
         }
-      }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'virtual-network')]"
+      ]
     },
     {
       "name": "key-vault",
