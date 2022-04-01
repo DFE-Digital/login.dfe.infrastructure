@@ -319,7 +319,7 @@
               },
               {
                 "name": "GF_INSTALL_PLUGINS",
-                "value": "grafana-azure-monitor-datasource, grafana-piechart-panel, redis-datasource"
+                "value": "grafana-azure-monitor-datasource"
               },
               {
                 "name": "GF_AUTH_GITHUB_ENABLED",
@@ -349,7 +349,6 @@
                 "name": "GF_SERVER_ROOT_URL",
                 "value": "[concat('https://',variables('appServiceName'),'.azurewebsites.net')]"
               }
-             
             ]
           },
           "azureStorageAccounts": {

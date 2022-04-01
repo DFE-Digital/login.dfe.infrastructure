@@ -46,11 +46,11 @@ param(
     [ValidateSet("IDAMS")]
     [string]$ServiceLine,
     [Parameter(Mandatory=$true)]
-    [ValidateSet("DfE Sign-in"")]
+    [ValidateSet("DfE Sign-in")]
     [string]$ServiceOffering,
     [Parameter]
     [ValidateSet("Authentication Services")]
-    [string]$Service,
+    [string]$Service
 )
 
 $Tags = @{
