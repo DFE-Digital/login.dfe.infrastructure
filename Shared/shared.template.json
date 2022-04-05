@@ -4,7 +4,7 @@
   "parameters": {
     "templatesBaseUri": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/feature/DSI-3165-Set-HTTP-version-2.0-Interactions/"
+      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/master/"
     },
     "appServicePlanOS": {
       "type": "string",
@@ -244,6 +244,7 @@
     "applicationSubnets": {
       "type": "array",
       "defaultValue": [
+        "auth-sn",
         "acc-sn",
         "adtbus-sn",
         "adtcln-sn",        
@@ -267,8 +268,7 @@
         "sup-sn-1",
         "svc-sn",
         "svc-sn-1",
-        "svc-sn-2",
-        "auth-sn"
+        "svc-sn-2"        
       ],
       "metadata": {
         "description": "Names of additional subnets to create for application integration"
@@ -333,6 +333,20 @@
         "description": "Whether to deploy a private endpoint to the Redis Cache instance"
       }
     },
+    "deployAzureSearch": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Whether to deploy the Azure Search instance"
+      }
+    },
+    "deployAzureSearchPrivateEndpoint": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Whether to deploy a private endpoint to the Azure Search instance"
+      }
+    },
     "deployamplsPrivateEndpoint": {
       "type": "bool",
       "defaultValue": false,
@@ -364,6 +378,10 @@
       "metadata": {
         "description": "Mode to use in the SQL firewall rule copy function. Using Serial for the initial deployment can help eliminate conflicts."
       }
+    },
+    "ipRules": {
+        "type": "string",
+        "defaultValue": ""
     }
   },
   "variables": {
@@ -381,6 +399,7 @@
     "serviceBusNamespaceName": "[concat(variables('resourceNamePrefix'),'-sbn')]",
     "serviceBusApiVersion": "2017-04-01",
     "redisSubnetName": "redis-sn-1",
+    "azureSearchSubnetName": "azureSearch-sn-1",
     "amplsSubnetName": "ampls-sn-1",
     "elasticSku": {
       "name": "ElasticPool",
@@ -393,6 +412,13 @@
       "privateEndpointName": "[concat(parameters('redisCacheName'),'-', variables('redisSubnetName'), '-pe')]",
       "privateLinkResource": "[resourceId('Microsoft.Cache/Redis', parameters('redisCacheName'))]",
       "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('redisSubnetName'))]"
+    },
+    "azureSearchPrivateEndpoint": {
+      "privateDnsZoneName": "privatelink.search.windows.net",
+      "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+      "privateEndpointName": "[concat(parameters('azureSearchName'),'-', variables('azureSearchSubnetName'), '-pe')]",
+      "privateLinkResource": "[resourceId('Microsoft.Search/searchServices', parameters('azureSearchName'))]",
+      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('azureSearchSubnetName'))]"
     },
     "azureMonitorPrivateEndpoint": {
       "amplsPrivateDNSZoneName": "[concat(parameters('amplsName'), '-Private-DNS-Zone')]",
@@ -487,7 +513,16 @@
           ]
         }
       }
-    ]
+    ],
+    "copy": [{
+      "name": "virtualNetworksSubNet",
+      "count": "[length(parameters('applicationSubnets'))]",
+      "input": {
+        "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), parameters('applicationSubnets')[copyIndex('virtualNetworksSubNet')])]",
+        "action": "Allow",
+        "state": "Succeeded"
+      }
+    }]
   },
   "resources": [
     {
@@ -823,23 +858,26 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/feature/DSI-2942/Shared/storage-account.json"
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/storage-account.json')]"
         },
         "parameters": {
           "storageAccountName": {
             "value": "[parameters('storageAccountName')]"
           },
-          "ipRules": {
-            "value": [{
-              "value": "147.243.0.0/16",
-              "action": "Allow"
-            }]
-          },
           "NetFirewall":{
               "value": true
+          },
+          "ipRules": {
+            "value": "[json(parameters('ipRules'))]"
+          },
+          "virtualNetworksSubNet": {
+            "value": []
           }
         }
-      }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'virtual-network')]"
+      ]
     },
     {
       "name": "key-vault",
@@ -861,6 +899,7 @@
       }
     },
     {
+      "condition": "[parameters('deployAzureSearch')]",
       "name": "azure-search",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
@@ -875,6 +914,45 @@
           }
         }
       }
+    },
+    {
+      "condition": "[parameters('deployAzureSearchPrivateEndpoint')]",
+      "apiVersion": "2020-10-01",
+      "name": "azure-search-private-endpoint",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/azure-search-private-endpoint.json')]"
+        },
+        "parameters": {
+          "templatesBaseUri": {
+            "value": "[parameters('templatesBaseUri')]"
+          },
+          "privateEndpointName": {
+            "value": "[variables('azureSearchPrivateEndpoint').privateEndpointName]"
+          },
+          "privateLinkResource": {
+            "value": "[variables('azureSearchPrivateEndpoint').privateLinkResource]"
+          },
+          "privateEndpointSubnetId": {
+            "value": "[variables('azureSearchPrivateEndpoint').privateEndpointSubnetId]"
+          },
+          "privateDnsZoneName": {
+            "value": "[variables('azureSearchPrivateEndpoint').privateDnsZoneName]"
+          },
+          "virtualNetworkId": {
+            "value": "[variables('azureSearchPrivateEndpoint').virtualNetworkId]"
+          },
+          "azureSearchName": {
+            "value": "[parameters('azureSearchName')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'virtual-network')]",
+        "[resourceId('Microsoft.Resources/deployments', 'azure-search')]"
+      ]
     },
     {
       "name": "azure-cdn",
@@ -980,6 +1058,9 @@
           },
           "redisSubnet": {
             "value": "[array(variables('redisSubnetName'))]"
+          },
+          "azureSearchSubnet": {
+            "value": "[array(variables('azureSearchSubnetName'))]"
           },
           "amplsSubnet": {
             "value": "[array(variables('amplsSubnetName'))]"

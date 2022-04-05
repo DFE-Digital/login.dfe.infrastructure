@@ -88,6 +88,70 @@
       "metadata": {
         "description": "Names of containers to create in the storage account."
       }
+    },
+    "serviceEndpointList": {
+      "type": "array",
+      "defaultValue": [
+        "Microsoft.Web",
+        "Microsoft.Sql",
+        "Microsoft.Storage",
+        "Microsoft.KeyVault",
+        "Microsoft.ServiceBus"
+      ],
+      "allowedValues": [
+        "Microsoft.Web",
+        "Microsoft.Sql",
+        "Microsoft.Storage",
+        "Microsoft.KeyVault",
+        "Microsoft.ServiceBus"
+      ]
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "defaultValue": "graf",
+      "metadata": {
+        "description": "The name of the virtual network."
+      }
+    },
+    "virtualNetworkAddressSpacePrefix": {
+      "type": "string",
+      "defaultValue": "10.1",
+      "metadata": {
+        "description": "Prefix address space of the Vnet"
+      }
+    },
+    "virtualNetworkAddressSpaceCIDR": {
+      "type": "string",
+      "defaultValue": "/16",
+      "metadata": {
+        "description": "The CIDR notation of the Vnet address space"
+      }
+    },
+    "destructiveVirtualNetworkDeploy": {
+      "type": "string",
+      "defaultValue": "Disabled",
+      "allowedValues": [
+        "Disabled",
+        "Enabled"
+      ],
+      "metadata": {
+        "description": "Deploys the Virtual Network and deletes all subnets if Enabled https://github.com/Azure/azure-quickstart-templates/issues/2786"
+      }
+    },
+    "subnetAddressSpaceCIDR": {
+      "type": "string",
+      "defaultValue": "/24",
+      "metadata": {
+        "description": "The CIDR notation of the subnet address space"
+      }
+    },
+    "NetFirewall":{
+        "type": "bool",
+        "defaultValue": true
+    },
+    "bypass": {
+        "type": "string",
+        "defaultValue": "AzureServices"
     }
   },
   "variables": {
@@ -255,7 +319,7 @@
               },
               {
                 "name": "GF_INSTALL_PLUGINS",
-                "value": "grafana-azure-monitor-datasource, grafana-piechart-panel, redis-datasource"
+                "value": "grafana-azure-monitor-datasource"
               },
               {
                 "name": "GF_AUTH_GITHUB_ENABLED",
@@ -285,7 +349,6 @@
                 "name": "GF_SERVER_ROOT_URL",
                 "value": "[concat('https://',variables('appServiceName'),'.azurewebsites.net')]"
               }
-             
             ]
           },
           "azureStorageAccounts": {
@@ -336,11 +399,13 @@
           },
           "storageKind": {
             "value": "Storage"
+          },
+          "NetFirewall":{
+              "value": false
           }
         }
       }
     },
-
     {
       "name": "[concat('storage-fileshare-', parameters('storageContainers')[copyIndex()])]",
       "type": "Microsoft.Resources/deployments",
@@ -381,6 +446,10 @@
     "storageAccountName": {
       "type": "string",
       "value": "[variables('storageAccountName')]"
+    },
+    "outboundIpAddresses": {
+      "type": "array",
+      "value": "[reference('app-service').outputs.possibleOutboundIpAddresses.value]"
     }
   }
 }
