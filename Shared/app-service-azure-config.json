@@ -99,6 +99,13 @@
             "metadata": {
                 "description": "Sends traffic via the vnet and enables support for virtual network private endpoints"
             }
+        },
+        "http20Enabled": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "HTTP version to 2.0"
+            }
         }
     },
     "variables": {
