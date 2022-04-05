@@ -129,7 +129,8 @@
                     "alwaysOn": true,
                     "minTlsVersion": "[parameters('minTlsVersion')]",
                     "numberOfWorkers": "[parameters('numberOfWorkers')]",
-                    "healthCheckPath": "[parameters('healthCheckPath')]"
+                    "healthCheckPath": "[parameters('healthCheckPath')]",
+                    "http20Enabled": "[parameters('http20Enabled')]"
                 }
             },
             "resources": [
@@ -148,7 +149,8 @@
                             "alwaysOn": true,
                             "minTlsVersion": "[parameters('minTlsVersion')]",
                             "numberOfWorkers": "[parameters('numberOfWorkers')]",
-                            "healthCheckPath": "[parameters('healthCheckPath')]"
+                            "healthCheckPath": "[parameters('healthCheckPath')]",
+                            "http20Enabled": "[parameters('http20Enabled')]"
                         }
                     },
                     "resources": [
