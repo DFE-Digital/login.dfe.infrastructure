@@ -51,7 +51,12 @@
       "properties": {
         "administratorLogin": "[parameters('sqlAdministratorLogin')]",
         "administratorLoginPassword": "[parameters('sqlAdministratorLoginPassword')]",
-        "version": "12.0"
+        "version": "12.0",
+        "administrators": {
+          "administratorType": "ActiveDirectory",
+          "principalType": "Group",
+          "login": "s141-dfesignin-dev-sql-admin"
+        }
       },
       "resources": [
         {
