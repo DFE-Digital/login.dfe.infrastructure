@@ -63,16 +63,7 @@
       "properties": {
         "administratorLogin": "[parameters('sqlAdministratorLogin')]",
         "administratorLoginPassword": "[parameters('sqlAdministratorLoginPassword')]",
-        "version": "12.0",
-        "administrators": {
-          "administratorType": "ActiveDirectory",
-          "principalType": "Group",
-          "login": "[parameters('azureActiveDirectoryAdmin')]",
-          "sid": "[parameters('azureActiveDirectoryAdminSID')]",
-          "tenantId": "[subscription().tenantId]"
-           
-           
-        }
+        "version": "12.0"
       },
       "resources": [
         {
@@ -110,6 +101,20 @@
           "dependsOn": [
             "[concat('Microsoft.Sql/servers/', parameters('sqlserverName'))]"
           ]
+        },
+        {
+            "type": "Microsoft.Sql/servers/administrators",
+            "apiVersion": "2021-08-01-preview",
+            "name": "[concat(parameters('sqlserverName'), '/ActiveDirectory')]",
+            "dependsOn": [
+              "[concat('Microsoft.Sql/servers/', parameters('sqlserverName'))]"
+            ],
+            "properties": {
+                "administratorType": "ActiveDirectory",
+                "login": "[parameters('azureActiveDirectoryAdmin')]",
+                "sid": "[parameters('azureActiveDirectoryAdminSID')]",
+                "tenantId": "[subscription().tenantId]"
+            }
         }
       ]
     }
