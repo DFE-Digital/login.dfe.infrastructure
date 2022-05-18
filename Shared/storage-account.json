@@ -5,6 +5,37 @@
         "storageAccountName": {
             "type": "string"
         },
+        "storageAccountType": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Standard_GRS",
+                "Standard_RAGRS",
+                "Standard_ZRS",
+                "Premium_LRS"
+            ]
+        },
+        "accessTier": {
+          "type": "string",
+          "defaultValue": "Hot",
+          "allowedValues": [
+            "Hot",
+            "Cool"
+          ],
+          "metadata": {
+            "description": "This setting is required if using BlobStorage as the storageKind, otherwise can be left blank"
+          }
+        },
+        "storageKind": {
+            "type": "string",
+            "defaultValue": "BlobStorage",
+            "allowedValues": [
+                "Storage",
+                "StorageV2",
+                "BlobStorage"
+            ]
+        },
         "NetFirewall":{
             "type": "bool",
             "defaultValue": true
@@ -24,26 +55,6 @@
         "virtualNetworksSubNet": {
             "type": "array",
             "defaultValue": []
-        },
-        "storageAccountType": {
-            "type": "string",
-            "defaultValue": "Standard_LRS",
-            "allowedValues": [
-                "Standard_LRS",
-                "Standard_GRS",
-                "Standard_RAGRS",
-                "Standard_ZRS",
-                "Premium_LRS"
-            ]
-        },
-        "storageKind": {
-            "type": "string",
-            "defaultValue": "BlobStorage",
-            "allowedValues": [
-                "Storage",
-                "StorageV2",
-                "BlobStorage"
-            ]
         }
     },
     "variables": {
@@ -81,7 +92,7 @@
                         }
                     }
                 },
-                "accessTier": "Hot"
+                "accessTier": "[if(equals(parameters('storageKind'),'BlobStorage'),parameters('accessTier'),json('null'))]"
             }
         }
     ],
@@ -92,7 +103,7 @@
         },
         "storageAccountConnectionString": {
             "type": "string",
-            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value)]"
+            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
         }
     }
 }
