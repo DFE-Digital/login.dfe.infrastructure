@@ -382,6 +382,18 @@
     "ipRules": {
         "type": "string",
         "defaultValue": ""
+    },
+    "azureActiveDirectoryAdmin": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure Active Directory admin"
+      }
+    },
+    "azureActiveDirectoryAdminSID": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure Active Directory admin SID"
+      }
     }
   },
   "variables": {
@@ -763,6 +775,12 @@
           },
           "elasticPoolProperties": {
             "value": "[parameters('elasticPoolProperties')]"
+          },
+          "azureActiveDirectoryAdmin": {
+            "value": "[parameters('azureActiveDirectoryAdmin')]"
+          },
+          "azureActiveDirectoryAdminSID": {
+            "value": "[parameters('azureActiveDirectoryAdminSID')]"
           }
         }
       }
