@@ -102,7 +102,7 @@
         },
         "http20Enabled": {
             "type": "bool",
-            "defaultValue": true,
+            "defaultValue": false,
             "metadata": {
                 "description": "HTTP version to 2.0"
             }
