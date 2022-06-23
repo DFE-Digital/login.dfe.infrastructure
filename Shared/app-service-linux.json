@@ -178,7 +178,7 @@
         },
         {
           "type": "Microsoft.Web/sites/slots/config",
-          "condition": "[and(not(empty(parameters('subnetResourceId'))),parameters('deployStagingSlot'))]",
+          "condition": "[and(not(empty(parameters('subnetResourceId'))), parameters('deployStagingSlot'))]",
           "name": "[concat(parameters('appServiceName'), '/staging/virtualNetwork')]",
           "apiVersion": "2018-11-01",
           "location": "[resourceGroup().location]",
