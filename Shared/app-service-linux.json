@@ -122,7 +122,6 @@
                 "siteConfig": "[if(parameters('deployStagingSlot'), variables('siteConfigSettings').withoutLinuxFxVersion, if(variables('appServiceAppSettingsProvided'), variables('siteConfigSettings').withAppServiceSettings, variables('siteConfigSettings').withoutAppServiceSettings))]"
             },
             "resources": [{
-                "condition": "[parameters('deployStagingSlot')]",
                 "name": "staging",
                 "type": "slots",
                 "apiVersion": "2020-06-01",
@@ -133,7 +132,7 @@
                     "siteConfig": "[if(variables('appServiceAppSettingsProvided'), variables('siteConfigSettings').withAppServiceSettings, variables('siteConfigSettings').withoutAppServiceSettings)]"
                 },
                 "resources": [{
-                    "condition": "[or(variables('attachAzureStorageAccounts'),parameters('deployStagingSlot'))]",
+                    "condition": "[variables('attachAzureStorageAccounts')]",
                     "name": "azureStorageAccounts",
                     "type": "config",
                     "apiVersion": "2018-02-01",
@@ -178,7 +177,7 @@
         },
         {
           "type": "Microsoft.Web/sites/slots/config",
-          "condition": "[and(not(empty(parameters('subnetResourceId'))), parameters('deployStagingSlot'))]",
+          "condition": "[not(empty(parameters('subnetResourceId')))]",
           "name": "[concat(parameters('appServiceName'), '/staging/virtualNetwork')]",
           "apiVersion": "2018-11-01",
           "location": "[resourceGroup().location]",
