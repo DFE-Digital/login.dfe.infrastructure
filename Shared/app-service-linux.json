@@ -133,7 +133,7 @@
                     "siteConfig": "[if(variables('appServiceAppSettingsProvided'), variables('siteConfigSettings').withAppServiceSettings, variables('siteConfigSettings').withoutAppServiceSettings)]"
                 },
                 "resources": [{
-                    "condition": "[and(variables('attachAzureStorageAccounts'),parameters('deployStagingSlot'))]",
+                    "condition": "[or(variables('attachAzureStorageAccounts'),parameters('deployStagingSlot'))]",
                     "name": "azureStorageAccounts",
                     "type": "config",
                     "apiVersion": "2018-02-01",
