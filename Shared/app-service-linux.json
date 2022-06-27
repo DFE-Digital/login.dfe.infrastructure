@@ -195,6 +195,18 @@
 		"possibleOutboundIpAddresses": {
 			"type": "array",
 			"value": "[split(reference(parameters('appServiceName')).possibleOutboundIpAddresses, ',')]"
+		},
+        "condition": {
+			"type": "string",
+			"value": "[and(variables('attachAzureStorageAccounts'),parameters('deployStagingSlot'))]"
+		},
+        "condition2": {
+			"type": "string",
+			"value": "[variables('attachAzureStorageAccounts')]"
+		},
+			"type": "string",
+			"value": "[parameters('deployStagingSlot')]"
 		}
+
 	}
 }
