@@ -201,11 +201,11 @@
 			"value": "[and(variables('attachAzureStorageAccounts'),parameters('deployStagingSlot'))]"
 		},
         "condition2": {
-			"type": "string",
+			"type": "bool",
 			"value": "[variables('attachAzureStorageAccounts')]"
 		},
         "condition3": {
-			"type": "string",
+			"type": "bool",
 			"value": "[parameters('deployStagingSlot')]"
 		}
 
