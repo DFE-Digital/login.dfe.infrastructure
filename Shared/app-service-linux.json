@@ -197,7 +197,7 @@
 			"value": "[split(reference(parameters('appServiceName')).possibleOutboundIpAddresses, ',')]"
 		},
         "condition": {
-			"type": "string",
+			"type": "bool",
 			"value": "[and(variables('attachAzureStorageAccounts'),parameters('deployStagingSlot'))]"
 		},
         "condition2": {
