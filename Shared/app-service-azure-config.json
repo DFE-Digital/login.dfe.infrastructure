@@ -138,6 +138,7 @@
                     "numberOfWorkers": "[parameters('numberOfWorkers')]",
                     "healthCheckPath": "[parameters('healthCheckPath')]",
                     "linuxFxVersion": "NODE|14-lts",
+                    "appCommandLine": "pm2 start /home/site/wwwroot/process.json --no-daemon",
                     "http20Enabled": "[parameters('http20Enabled')]"
                 }
             },
@@ -159,6 +160,7 @@
                             "numberOfWorkers": "[parameters('numberOfWorkers')]",
                             "healthCheckPath": "[parameters('healthCheckPath')]",
                             "linuxFxVersion": "NODE|14-lts",
+                            "appCommandLine": "pm2 start /home/site/wwwroot/process.json --no-daemon",
                             "http20Enabled": "[parameters('http20Enabled')]"
                         }
                     },
