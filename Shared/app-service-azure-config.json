@@ -22,7 +22,7 @@
         },
         "nodeVersion": {
             "type": "string",
-            "defaultValue": "14.5.0",
+            "defaultValue": "NODE|14-lts",
             "metadata": {
                 "description": "The default NodeJS version that the App Service will run"
             }
@@ -137,6 +137,7 @@
                     "minTlsVersion": "[parameters('minTlsVersion')]",
                     "numberOfWorkers": "[parameters('numberOfWorkers')]",
                     "healthCheckPath": "[parameters('healthCheckPath')]",
+                    "linuxFxVersion": "NODE|14-lts",
                     "http20Enabled": "[parameters('http20Enabled')]"
                 }
             },
@@ -157,6 +158,7 @@
                             "minTlsVersion": "[parameters('minTlsVersion')]",
                             "numberOfWorkers": "[parameters('numberOfWorkers')]",
                             "healthCheckPath": "[parameters('healthCheckPath')]",
+                            "linuxFxVersion": "NODE|14-lts",
                             "http20Enabled": "[parameters('http20Enabled')]"
                         }
                     },
