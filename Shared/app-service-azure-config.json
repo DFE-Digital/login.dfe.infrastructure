@@ -26,8 +26,6 @@
             "metadata": {
                 "description": "The default NodeJS version that the App Service will run"
             }
-            "http20Enabled": "[parameters('http20Enabled')]"
-                    "http20Enabled": "[parameters('http20Enabled')]"
         },
         "appCommandLine": {
             "type": "string",
@@ -35,8 +33,6 @@
             "metadata": {
                 "description": "The default app command that the App Service will run"
             }
-            "http20Enabled": "[parameters('http20Enabled')]"
-                    "http20Enabled": "[parameters('http20Enabled')]"
         },
         "appServiceConfigPath": {
             "type": "string",
