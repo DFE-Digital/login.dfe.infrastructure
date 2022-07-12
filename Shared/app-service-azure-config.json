@@ -26,6 +26,17 @@
             "metadata": {
                 "description": "The default NodeJS version that the App Service will run"
             }
+            "http20Enabled": "[parameters('http20Enabled')]"
+                    "http20Enabled": "[parameters('http20Enabled')]"
+        },
+        "appCommandLine": {
+            "type": "string",
+            "defaultValue": "pm2 start /home/site/wwwroot/process.json --no-daemon",
+            "metadata": {
+                "description": "The default app command that the App Service will run"
+            }
+            "http20Enabled": "[parameters('http20Enabled')]"
+                    "http20Enabled": "[parameters('http20Enabled')]"
         },
         "appServiceConfigPath": {
             "type": "string",
@@ -137,8 +148,8 @@
                     "minTlsVersion": "[parameters('minTlsVersion')]",
                     "numberOfWorkers": "[parameters('numberOfWorkers')]",
                     "healthCheckPath": "[parameters('healthCheckPath')]",
-                    "linuxFxVersion": "NODE|14-lts",
-                    "appCommandLine": "pm2 start /home/site/wwwroot/process.json --no-daemon",
+                    "linuxFxVersion": "[parameters('nodeVersion')]",
+                    "appCommandLine": "[parameters('appCommandLine')]",
                     "http20Enabled": "[parameters('http20Enabled')]"
                 }
             },
@@ -159,8 +170,8 @@
                             "minTlsVersion": "[parameters('minTlsVersion')]",
                             "numberOfWorkers": "[parameters('numberOfWorkers')]",
                             "healthCheckPath": "[parameters('healthCheckPath')]",
-                            "linuxFxVersion": "NODE|14-lts",
-                            "appCommandLine": "pm2 start /home/site/wwwroot/process.json --no-daemon",
+                            "linuxFxVersion": "[parameters('nodeVersion')]",
+                            "appCommandLine": "[parameters('appCommandLine')]",
                             "http20Enabled": "[parameters('http20Enabled')]"
                         }
                     },
@@ -204,8 +215,8 @@
           "properties": {
             "subnetResourceId": "[parameters('subnetResourceId')]",
             "swiftSupported": true,
-            "linuxFxVersion": "NODE|14-lts",
-            "appCommandLine": "pm2 start /home/site/wwwroot/process.json --no-daemon"
+            "linuxFxVersion": "[parameters('nodeVersion')]",
+            "appCommandLine": "[parameters('appCommandLine')]"
           },
           "dependsOn": [
             "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
@@ -220,8 +231,8 @@
           "properties": {
             "subnetResourceId": "[parameters('subnetResourceId')]",
             "swiftSupported": true,
-            "linuxFxVersion": "NODE|14-lts",
-            "appCommandLine": "pm2 start /home/site/wwwroot/process.json --no-daemon"
+            "linuxFxVersion": "[parameters('nodeVersion')]",
+            "appCommandLine": "[parameters('appCommandLine')]"
           },
           "dependsOn": [
             "[resourceId('Microsoft.Web/sites/slots', parameters('appServiceName'), 'staging')]"
