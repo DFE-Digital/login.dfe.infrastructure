@@ -92,6 +92,12 @@
         "description": "Name of the Azure Search resource"
       }
     },
+    "azureDataFactoryName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Azure Data Factory resource"
+      }
+    },
     "azureCdnName": {
       "type": "string",
       "metadata": {
@@ -399,6 +405,7 @@
   "variables": {
     "resourceNamePrefix": "[concat(toLower(parameters('platformGlobalIdentifier')), toLower(parameters('environmentId')),'-', toLower(parameters('platformGlobalName')),'-', toLower(parameters('applicationName')))]",
     "appInsightsName": "[concat(variables('resourceNamePrefix'),'-ai')]",
+    "azureDataFactoryName": "[concat(variables('resourceNamePrefix'),'-adf-1')]",
     "redisCacheName": "[concat(variables('resourceNamePrefix'),'-rc')]",
     "amplsName": "[concat(variables('resourceNamePrefix'),'-ampls')]",
     "sqlServerName": "[concat(variables('resourceNamePrefix'),'-sql')]",
@@ -864,6 +871,23 @@
         "parameters": {
           "appInsightsName": {
             "value": "[parameters('appInsightsName')]"
+          }
+        }
+      },
+      "dependsOn": []
+    },
+    {
+      "name": "azure-datafactory",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-data-factory.json')]"
+        },
+        "parameters": {
+          "azureDataFactoryName": {
+            "value": "[parameters('azureDataFactoryName')]"
           }
         }
       },
