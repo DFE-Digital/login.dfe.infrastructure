@@ -101,7 +101,5 @@ stages:
           environmentName: ${{parameter.key}}
           ${{ if eq(parameter.key, 'pr') }}:
             sslCertificateName: signin-generic
-            isProduction: true
           ${{ else }}:
             sslCertificateName: non-prod-gateway
-            isProduction: false
