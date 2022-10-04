@@ -1,0 +1,27 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "redisCacheName": {
+      "type": "string"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "[concat(parameters('redisCacheName'), '/default')]",
+      "type": "Microsoft.Cache/Redis/patchSchedules",
+      "apiVersion": "2022-05-01",
+      "properties": {
+        "scheduleEntries": [
+            {
+                "dayOfWeek": "saturday",
+                "startHourUtc": 23,
+                "maintenanceWindow": "PT5H"
+            }
+        ]
+      }
+    }
+  ],
+  "outputs": {}
+}
