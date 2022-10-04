@@ -86,34 +86,35 @@ stages:
 #     - template:  pipeline/checkov.yml@devopsTemplates
 
 - ${{ each parameter in parameters }}:
-  - ${{ if eq(parameter.value, 'true') }}:
-    - stage: Deployment_${{parameter.Key}}
-      displayName: "Deployment [${{parameter.Key}}]"
-      # dependsOn: 
-      # - scanInfra
-      variables:
-      - group: dsi-${{parameter.key}}-kv
-      jobs:
-      - ${{ if parameters.prereq }}:
-        - template: pipeline/preDeployInfrastrusture.yml@devopsTemplates
-          parameters:
-            ${{ if eq(parameter.key, 'dev') }}:
-              serviceConnection: $(devServiceConnection)
-            ${{ elseif eq(parameter.key, 'pr') }}:
-              serviceConnection: $(prodServiceConnection)
-            ${{ else }}:
-              serviceConnection: $(testServiceConnection)
-            environmentName: ${{parameter.key}}
-            infrastuctureType: pre_req_infr
+  - ${{ if eq(parameter.key, 'prereq') }}:
+    - ${{ if eq(parameter.value, 'true') }}:
+      - stage: Deployment_${{parameter.Key}}
+        displayName: "Deployment [${{parameter.Key}}]"
+        # dependsOn: 
+        # - scanInfra
+        variables:
+        - group: dsi-${{parameter.key}}-kv
+        jobs:
+        - ${{ if parameters.prereq }}:
+          - template: pipeline/preDeployInfrastrusture.yml@devopsTemplates
+            parameters:
+              ${{ if eq(parameter.key, 'dev') }}:
+                serviceConnection: $(devServiceConnection)
+              ${{ elseif eq(parameter.key, 'pr') }}:
+                serviceConnection: $(prodServiceConnection)
+              ${{ else }}:
+                serviceConnection: $(testServiceConnection)
+              environmentName: ${{parameter.key}}
+              infrastuctureType: pre_req_infr
 
-        - template: pipeline/preDeployInfrastrusture.yml@devopsTemplates
-          parameters:
-            ${{ if eq(parameter.key, 'dev') }}:
-              serviceConnection: $(devServiceConnection)
-            ${{ elseif eq(parameter.key, 'pr') }}:
-              serviceConnection: $(prodServiceConnection)
-            ${{ else }}:
-              serviceConnection: $(testServiceConnection)
-            environmentName: ${{parameter.key}}
-            infrastuctureType: base_infr
-            templatePath:  $(System.DefaultWorkingDirectory)/login.dfe.infrastructure/templates/preDeployInfrastrusture.json
+          - template: pipeline/preDeployInfrastrusture.yml@devopsTemplates
+            parameters:
+              ${{ if eq(parameter.key, 'dev') }}:
+                serviceConnection: $(devServiceConnection)
+              ${{ elseif eq(parameter.key, 'pr') }}:
+                serviceConnection: $(prodServiceConnection)
+              ${{ else }}:
+                serviceConnection: $(testServiceConnection)
+              environmentName: ${{parameter.key}}
+              infrastuctureType: base_infr
+              templatePath:  $(System.DefaultWorkingDirectory)/login.dfe.infrastructure/templates/preDeployInfrastrusture.json
