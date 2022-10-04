@@ -21,6 +21,10 @@ pr:
     - develop
 
 parameters:
+- name: prereq
+  type: boolean
+  displayName: 'Deploy Pre-Requisites'
+  default: false
 - name: dev
   type: boolean
   displayName: 'Dev Deployment'
@@ -90,16 +94,13 @@ stages:
       variables:
       - group: dsi-${{parameter.key}}-kv
       jobs:
-      - template: pipeline/baseInfrastructure.yml@devopsTemplates
-        parameters:
-          ${{ if eq(parameter.key, 'dev') }}:
-            serviceConnection: $(devServiceConnection)
-          ${{ elseif eq(parameter.key, 'pr') }}:
-            serviceConnection: $(prodServiceConnection)
-          ${{ else }}:
-            serviceConnection: $(testServiceConnection)
-          environmentName: ${{parameter.key}}
-          ${{ if eq(parameter.key, 'pr') }}:
-            sslCertificateName: signin-generic
-          ${{ else }}:
-            sslCertificateName: non-prod-gateway
+      - ${{ if parameters.prereq }}:
+        - template: pipeline/baseInfrastructure.yml@devopsTemplates
+          parameters:
+            ${{ if eq(parameter.key, 'dev') }}:
+              serviceConnection: $(devServiceConnection)
+            ${{ elseif eq(parameter.key, 'pr') }}:
+              serviceConnection: $(prodServiceConnection)
+            ${{ else }}:
+              serviceConnection: $(testServiceConnection)
+            environmentName: ${{parameter.key}}
