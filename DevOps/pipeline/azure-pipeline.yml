@@ -117,4 +117,4 @@ stages:
                 serviceConnection: $(testServiceConnection)
               environmentName: ${{parameter.key}}
               infrastuctureType: base_infr
-              templatePath:  $(System.DefaultWorkingDirectory)/login.dfe.infrastructure/templates/preDeployInfrastrusture.json
+              templatePath:  $(System.DefaultWorkingDirectory)/login.dfe.infrastructure/DevOps/templates/preDeployInfrastrusture.json
