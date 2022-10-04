@@ -86,7 +86,7 @@ stages:
 #     - template:  pipeline/checkov.yml@devopsTemplates
 
 - ${{ each parameter in parameters }}:
-  - ${{ if eq(parameter.key, 'prereq') }}:
+  - ${{ if ne(parameter.key, 'prereq') }}:
     - ${{ if eq(parameter.value, 'true') }}:
       - stage: Deployment_${{parameter.Key}}
         displayName: "Deployment [${{parameter.Key}}]"
