@@ -95,7 +95,7 @@ stages:
       - group: dsi-${{parameter.key}}-kv
       jobs:
       - ${{ if parameters.prereq }}:
-        - template: pipeline/baseInfrastructure.yml@devopsTemplates
+        - template: pipeline/preDeployInfrastrusture.yml@devopsTemplates
           parameters:
             ${{ if eq(parameter.key, 'dev') }}:
               serviceConnection: $(devServiceConnection)
