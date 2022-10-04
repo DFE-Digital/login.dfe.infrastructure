@@ -104,3 +104,16 @@ stages:
             ${{ else }}:
               serviceConnection: $(testServiceConnection)
             environmentName: ${{parameter.key}}
+            infrastuctureType: pre-req
+
+        - template: pipeline/preDeployInfrastrusture.yml@devopsTemplates
+          parameters:
+            ${{ if eq(parameter.key, 'dev') }}:
+              serviceConnection: $(devServiceConnection)
+            ${{ elseif eq(parameter.key, 'pr') }}:
+              serviceConnection: $(prodServiceConnection)
+            ${{ else }}:
+              serviceConnection: $(testServiceConnection)
+            environmentName: ${{parameter.key}}
+            infrastuctureType: base-infr
+            templatePath:  $(System.DefaultWorkingDirectory)/login.dfe.infrastructure/templates/preDeployInfrastrusture.json
