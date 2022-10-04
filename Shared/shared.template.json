@@ -638,6 +638,25 @@
       }
     },
     {
+      "apiVersion": "2022-05-01",
+      "name": "redis-cache-patch-schedule",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/redis-cache-patch-schedule.json')]"
+        },
+        "parameters": {
+          "redisCacheName": {
+            "value": "[parameters('redisCacheName')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'redis-cache')]"
+      ]
+    },
+    {
       "condition": "[parameters('deployRedisCachePrivateEndpoint')]",
       "apiVersion": "2020-10-01",
       "name": "redis-cache-private-endpoint",
