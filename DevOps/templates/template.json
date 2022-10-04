@@ -4,7 +4,7 @@
   "parameters": {
     "templatesBaseUri": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/master/"
+      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/master/" 
     },
     "appServicePlanOS": {
       "type": "string",
@@ -544,99 +544,6 @@
     }]
   },
   "resources": [
-    {
-      "condition": "[greater(length(parameters('frontEndAppServicePlanName')), 0)]",
-      "apiVersion": "2020-10-01",
-      "name": "[concat('front-end-app-service-plan','-',parameters('frontEndAppServicePlanSku')[copyIndex()].id)]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-plan.json')]"
-        },
-        "parameters": {
-          "appServicePlanName": {
-            "value": "[concat(parameters('frontEndAppServicePlanName'),'-',parameters('frontEndAppServicePlanSku')[copyIndex()].id)]"
-          },
-          "appServicePlanSku": {
-            "value": "[parameters('frontEndAppServicePlanSku')[copyIndex()].sku]"
-          },
-          "appServicePlanOS": {
-            "value": "[parameters('appServicePlanOS')]"
-          },
-          "appServicePlanIsLinux": {
-            "value": "[parameters('appServicePlanIsLinux')]"
-          }
-        }
-      },
-      "copy": {
-        "name": "FeAspCopy",
-        "count": "[length(parameters('frontEndAppServicePlanSku'))]",
-        "mode": "Parallel"
-      }
-    },
-    {
-      "condition": "[greater(length(parameters('backEndAppServicePlanName')), 0)]",
-      "apiVersion": "2020-10-01",
-      "name": "[concat('back-end-app-service-plan','-',parameters('backEndAppServicePlanSku')[copyIndex()].id)]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-plan.json')]"
-        },
-        "parameters": {
-          "appServicePlanName": {
-            "value": "[concat(parameters('backEndAppServicePlanName'),'-',parameters('backEndAppServicePlanSku')[copyIndex()].id)]"
-          },
-          "appServicePlanSku": {
-            "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku]"
-          },
-          "appServicePlanOS": {
-            "value": "[parameters('appServicePlanOS')]"
-          },
-          "appServicePlanIsLinux": {
-            "value": "[parameters('appServicePlanIsLinux')]"
-          }
-        }
-      },
-      "copy": {
-        "name": "BeAspCopy",
-        "count": "[length(parameters('backEndAppServicePlanSku'))]",
-        "mode": "Parallel"
-      }
-    },
-    {
-      "condition": "[greater(length(parameters('workerAppServicePlanName')), 0)]",
-      "apiVersion": "2020-10-01",
-      "name": "[concat('worker-app-service-plan','-',parameters('workerAppServicePlanSku')[copyIndex()].id)]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-plan.json')]"
-        },
-        "parameters": {
-          "appServicePlanName": {
-            "value": "[concat(parameters('workerAppServicePlanName'),'-',parameters('backEndAppServicePlanSku')[copyIndex()].id)]"
-          },
-          "appServicePlanSku": {
-            "value": "[parameters('workerAppServicePlanSku')[copyIndex()].sku]"
-          },
-          "appServicePlanOS": {
-            "value": "[parameters('appServicePlanOS')]"
-          },
-          "appServicePlanIsLinux": {
-            "value": "[parameters('appServicePlanIsLinux')]"
-          }
-        }
-      },
-      "copy": {
-        "name": "WkrAspCopy",
-        "count": "[length(parameters('workerAppServicePlanSku'))]",
-        "mode": "Parallel"
-      }
-    },
     {
       "apiVersion": "2020-10-01",
       "name": "redis-cache",
