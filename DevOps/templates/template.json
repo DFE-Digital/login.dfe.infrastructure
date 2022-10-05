@@ -6,18 +6,6 @@
       "type": "string",
       "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/master/" 
     },
-    "appServicePlanOS": {
-      "type": "string",
-      "metadata": {
-        "description": "Windows or Linux App Service Plan"
-      }
-    },
-    "appServicePlanIsLinux": {
-      "type": "bool",
-      "metadata": {
-        "description": "Whether the App Service Plan is Linux or not"
-      }
-    },
     "appInsightsName": {
       "type": "string",
       "metadata": {
@@ -148,72 +136,6 @@
         "description": "Properties for the elastic pool"
       }
     },
-    "frontEndAppServicePlanName": {
-      "type": "string",
-      "defaultValue": ""
-    },
-    "frontEndAppServicePlanSku": {
-      "type": "array",
-      "defaultValue": [
-        {
-          "id": "01",
-          "sku": {
-            "name": "P1v2",
-            "tier": "PremiumV2",
-            "size": "P1v2",
-            "family": "Pv2",
-            "capacity": 1
-          }
-        }
-      ],
-      "metadata": {
-        "description": "The SKU of the front-end App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
-      }
-    },
-    "backEndAppServicePlanName": {
-      "type": "string",
-      "defaultValue": ""
-    },
-    "backEndAppServicePlanSku": {
-      "type": "array",
-      "defaultValue": [
-        {
-          "id": "01",
-          "sku": {
-            "name": "P1v2",
-            "tier": "PremiumV2",
-            "size": "P1v2",
-            "family": "Pv2",
-            "capacity": 1
-          }
-        }
-      ],
-      "metadata": {
-        "description": "The SKU of the back-end App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
-      }
-    },
-    "workerAppServicePlanName": {
-      "type": "string",
-      "defaultValue": ""
-    },
-    "workerAppServicePlanSku": {
-      "type": "array",
-      "defaultValue": [
-        {
-          "id": "01",
-          "sku": {
-            "name": "P1v2",
-            "tier": "PremiumV2",
-            "size": "P1v2",
-            "family": "Pv2",
-            "capacity": 1
-          }
-        }
-      ],
-      "metadata": {
-        "description": "The SKU of the worker App Service Plan"
-      }
-    },
     "microsoftAzureWebsitesRPObjectId": {
       "type": "string",
       "metadata": {
@@ -299,7 +221,7 @@
       "type": "string",
       "defaultValue": "signin"
     },
-    "applicationName": {
+    "infrastructureName": {
       "type": "string",
       "defaultValue": "shd"
     },
