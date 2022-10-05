@@ -307,9 +307,8 @@
         "description": "Mode to use in the SQL firewall rule copy function. Using Serial for the initial deployment can help eliminate conflicts."
       }
     },
-    "ipRules": {
-        "type": "string",
-        "defaultValue": ""
+    "cdnIpRules": {
+        "type": "array"
     },
     "azureActiveDirectoryAdmin": {
       "type": "string",
@@ -758,7 +757,7 @@
               "value": true
           },
           "ipRules": {
-            "value": "[json(parameters('ipRules'))]"
+            "value": "[parameters('cdnIpRules')]"
           },
           "virtualNetworksSubNet": {
             "value": []
