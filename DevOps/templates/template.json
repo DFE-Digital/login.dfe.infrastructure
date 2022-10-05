@@ -895,36 +895,6 @@
       ]
     },
     {
-      "condition": "[greater(length(parameters('keyvaultCertificateNames')), 0)]",
-      "name": "[concat('app-service-certificates', copyIndex())]",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-certificate.json')]"
-        },
-        "parameters": {
-          "keyVaultCertificateName": {
-            "value": "[parameters('keyvaultCertificateNames')[copyIndex()]]"
-          },
-          "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
-          },
-          "keyVaultResourceGroup": {
-            "value": "[resourceGroup().name]"
-          }
-        }
-      },
-      "copy": {
-        "name": "certCopy",
-        "count": "[length(parameters('keyvaultCertificateNames'))]"
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'key-vault')]"
-      ]
-    },
-    {
       "condition": "[parameters('deployVirtualNetwork')]",
       "apiVersion": "2020-10-01",
       "name": "virtual-network",
