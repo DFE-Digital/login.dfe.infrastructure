@@ -4,7 +4,7 @@
   "parameters": {
     "templatesBaseUri": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/master/"
+      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/feature/DSI-3165-Set-HTTP-version-2.0-Interactions/"
     },
     "appServicePlanOS": {
       "type": "string",
@@ -90,12 +90,6 @@
       "type": "string",
       "metadata": {
         "description": "Name of the Azure Search resource"
-      }
-    },
-    "azureDataFactoryName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the Azure Data Factory resource"
       }
     },
     "azureCdnName": {
@@ -388,24 +382,11 @@
     "ipRules": {
         "type": "string",
         "defaultValue": ""
-    },
-    "azureActiveDirectoryAdmin": {
-      "type": "string",
-      "metadata": {
-        "description": "Azure Active Directory admin"
-      }
-    },
-    "azureActiveDirectoryAdminSID": {
-      "type": "string",
-      "metadata": {
-        "description": "Azure Active Directory admin SID"
-      }
     }
   },
   "variables": {
     "resourceNamePrefix": "[concat(toLower(parameters('platformGlobalIdentifier')), toLower(parameters('environmentId')),'-', toLower(parameters('platformGlobalName')),'-', toLower(parameters('applicationName')))]",
     "appInsightsName": "[concat(variables('resourceNamePrefix'),'-ai')]",
-    "azureDataFactoryName": "[concat(variables('resourceNamePrefix'),'-adf-1')]",
     "redisCacheName": "[concat(variables('resourceNamePrefix'),'-rc')]",
     "amplsName": "[concat(variables('resourceNamePrefix'),'-ampls')]",
     "sqlServerName": "[concat(variables('resourceNamePrefix'),'-sql')]",
@@ -657,6 +638,25 @@
       }
     },
     {
+      "apiVersion": "2022-05-01",
+      "name": "redis-cache-patch-schedule",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/redis-cache-patch-schedule.json')]"
+        },
+        "parameters": {
+          "redisCacheName": {
+            "value": "[parameters('redisCacheName')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'redis-cache')]"
+      ]
+    },
+    {
       "condition": "[parameters('deployRedisCachePrivateEndpoint')]",
       "apiVersion": "2020-10-01",
       "name": "redis-cache-private-endpoint",
@@ -782,12 +782,6 @@
           },
           "elasticPoolProperties": {
             "value": "[parameters('elasticPoolProperties')]"
-          },
-          "azureActiveDirectoryAdmin": {
-            "value": "[parameters('azureActiveDirectoryAdmin')]"
-          },
-          "azureActiveDirectoryAdminSID": {
-            "value": "[parameters('azureActiveDirectoryAdminSID')]"
           }
         }
       }
@@ -871,23 +865,6 @@
         "parameters": {
           "appInsightsName": {
             "value": "[parameters('appInsightsName')]"
-          }
-        }
-      },
-      "dependsOn": []
-    },
-    {
-      "name": "azure-datafactory",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-data-factory.json')]"
-        },
-        "parameters": {
-          "azureDataFactoryName": {
-            "value": "[parameters('azureDataFactoryName')]"
           }
         }
       },
