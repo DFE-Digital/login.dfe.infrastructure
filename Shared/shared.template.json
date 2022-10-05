@@ -657,6 +657,25 @@
       }
     },
     {
+      "apiVersion": "2020-10-01",
+      "name": "redis-cache",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'Shared/redis-cache.json')]"
+        },
+        "parameters": {
+          "redisCacheName": {
+            "value": "[parameters('redisCacheName')]"
+          },
+          "redisCacheSku": {
+            "value": "[parameters('redisCacheSku')]"
+          }
+        }
+      }
+    },
+    {
       "condition": "[parameters('deployRedisCachePrivateEndpoint')]",
       "apiVersion": "2020-10-01",
       "name": "redis-cache-private-endpoint",
