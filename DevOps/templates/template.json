@@ -347,17 +347,17 @@
     "emptyArray": [],
     "redisCachePrivateEndpoint": {
       "privateDnsZoneName": "privatelink.redis.cache.windows.net",
-      "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+      "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
       "privateEndpointName": "[concat(parameters('redisCacheName'),'-', variables('redisSubnetName'), '-pe')]",
       "privateLinkResource": "[resourceId('Microsoft.Cache/Redis', parameters('redisCacheName'))]",
-      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('redisSubnetName'))]"
+      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('redisSubnetName'))]"
     },
     "azureSearchPrivateEndpoint": {
       "privateDnsZoneName": "privatelink.search.windows.net",
-      "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+      "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
       "privateEndpointName": "[concat(parameters('azureSearchName'),'-', variables('azureSearchSubnetName'), '-pe')]",
       "privateLinkResource": "[resourceId('Microsoft.Search/searchServices', parameters('azureSearchName'))]",
-      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('azureSearchSubnetName'))]"
+      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('azureSearchSubnetName'))]"
     },
     "azureMonitorPrivateEndpoint": {
       "amplsPrivateDNSZoneName": "[concat(parameters('amplsName'), '-Private-DNS-Zone')]",
@@ -366,11 +366,11 @@
       "amplsMonitorPrivateDnsZoneName": "privatelink.monitor.azure.com",
       "amplsOPInsightODSPrivateDnsZoneName": "privatelink.ods.opinsights.azure.com",
       "amplsOPInsightOMSPrivateDnsZoneName": "privatelink.oms.opinsights.azure.com",
-      "amplsVirtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-      "amplsVirtualNetworkName": "[variables('virtualNetworkName')]",
+      "amplsVirtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+      "amplsVirtualNetworkName": "[parameters('virtualNetworkName')]",
       "amplsPrivateEndpointName": "[concat(parameters('amplsName'), '-pe')]",
       "amplsPrivateLinkResource": "[resourceId('Microsoft.insights/privateLinkScopes', parameters('amplsName'))]",
-      "amplsPrivateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('amplsSubnetName'))]"
+      "amplsPrivateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('amplsSubnetName'))]"
     },
     "keyVaultAccessPolicies": [
       {
@@ -457,7 +457,7 @@
       "name": "virtualNetworksSubNet",
       "count": "[length(parameters('applicationSubnets'))]",
       "input": {
-        "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), parameters('applicationSubnets')[copyIndex('virtualNetworksSubNet')])]",
+        "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('applicationSubnets')[copyIndex('virtualNetworksSubNet')])]",
         "action": "Allow",
         "state": "Succeeded"
       }
@@ -909,7 +909,7 @@
             "value": "[parameters('templatesBaseUri')]"
           },
           "virtualNetworkName": {
-            "value": "[variables('virtualNetworkName')]"
+            "value": "[parameters('virtualNetworkName')]"
           },
           "destructiveVirtualNetworkDeploy": {
             "value": "[parameters('destructiveVirtualNetworkDeploy')]"
@@ -945,7 +945,7 @@
         },
         "parameters": {
           "virtualNetworkName": {
-            "value": "[variables('virtualNetworkName')]"
+            "value": "[parameters('virtualNetworkName')]"
           },
           "subnetConfiguration": {
             "value": "[if(parameters('deployVirtualNetwork'), reference('virtual-network').outputs.applicationSubnetConfiguration.value, variables('emptyArray'))]"
