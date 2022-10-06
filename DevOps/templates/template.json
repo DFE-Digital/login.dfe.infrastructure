@@ -321,22 +321,21 @@
       "metadata": {
         "description": "Azure Active Directory admin SID"
       }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "metadata": {
+        "description": "Virtual Network Name"
+      }
+    },
+    "serviceBusNamespaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Service Bus Name"
+      }
     }
   },
   "variables": {
-    "resourceNamePrefix": "[concat(toLower(parameters('platformGlobalIdentifier')), toLower(parameters('environmentId')),'-', toLower(parameters('platformGlobalName')),'-', toLower(parameters('infrastructureName')))]",
-    "appInsightsName": "[concat(variables('resourceNamePrefix'),'-ai')]",
-    "azureDataFactoryName": "[concat(variables('resourceNamePrefix'),'-adf-1')]",
-    "redisCacheName": "[concat(variables('resourceNamePrefix'),'-rc')]",
-    "amplsName": "[concat(variables('resourceNamePrefix'),'-ampls')]",
-    "sqlServerName": "[concat(variables('resourceNamePrefix'),'-sql')]",
-    "elasticPoolName": "[concat(variables('resourceNamePrefix'),'-ep')]",
-    "storageAccountName": "[concat(replace(variables('resourceNamePrefix'),'-',''),'str')]",
-    "keyVaultName": "[concat(variables('resourceNamePrefix'),'-kv')]",
-    "azureSearchName": "[concat(variables('resourceNamePrefix'),'-azs')]",
-    "azureCdnName": "[concat(variables('resourceNamePrefix'),'-cdn')]",
-    "virtualNetworkName": "[concat(variables('resourceNamePrefix'),'-vnet')]",
-    "serviceBusNamespaceName": "[concat(variables('resourceNamePrefix'),'-sbn')]",
     "serviceBusApiVersion": "2017-04-01",
     "redisSubnetName": "redis-sn-1",
     "azureSearchSubnetName": "azureSearch-sn-1",
@@ -967,7 +966,7 @@
         },
         "parameters": {
           "serviceBusNamespaceName": {
-            "value": "[variables('serviceBusNamespaceName')]"
+            "value": "[parameters('serviceBusNamespaceName')]"
           },
           "serviceBusSku": {
             "value": "[parameters('serviceBusSku')]"
@@ -997,7 +996,7 @@
             "value": "sharedServiceBusConnectionString"
           },
           "secretResourceId": {
-            "value": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespaceName'), 'RootManageSharedAccessKey')]"
+            "value": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', parameters('serviceBusNamespaceName'), 'RootManageSharedAccessKey')]"
           },
           "contentType": {
             "value": "Shared service bus connection string"
@@ -1071,7 +1070,7 @@
         },
         "parameters": {
           "serviceBusNamespaceName": {
-            "value": "[variables('serviceBusNamespaceName')]"
+            "value": "[parameters('serviceBusNamespaceName')]"
           },
           "subnetResourceIdList": {
             "value": "[if(parameters('deployVirtualNetwork'), reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value, variables('emptyArray'))]"
