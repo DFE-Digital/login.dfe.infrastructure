@@ -103,9 +103,6 @@
     "cdnEndpointName": {
       "type": "string"
     },
-    "cdnProfileName": {
-      "type": "string"
-    },
     "originName": {
       "defaultValue": "",
       "type": "string"
@@ -875,7 +872,7 @@
             "value": "[parameters('cdnEndpointName')]"
           },
           "cdnProfileName": {
-            "value": "[parameters('cdnProfileName')]"
+            "value": "[parameters('azureCdnName')]"
           },
           "originName": {
             "value": "[parameters('originName')]"
