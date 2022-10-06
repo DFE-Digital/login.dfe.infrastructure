@@ -324,7 +324,7 @@
     }
   },
   "variables": {
-    "resourceNamePrefix": "[concat(toLower(parameters('platformGlobalIdentifier')), toLower(parameters('environmentId')),'-', toLower(parameters('platformGlobalName')),'-', toLower(parameters('applicationName')))]",
+    "resourceNamePrefix": "[concat(toLower(parameters('platformGlobalIdentifier')), toLower(parameters('environmentId')),'-', toLower(parameters('platformGlobalName')),'-', toLower(parameters('infrastructureName')))]",
     "appInsightsName": "[concat(variables('resourceNamePrefix'),'-ai')]",
     "azureDataFactoryName": "[concat(variables('resourceNamePrefix'),'-adf-1')]",
     "redisCacheName": "[concat(variables('resourceNamePrefix'),'-rc')]",
