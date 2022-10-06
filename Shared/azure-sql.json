@@ -104,7 +104,7 @@
         },
         {
             "type": "Microsoft.Sql/servers/administrators",
-            "apiVersion": "2021-08-01-preview",
+            "apiVersion": "2022-02-01-preview",
             "name": "[concat(parameters('sqlserverName'), '/ActiveDirectory')]",
             "dependsOn": [
               "[concat('Microsoft.Sql/servers/', parameters('sqlserverName'))]"
