@@ -235,6 +235,13 @@
         "environmentVariable": "keyVaultApplicationObjectId"
       }
     },
+    "keyVaultAzureDataFactoryId": {
+      "type": "string",
+      "metadata": {
+        "description": "Object Id of the  Azure Data Factory",
+        "environmentVariable": "keyVaultAzureDataFactoryId"
+      }
+    },
     "destructiveVirtualNetworkDeploy": {
       "type": "string",
       "defaultValue": "Disabled",
@@ -480,6 +487,16 @@
             "Recover",
             "Backup",
             "Restore"
+          ]
+        }
+      },
+      {
+        "objectId": "[parameters('keyVaultAzureDataFactoryId')]",
+        "tenantId": "[subscription().tenantId]",
+        "permissions": {
+          "secrets": [
+            "Get",
+            "List"
           ]
         }
       },
