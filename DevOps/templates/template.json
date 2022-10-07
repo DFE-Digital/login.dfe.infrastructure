@@ -6,6 +6,19 @@
       "type": "string",
       "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/master/" 
     },
+    "AccessToken": {
+        "type": "string",
+        "metadata": {
+            "description": "Token that will acces the private repo from the logic app"
+        }
+    },
+    "branch": {
+        "type": "string",
+        "defaultValue": "feature/DSI-5655",
+        "metadata": {
+            "description": "Branch that use for the ARM templateLinks"
+        }
+    },
     "appInsightsName": {
       "type": "string",
       "metadata": {
@@ -330,12 +343,6 @@
       "metadata": {
         "description": "Service Bus Name"
       }
-    },
-    "AccessToken": {
-        "type": "string",
-        "metadata": {
-            "description": "Token that will acces the private repo from the logic app"
-        }
     }
   },
   "variables": {
@@ -474,7 +481,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'Shared/redis-cache.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/redis-cache.json')]"
         },
         "parameters": {
           "redisCacheName": {
@@ -493,7 +500,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'Shared/redis-cache-patch-schedule.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/redis-cache-patch-schedule.json')]"
         },
         "parameters": {
           "redisCacheName": {
@@ -513,7 +520,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'Shared/redis-cache-private-endpoint.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/redis-cache-private-endpoint.json')]"
         },
         "parameters": {
           "templatesBaseUri": {
@@ -555,7 +562,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'Shared/ampls.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/ampls.json')]"
         },
         "parameters": {
           "amplsName": {
@@ -611,7 +618,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-sql.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-sql.json')]"
         },
         "parameters": {
           "sqlAdministratorLogin": {
@@ -649,7 +656,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'Shared/sql-server-firewall-rules.json')]",
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/sql-server-firewall-rules.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -676,7 +683,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/database.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/database.json')]"
         },
         "parameters": {
           "databaseName": {
@@ -715,7 +722,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/app-insights.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/app-insights.json')]"
         },
         "parameters": {
           "appInsightsName": {
@@ -732,7 +739,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-data-factory.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-data-factory.json')]"
         },
         "parameters": {
           "azureDataFactoryName": {
@@ -749,7 +756,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/storage-account.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/storage-account.json')]"
         },
         "parameters": {
           "storageAccountName": {
@@ -771,25 +778,6 @@
       ]
     },
     {
-      "name": "key-vault",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/key-vault.json')]"
-        },
-        "parameters": {
-          "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
-          },
-          "keyVaultAccessPolicies": {
-            "value": "[variables('keyVaultAccessPolicies')]"
-          }
-        }
-      }
-    },
-    {
       "condition": "[parameters('deployAzureSearch')]",
       "name": "azure-search",
       "type": "Microsoft.Resources/deployments",
@@ -797,7 +785,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-search.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-search.json')]"
         },
         "parameters": {
           "azureSearchName": {
@@ -814,7 +802,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'Shared/azure-search-private-endpoint.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-search-private-endpoint.json')]"
         },
         "parameters": {
           "templatesBaseUri": {
@@ -852,7 +840,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-cdn.json')]"
         },
         "parameters": {
           "cdnProfileName": {
@@ -871,7 +859,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn-endpoint.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-cdn-endpoint.json')]"
         },
         "parameters": {
           "cdnEndpointName": {
@@ -904,7 +892,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/network.template.json')]",
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/network.template.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -943,7 +931,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'utilities/getSubnetResourceIdList.json')]",
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/getSubnetResourceIdList.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -964,7 +952,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'Shared/service-bus.json')]",
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/service-bus.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -1005,7 +993,7 @@
             "value": "Shared service bus connection string"
           },
           "templateUri": {
-            "value": "[concat(parameters('templatesBaseUri'),'Shared/key-vault-secret.json')]"
+            "value": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]"
           }
         },
         "template": {
@@ -1068,7 +1056,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'Shared/service-bus-network-rules.json')]",
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/service-bus-network-rules.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
