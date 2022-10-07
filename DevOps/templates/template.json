@@ -523,7 +523,7 @@
         },
         "parameters": {
           "templatesBaseUri": {
-            "value": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=']"
+            "value": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=')]"
           },
           "privateEndpointName": {
             "value": "[variables('redisCachePrivateEndpoint').privateEndpointName]"
@@ -805,7 +805,7 @@
         },
         "parameters": {
           "templatesBaseUri": {
-            "value": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=']"
+            "value": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=')]"
           },
           "privateEndpointName": {
             "value": "[variables('azureSearchPrivateEndpoint').privateEndpointName]"
@@ -896,7 +896,7 @@
         },
         "parameters": {
           "templatesBaseUri": {
-            "value": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=']"
+            "value": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=')]"
           },
           "virtualNetworkName": {
             "value": "[parameters('virtualNetworkName')]"
