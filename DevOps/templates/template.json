@@ -330,6 +330,12 @@
       "metadata": {
         "description": "Service Bus Name"
       }
+    },
+    "AccessToken": {
+        "type": "string",
+        "metadata": {
+            "description": "Token that will acces the private repo from the logic app"
+        }
     }
   },
   "variables": {
