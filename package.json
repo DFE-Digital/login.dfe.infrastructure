@@ -4,7 +4,7 @@
   "description": "[![PROD](https://sfa-gov-uk.visualstudio.com/_apis/public/build/definitions/aa44e142-c0ac-4ace-a6b2-0d9a3f35d516/705/badge)](https://dev.azure.com/sfa-gov-uk/DfE%20Signin/_release?definitionId=10&_a=deployments&view=mine)",
   "main": "index.js",
   "dependencies": {
-    "@slack/webhook": "^5.0.2",
+    "@slack/webhook": "^5.0.4",
     "install": "^0.13.0",
     "login.dfe.jwt-strategies": "git+https://github.com/DFE-Digital/login.dfe.jwt-strategies.git",
     "npm": "^6.13.7",
