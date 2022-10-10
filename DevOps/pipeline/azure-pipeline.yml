@@ -78,12 +78,12 @@ variables:
 
 stages:
 
-# # Code Scans & Build the artifact for deployment
-# - stage: scanInfra
-#   displayName: "Scan tools"
-#   jobs:
-#     # Code scaning tools
-#     - template:  pipeline/checkov.yml@devopsTemplates
+# Code Scans & Build the artifact for deployment
+- stage: scanInfra
+  displayName: "Scan tools"
+  jobs:
+    # Code scaning tools
+    - template:  pipeline/checkov.yml@devopsTemplates
 
 - ${{ each parameter in parameters }}:
   - ${{ if ne(parameter.key, 'prereq') }}:
