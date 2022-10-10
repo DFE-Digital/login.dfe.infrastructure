@@ -3,20 +3,20 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "templatesBaseUri": {
-      "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/DFE-Digital/login.dfe.infrastructure/master/"
+      "type": "string"
     },
-    "appServicePlanOS": {
-      "type": "string",
-      "metadata": {
-        "description": "Windows or Linux App Service Plan"
-      }
+    "AccessToken": {
+        "type": "string",
+        "metadata": {
+            "description": "Token that will acces the private repo from the logic app"
+        }
     },
-    "appServicePlanIsLinux": {
-      "type": "bool",
-      "metadata": {
-        "description": "Whether the App Service Plan is Linux or not"
-      }
+    "branch": {
+        "type": "string",
+        "defaultValue": "main",
+        "metadata": {
+            "description": "Branch that use for the ARM templateLinks"
+        }
     },
     "appInsightsName": {
       "type": "string",
@@ -115,9 +115,6 @@
     "cdnEndpointName": {
       "type": "string"
     },
-    "cdnProfileName": {
-      "type": "string"
-    },
     "originName": {
       "defaultValue": "",
       "type": "string"
@@ -146,72 +143,6 @@
       "type": "object",
       "metadata": {
         "description": "Properties for the elastic pool"
-      }
-    },
-    "frontEndAppServicePlanName": {
-      "type": "string",
-      "defaultValue": ""
-    },
-    "frontEndAppServicePlanSku": {
-      "type": "array",
-      "defaultValue": [
-        {
-          "id": "01",
-          "sku": {
-            "name": "P1v2",
-            "tier": "PremiumV2",
-            "size": "P1v2",
-            "family": "Pv2",
-            "capacity": 1
-          }
-        }
-      ],
-      "metadata": {
-        "description": "The SKU of the front-end App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
-      }
-    },
-    "backEndAppServicePlanName": {
-      "type": "string",
-      "defaultValue": ""
-    },
-    "backEndAppServicePlanSku": {
-      "type": "array",
-      "defaultValue": [
-        {
-          "id": "01",
-          "sku": {
-            "name": "P1v2",
-            "tier": "PremiumV2",
-            "size": "P1v2",
-            "family": "Pv2",
-            "capacity": 1
-          }
-        }
-      ],
-      "metadata": {
-        "description": "The SKU of the back-end App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
-      }
-    },
-    "workerAppServicePlanName": {
-      "type": "string",
-      "defaultValue": ""
-    },
-    "workerAppServicePlanSku": {
-      "type": "array",
-      "defaultValue": [
-        {
-          "id": "01",
-          "sku": {
-            "name": "P1v2",
-            "tier": "PremiumV2",
-            "size": "P1v2",
-            "family": "Pv2",
-            "capacity": 1
-          }
-        }
-      ],
-      "metadata": {
-        "description": "The SKU of the worker App Service Plan"
       }
     },
     "microsoftAzureWebsitesRPObjectId": {
@@ -299,7 +230,7 @@
       "type": "string",
       "defaultValue": "signin"
     },
-    "applicationName": {
+    "infrastructureName": {
       "type": "string",
       "defaultValue": "shd"
     },
@@ -385,9 +316,8 @@
         "description": "Mode to use in the SQL firewall rule copy function. Using Serial for the initial deployment can help eliminate conflicts."
       }
     },
-    "ipRules": {
-        "type": "string",
-        "defaultValue": ""
+    "cdnIpRules": {
+        "type": "array"
     },
     "azureActiveDirectoryAdmin": {
       "type": "string",
@@ -400,22 +330,21 @@
       "metadata": {
         "description": "Azure Active Directory admin SID"
       }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "metadata": {
+        "description": "Virtual Network Name"
+      }
+    },
+    "serviceBusNamespaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Service Bus Name"
+      }
     }
   },
   "variables": {
-    "resourceNamePrefix": "[concat(toLower(parameters('platformGlobalIdentifier')), toLower(parameters('environmentId')),'-', toLower(parameters('platformGlobalName')),'-', toLower(parameters('applicationName')))]",
-    "appInsightsName": "[concat(variables('resourceNamePrefix'),'-ai')]",
-    "azureDataFactoryName": "[concat(variables('resourceNamePrefix'),'-adf-1')]",
-    "redisCacheName": "[concat(variables('resourceNamePrefix'),'-rc')]",
-    "amplsName": "[concat(variables('resourceNamePrefix'),'-ampls')]",
-    "sqlServerName": "[concat(variables('resourceNamePrefix'),'-sql')]",
-    "elasticPoolName": "[concat(variables('resourceNamePrefix'),'-ep')]",
-    "storageAccountName": "[concat(replace(variables('resourceNamePrefix'),'-',''),'str')]",
-    "keyVaultName": "[concat(variables('resourceNamePrefix'),'-kv')]",
-    "azureSearchName": "[concat(variables('resourceNamePrefix'),'-azs')]",
-    "azureCdnName": "[concat(variables('resourceNamePrefix'),'-cdn')]",
-    "virtualNetworkName": "[concat(variables('resourceNamePrefix'),'-vnet')]",
-    "serviceBusNamespaceName": "[concat(variables('resourceNamePrefix'),'-sbn')]",
     "serviceBusApiVersion": "2017-04-01",
     "redisSubnetName": "redis-sn-1",
     "azureSearchSubnetName": "azureSearch-sn-1",
@@ -427,17 +356,17 @@
     "emptyArray": [],
     "redisCachePrivateEndpoint": {
       "privateDnsZoneName": "privatelink.redis.cache.windows.net",
-      "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+      "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
       "privateEndpointName": "[concat(parameters('redisCacheName'),'-', variables('redisSubnetName'), '-pe')]",
       "privateLinkResource": "[resourceId('Microsoft.Cache/Redis', parameters('redisCacheName'))]",
-      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('redisSubnetName'))]"
+      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('redisSubnetName'))]"
     },
     "azureSearchPrivateEndpoint": {
       "privateDnsZoneName": "privatelink.search.windows.net",
-      "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+      "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
       "privateEndpointName": "[concat(parameters('azureSearchName'),'-', variables('azureSearchSubnetName'), '-pe')]",
       "privateLinkResource": "[resourceId('Microsoft.Search/searchServices', parameters('azureSearchName'))]",
-      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('azureSearchSubnetName'))]"
+      "privateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('azureSearchSubnetName'))]"
     },
     "azureMonitorPrivateEndpoint": {
       "amplsPrivateDNSZoneName": "[concat(parameters('amplsName'), '-Private-DNS-Zone')]",
@@ -446,11 +375,11 @@
       "amplsMonitorPrivateDnsZoneName": "privatelink.monitor.azure.com",
       "amplsOPInsightODSPrivateDnsZoneName": "privatelink.ods.opinsights.azure.com",
       "amplsOPInsightOMSPrivateDnsZoneName": "privatelink.oms.opinsights.azure.com",
-      "amplsVirtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-      "amplsVirtualNetworkName": "[variables('virtualNetworkName')]",
+      "amplsVirtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+      "amplsVirtualNetworkName": "[parameters('virtualNetworkName')]",
       "amplsPrivateEndpointName": "[concat(parameters('amplsName'), '-pe')]",
       "amplsPrivateLinkResource": "[resourceId('Microsoft.insights/privateLinkScopes', parameters('amplsName'))]",
-      "amplsPrivateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('amplsSubnetName'))]"
+      "amplsPrivateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('amplsSubnetName'))]"
     },
     "keyVaultAccessPolicies": [
       {
@@ -537,7 +466,7 @@
       "name": "virtualNetworksSubNet",
       "count": "[length(parameters('applicationSubnets'))]",
       "input": {
-        "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), parameters('applicationSubnets')[copyIndex('virtualNetworksSubNet')])]",
+        "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('applicationSubnets')[copyIndex('virtualNetworksSubNet')])]",
         "action": "Allow",
         "state": "Succeeded"
       }
@@ -545,106 +474,13 @@
   },
   "resources": [
     {
-      "condition": "[greater(length(parameters('frontEndAppServicePlanName')), 0)]",
-      "apiVersion": "2020-10-01",
-      "name": "[concat('front-end-app-service-plan','-',parameters('frontEndAppServicePlanSku')[copyIndex()].id)]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-plan.json')]"
-        },
-        "parameters": {
-          "appServicePlanName": {
-            "value": "[concat(parameters('frontEndAppServicePlanName'),'-',parameters('frontEndAppServicePlanSku')[copyIndex()].id)]"
-          },
-          "appServicePlanSku": {
-            "value": "[parameters('frontEndAppServicePlanSku')[copyIndex()].sku]"
-          },
-          "appServicePlanOS": {
-            "value": "[parameters('appServicePlanOS')]"
-          },
-          "appServicePlanIsLinux": {
-            "value": "[parameters('appServicePlanIsLinux')]"
-          }
-        }
-      },
-      "copy": {
-        "name": "FeAspCopy",
-        "count": "[length(parameters('frontEndAppServicePlanSku'))]",
-        "mode": "Parallel"
-      }
-    },
-    {
-      "condition": "[greater(length(parameters('backEndAppServicePlanName')), 0)]",
-      "apiVersion": "2020-10-01",
-      "name": "[concat('back-end-app-service-plan','-',parameters('backEndAppServicePlanSku')[copyIndex()].id)]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-plan.json')]"
-        },
-        "parameters": {
-          "appServicePlanName": {
-            "value": "[concat(parameters('backEndAppServicePlanName'),'-',parameters('backEndAppServicePlanSku')[copyIndex()].id)]"
-          },
-          "appServicePlanSku": {
-            "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku]"
-          },
-          "appServicePlanOS": {
-            "value": "[parameters('appServicePlanOS')]"
-          },
-          "appServicePlanIsLinux": {
-            "value": "[parameters('appServicePlanIsLinux')]"
-          }
-        }
-      },
-      "copy": {
-        "name": "BeAspCopy",
-        "count": "[length(parameters('backEndAppServicePlanSku'))]",
-        "mode": "Parallel"
-      }
-    },
-    {
-      "condition": "[greater(length(parameters('workerAppServicePlanName')), 0)]",
-      "apiVersion": "2020-10-01",
-      "name": "[concat('worker-app-service-plan','-',parameters('workerAppServicePlanSku')[copyIndex()].id)]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-plan.json')]"
-        },
-        "parameters": {
-          "appServicePlanName": {
-            "value": "[concat(parameters('workerAppServicePlanName'),'-',parameters('backEndAppServicePlanSku')[copyIndex()].id)]"
-          },
-          "appServicePlanSku": {
-            "value": "[parameters('workerAppServicePlanSku')[copyIndex()].sku]"
-          },
-          "appServicePlanOS": {
-            "value": "[parameters('appServicePlanOS')]"
-          },
-          "appServicePlanIsLinux": {
-            "value": "[parameters('appServicePlanIsLinux')]"
-          }
-        }
-      },
-      "copy": {
-        "name": "WkrAspCopy",
-        "count": "[length(parameters('workerAppServicePlanSku'))]",
-        "mode": "Parallel"
-      }
-    },
-    {
       "apiVersion": "2020-10-01",
       "name": "redis-cache",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'Shared/redis-cache.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/redis-cache.json')]"
         },
         "parameters": {
           "redisCacheName": {
@@ -663,7 +499,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'Shared/redis-cache-patch-schedule.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/redis-cache-patch-schedule.json')]"
         },
         "parameters": {
           "redisCacheName": {
@@ -683,11 +519,11 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'Shared/redis-cache-private-endpoint.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/redis-cache-private-endpoint.json')]"
         },
         "parameters": {
           "templatesBaseUri": {
-            "value": "[parameters('templatesBaseUri')]"
+            "value": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=')]"
           },
           "privateEndpointName": {
             "value": "[variables('redisCachePrivateEndpoint').privateEndpointName]"
@@ -725,7 +561,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'Shared/ampls.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/ampls.json')]"
         },
         "parameters": {
           "amplsName": {
@@ -781,7 +617,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-sql.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-sql.json')]"
         },
         "parameters": {
           "sqlAdministratorLogin": {
@@ -819,7 +655,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'Shared/sql-server-firewall-rules.json')]",
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/sql-server-firewall-rules.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -846,7 +682,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/database.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/database.json')]"
         },
         "parameters": {
           "databaseName": {
@@ -885,7 +721,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/app-insights.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/app-insights.json')]"
         },
         "parameters": {
           "appInsightsName": {
@@ -902,7 +738,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-data-factory.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-data-factory.json')]"
         },
         "parameters": {
           "azureDataFactoryName": {
@@ -919,7 +755,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/storage-account.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/storage-account.json')]"
         },
         "parameters": {
           "storageAccountName": {
@@ -929,7 +765,7 @@
               "value": true
           },
           "ipRules": {
-            "value": "[json(parameters('ipRules'))]"
+            "value": "[parameters('cdnIpRules')]"
           },
           "virtualNetworksSubNet": {
             "value": []
@@ -941,25 +777,6 @@
       ]
     },
     {
-      "name": "key-vault",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/key-vault.json')]"
-        },
-        "parameters": {
-          "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
-          },
-          "keyVaultAccessPolicies": {
-            "value": "[variables('keyVaultAccessPolicies')]"
-          }
-        }
-      }
-    },
-    {
       "condition": "[parameters('deployAzureSearch')]",
       "name": "azure-search",
       "type": "Microsoft.Resources/deployments",
@@ -967,7 +784,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-search.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-search.json')]"
         },
         "parameters": {
           "azureSearchName": {
@@ -984,11 +801,11 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'Shared/azure-search-private-endpoint.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-search-private-endpoint.json')]"
         },
         "parameters": {
           "templatesBaseUri": {
-            "value": "[parameters('templatesBaseUri')]"
+            "value": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=')]"
           },
           "privateEndpointName": {
             "value": "[variables('azureSearchPrivateEndpoint').privateEndpointName]"
@@ -1022,7 +839,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-cdn.json')]"
         },
         "parameters": {
           "cdnProfileName": {
@@ -1041,14 +858,14 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/azure-cdn-endpoint.json')]"
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-cdn-endpoint.json')]"
         },
         "parameters": {
           "cdnEndpointName": {
             "value": "[parameters('cdnEndpointName')]"
           },
           "cdnProfileName": {
-            "value": "[parameters('cdnProfileName')]"
+            "value": "[parameters('azureCdnName')]"
           },
           "originName": {
             "value": "[parameters('originName')]"
@@ -1067,36 +884,6 @@
       ]
     },
     {
-      "condition": "[greater(length(parameters('keyvaultCertificateNames')), 0)]",
-      "name": "[concat('app-service-certificates', copyIndex())]",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/app-service-certificate.json')]"
-        },
-        "parameters": {
-          "keyVaultCertificateName": {
-            "value": "[parameters('keyvaultCertificateNames')[copyIndex()]]"
-          },
-          "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
-          },
-          "keyVaultResourceGroup": {
-            "value": "[resourceGroup().name]"
-          }
-        }
-      },
-      "copy": {
-        "name": "certCopy",
-        "count": "[length(parameters('keyvaultCertificateNames'))]"
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'key-vault')]"
-      ]
-    },
-    {
       "condition": "[parameters('deployVirtualNetwork')]",
       "apiVersion": "2020-10-01",
       "name": "virtual-network",
@@ -1104,15 +891,15 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'), 'Shared/network.template.json')]",
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/network.template.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
           "templatesBaseUri": {
-            "value": "[parameters('templatesBaseUri')]"
+            "value": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=')]"
           },
           "virtualNetworkName": {
-            "value": "[variables('virtualNetworkName')]"
+            "value": "[parameters('virtualNetworkName')]"
           },
           "destructiveVirtualNetworkDeploy": {
             "value": "[parameters('destructiveVirtualNetworkDeploy')]"
@@ -1143,12 +930,12 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'utilities/getSubnetResourceIdList.json')]",
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/getSubnetResourceIdList.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
           "virtualNetworkName": {
-            "value": "[variables('virtualNetworkName')]"
+            "value": "[parameters('virtualNetworkName')]"
           },
           "subnetConfiguration": {
             "value": "[if(parameters('deployVirtualNetwork'), reference('virtual-network').outputs.applicationSubnetConfiguration.value, variables('emptyArray'))]"
@@ -1164,12 +951,12 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'Shared/service-bus.json')]",
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/service-bus.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
           "serviceBusNamespaceName": {
-            "value": "[variables('serviceBusNamespaceName')]"
+            "value": "[parameters('serviceBusNamespaceName')]"
           },
           "serviceBusSku": {
             "value": "[parameters('serviceBusSku')]"
@@ -1183,8 +970,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments','service-bus')]",
-        "[resourceId('Microsoft.Resources/deployments','key-vault')]"
+        "[resourceId('Microsoft.Resources/deployments','service-bus')]"
       ],
       "properties": {
         "expressionEvaluationOptions": {
@@ -1199,13 +985,13 @@
             "value": "sharedServiceBusConnectionString"
           },
           "secretResourceId": {
-            "value": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespaceName'), 'RootManageSharedAccessKey')]"
+            "value": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', parameters('serviceBusNamespaceName'), 'RootManageSharedAccessKey')]"
           },
           "contentType": {
             "value": "Shared service bus connection string"
           },
           "templateUri": {
-            "value": "[concat(parameters('templatesBaseUri'),'Shared/key-vault-secret.json')]"
+            "value": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]"
           }
         },
         "template": {
@@ -1268,12 +1054,12 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'Shared/service-bus-network-rules.json')]",
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/service-bus-network-rules.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
           "serviceBusNamespaceName": {
-            "value": "[variables('serviceBusNamespaceName')]"
+            "value": "[parameters('serviceBusNamespaceName')]"
           },
           "subnetResourceIdList": {
             "value": "[if(parameters('deployVirtualNetwork'), reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value, variables('emptyArray'))]"
