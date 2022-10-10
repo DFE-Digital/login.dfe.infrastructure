@@ -32,5 +32,6 @@ For the time this document has been created 2 prerequisites are needed before th
       10. azureActiveDirectoryAdminSID -> The app registration object id for connectin in SQL Servers
       11. azureDevOpsObjectId -> The object Id of the service connection for the new key vault
       12. microsoftAzureWebsitesRPObjectId -> The object Id of the app registration for app services to connect in the key vault
+6. Updated parameter `deployPrivateEndpoint` from false to true and after deployement changes back to false
 
 ## Deployes 
