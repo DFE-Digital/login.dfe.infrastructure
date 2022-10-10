@@ -32,6 +32,19 @@ For the time this document has been created 2 prerequisites are needed before th
       10. azureActiveDirectoryAdminSID -> The app registration object id for connectin in SQL Servers
       11. azureDevOpsObjectId -> The object Id of the service connection for the new key vault
       12. microsoftAzureWebsitesRPObjectId -> The object Id of the app registration for app services to connect in the key vault
-6. Updated parameter `deployPrivateEndpoint` from false to true and after deployement changes back to false
+6. Updated parameter `deployPrivateEndpoint` from false to true for deployeing all the private enpoints and after deployement changes back to false
+7. Check the Deploy Pre-Requisites and Enviroment you deploy in the first run for creation of the Logic app and the KeyVault. The Logic app will deploy only in the Dev environment. 
 
-## Deployes 
+## Deployment
+---
+All external files are located in login.dfe.devops
+Infrastrucuter pipeline has two satges:
+
+1. Scan Infrastructure that will use checkov to scan the yml & ARM templates for the deployment
+2. Deployment stage that is have to job under:
+   1. Pre deployments Job that will create the logic app in dev enviroment and the Keyvault that will use in all the enviroment and for the variable groups in azure devops after the first run any new subscriptio or enviroment. The ARM template for that job are located in login.dfe.devops.
+   2. Base infrastructure Job that will deploy all the specify componets that are diffint in the template.json under the DevOps/templates folder
+
+More information of trigger & Approvols please check [here](https://github.com/DFE-Digital/login.dfe.devops/blob/main/Docs/PipelineTrigger.md)
+
+Also this pipeline has an extra parameter in pipeline trigger the Pre-Requisites for deploying the pre requisites infrastructure if needed 
