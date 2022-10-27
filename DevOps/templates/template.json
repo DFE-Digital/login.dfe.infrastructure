@@ -463,9 +463,9 @@
         {
           "name": "backend-g1-asp",
           "sku": {
-            "name": "P1v2",
+            "name": "P2v2",
             "tier": "PremiumV2",
-            "size": "P1v2",
+            "size": "P2v2",
             "family": "Pv2",
             "capacity": 1
           }
@@ -491,6 +491,24 @@
         {
           "name": "utils-asp",
           "sku": {
+            "name": "S1",
+            "tier": "PremiumV2",
+            "size": "S1",
+            "family": "",
+            "capacity": 1
+          }
+        }
+      ],
+      "metadata": {
+        "description": "The SKU of the utils tier App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
+      }
+    },
+    "pireanAppServicePlanSku": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "backend-g3-asp",
+          "sku": {
             "name": "P1v2",
             "tier": "PremiumV2",
             "size": "P1v2",
@@ -500,7 +518,7 @@
         }
       ],
       "metadata": {
-        "description": "The SKU of the utils tier App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
+        "description": "The SKU of the pirean tier App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
       }
     }
   },
@@ -1229,6 +1247,250 @@
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'service-bus')]"
       ]
+    },
+    {
+      "apiVersion": "2020-10-01",
+      "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('samltierAppServicePlanSku')[copyIndex()].name)]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/app-service-plan.json')]"
+        },
+        "parameters": {
+          "appServicePlanName": {
+            "value": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('samltierAppServicePlanSku')[copyIndex()].name)]"
+          },
+          "appServicePlanSku": {
+            "value": "[parameters('samltierAppServicePlanSku')[copyIndex()].sku]"
+          },
+          "appServicePlanOS": {
+            "value": "Linux"
+          },
+          "appServicePlanIsLinux": {
+            "value": true
+          }
+        }
+      },
+      "copy": {
+        "name": "FeAspCopy",
+        "count": "[length(parameters('samltierAppServicePlanSku'))]",
+        "mode": "Parallel"
+      }
+    },
+    {
+      "apiVersion": "2020-10-01",
+      "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('prestierAppServicePlanSku')[copyIndex()].name)]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/app-service-plan.json')]"
+        },
+        "parameters": {
+          "appServicePlanName": {
+            "value": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('prestierAppServicePlanSku')[copyIndex()].name)]"
+          },
+          "appServicePlanSku": {
+            "value": "[parameters('prestierAppServicePlanSku')[copyIndex()].sku]"
+          },
+          "appServicePlanOS": {
+            "value": "Linux"
+          },
+          "appServicePlanIsLinux": {
+            "value": true
+          }
+        }
+      },
+      "copy": {
+        "name": "FeAspCopy",
+        "count": "[length(parameters('prestierAppServicePlanSku'))]",
+        "mode": "Parallel"
+      }
+    },
+    {
+      "apiVersion": "2020-10-01",
+      "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('midtierAppServicePlanSku')[copyIndex()].name)]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/app-service-plan.json')]"
+        },
+        "parameters": {
+          "appServicePlanName": {
+            "value": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('midtierAppServicePlanSku')[copyIndex()].name)]"
+          },
+          "appServicePlanSku": {
+            "value": "[parameters('midtierAppServicePlanSku')[copyIndex()].sku]"
+          },
+          "appServicePlanOS": {
+            "value": "Linux"
+          },
+          "appServicePlanIsLinux": {
+            "value": true
+          }
+        }
+      },
+      "copy": {
+        "name": "FeAspCopy",
+        "count": "[length(parameters('midtierAppServicePlanSku'))]",
+        "mode": "Parallel"
+      }
+    },
+    {
+      "apiVersion": "2020-10-01",
+      "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('backEndAppServicePlanSku')[copyIndex()].name)]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/app-service-plan.json')]"
+        },
+        "parameters": {
+          "appServicePlanName": {
+            "value": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('backEndAppServicePlanSku')[copyIndex()].name)]"
+          },
+          "appServicePlanSku": {
+            "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku]"
+          },
+          "appServicePlanOS": {
+            "value": "Linux"
+          },
+          "appServicePlanIsLinux": {
+            "value": true
+          }
+        }
+      },
+      "copy": {
+        "name": "FeAspCopy",
+        "count": "[length(parameters('backEndAppServicePlanSku'))]",
+        "mode": "Parallel"
+      }
+    },
+    {
+      "condition": "[eq(parameters('environmentId')), d01)]",
+      "apiVersion": "2020-10-01",
+      "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('utilsAppServicePlanSku')[copyIndex()].name)]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/app-service-plan.json')]"
+        },
+        "parameters": {
+          "appServicePlanName": {
+            "value": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('utilsAppServicePlanSku')[copyIndex()].name)]"
+          },
+          "appServicePlanSku": {
+            "value": "[parameters('utilsAppServicePlanSku')[copyIndex()].sku]"
+          },
+          "appServicePlanOS": {
+            "value": "Linux"
+          },
+          "appServicePlanIsLinux": {
+            "value": true
+          }
+        }
+      },
+      "copy": {
+        "name": "FeAspCopy",
+        "count": "[length(parameters('utilsAppServicePlanSku'))]",
+        "mode": "Parallel"
+      }
+    },
+    {
+      "condition": "[eq(parameters('environmentId')), d01)]",
+      "apiVersion": "2020-10-01",
+      "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('utilsAppServicePlanSku')[copyIndex()].name)]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/app-service-plan.json')]"
+        },
+        "parameters": {
+          "appServicePlanName": {
+            "value": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('utilsAppServicePlanSku')[copyIndex()].name)]"
+          },
+          "appServicePlanSku": {
+            "value": "[parameters('utilsAppServicePlanSku')[copyIndex()].sku]"
+          },
+          "appServicePlanOS": {
+            "value": "Linux"
+          },
+          "appServicePlanIsLinux": {
+            "value": true
+          }
+        }
+      },
+      "copy": {
+        "name": "FeAspCopy",
+        "count": "[length(parameters('utilsAppServicePlanSku'))]",
+        "mode": "Parallel"
+      }
+    },
+    {
+      "condition": "[eq(parameters('environmentId')), d01)]",
+      "apiVersion": "2020-10-01",
+      "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('utilsAppServicePlanSku')[copyIndex()].name)]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/app-service-plan.json')]"
+        },
+        "parameters": {
+          "appServicePlanName": {
+            "value": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('utilsAppServicePlanSku')[copyIndex()].name)]"
+          },
+          "appServicePlanSku": {
+            "value": "[parameters('utilsAppServicePlanSku')[copyIndex()].sku]"
+          },
+          "appServicePlanOS": {
+            "value": "Linux"
+          },
+          "appServicePlanIsLinux": {
+            "value": true
+          }
+        }
+      },
+      "copy": {
+        "name": "FeAspCopy",
+        "count": "[length(parameters('utilsAppServicePlanSku'))]",
+        "mode": "Parallel"
+      }
+    },
+    {
+      "condition": "[eq(parameters('environmentId')), d01)]",
+      "apiVersion": "2020-10-01",
+      "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('pireanAppServicePlanSku')[copyIndex()].name)]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/app-service-plan.json')]"
+        },
+        "parameters": {
+          "appServicePlanName": {
+            "value": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('pireanAppServicePlanSku')[copyIndex()].name)]"
+          },
+          "appServicePlanSku": {
+            "value": "[parameters('pireanAppServicePlanSku')[copyIndex()].sku]"
+          },
+          "appServicePlanOS": {
+            "value": "Linux"
+          },
+          "appServicePlanIsLinux": {
+            "value": true
+          }
+        }
+      },
+      "copy": {
+        "name": "FeAspCopy",
+        "count": "[length(parameters('pireanAppServicePlanSku'))]",
+        "mode": "Parallel"
+      }
     }
   ],
   "outputs": {}
