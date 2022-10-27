@@ -23,7 +23,7 @@ pr:
 parameters:
 - name: prereq
   type: boolean
-  displayName: 'Deploy Pre-Requisites'
+  displayName: 'Deploy Pre-Requisites only'
   default: false
 - name: tran
   type: boolean
