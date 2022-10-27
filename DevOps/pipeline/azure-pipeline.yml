@@ -25,6 +25,10 @@ parameters:
   type: boolean
   displayName: 'Deploy Pre-Requisites'
   default: false
+- name: tran
+  type: boolean
+  displayName: 'Transformation Deployment'
+  default: false
 - name: dev
   type: boolean
   displayName: 'Dev Deployment'
@@ -48,8 +52,13 @@ parameters:
 
 variables:
 - group: dsi-global
+- name: tran
+  ${{ if or(eq(parameters.tran, 'true'), }}:
+    value: true
+  ${{ else }}:
+    value: false
 - name: dev
-  ${{ if or(eq(parameters.dev, 'true'), contains(variables['Build.SourceBranch'],'dsi'), contains(variables['Build.SourceBranch'],'PIM'), contains(variables['Build.SourceBranch'],'NSA')) }}:
+  ${{ if or(eq(parameters.dev, 'true')}}:
     value: true
   ${{ else }}:
     value: false
@@ -107,15 +116,16 @@ stages:
               environmentName: ${{parameter.key}}
               infrastuctureType: pre_req_infr
 
-        - template: pipeline/preDeployInfrastrusture.yml@devopsTemplates
-          parameters:
-            ${{ if eq(parameter.key, 'dev') }}:
-              serviceConnection: $(devServiceConnection)
-            ${{ elseif eq(parameter.key, 'pr') }}:
-              serviceConnection: $(prodServiceConnection)
-            ${{ else }}:
-              serviceConnection: $(testServiceConnection)
-            environmentName: ${{parameter.key}}
-            infrastuctureType: base_infr
-            templatePath:  $(System.DefaultWorkingDirectory)/login.dfe.infrastructure/DevOps/templates/template.json
-            deployPrivateEndpoint: false
+        - ${{ else }}:
+          - template: pipeline/preDeployInfrastrusture.yml@devopsTemplates
+            parameters:
+              ${{ if eq(parameter.key, 'dev') }}:
+                serviceConnection: $(devServiceConnection)
+              ${{ elseif eq(parameter.key, 'pr') }}:
+                serviceConnection: $(prodServiceConnection)
+              ${{ else }}:
+                serviceConnection: $(testServiceConnection)
+              environmentName: ${{parameter.key}}
+              infrastuctureType: base_infr
+              templatePath:  $(System.DefaultWorkingDirectory)/login.dfe.infrastructure/DevOps/templates/template.json
+              deployPrivateEndpoint: false

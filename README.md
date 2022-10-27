@@ -10,7 +10,7 @@ This document refers to the DevOps engineers who will maintain this pipeline. Al
 ---
 For the time this document has been created 2 prerequisites are needed before the pipeline will run
 
-1. Azure Active Directory needs 4 App registrations that will be created by the CIP team
+1. Azure Active Directory needs 3 App registrations that will be created by the CIP team
    1. Service connections for the pipeline to be able to deploy in all environments
    2. Azure Active Directory Admin for the use of connection in the SQL server
    3. Microsoft Azure App Service that will give access to the app services to access the key vaults
