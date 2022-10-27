@@ -342,6 +342,166 @@
       "metadata": {
         "description": "Service Bus Name"
       }
+    },
+    "samltierAppServicePlanSku": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "samltier-g1-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 1
+          }
+        },
+        {
+          "name": "samltier-g2-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 1
+          }
+        }
+      ],
+      "metadata": {
+        "description": "The SKU of the saml tier App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
+      }
+    },
+    "prestierAppServicePlanSku": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "prestier-g1-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 1
+          }
+        },
+        {
+          "name": "prestier-g2-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 1
+          }
+        },
+        {
+          "name": "prestier-g3-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 1
+          }
+        },
+        {
+          "name": "prestier-g4-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 1
+          }
+        }
+      ],
+      "metadata": {
+        "description": "The SKU of the front-end tier App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
+      }
+    },
+    "midtierAppServicePlanSku": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "midtier-g1-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 1
+          }
+        },
+        {
+          "name": "midtier-g2-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 1
+          }
+        },
+        {
+          "name": "midtier-g3-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 1
+          }
+        }
+      ],
+      "metadata": {
+        "description": "The SKU of the mid tier App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
+      }
+    },
+    "backEndAppServicePlanSku": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "backend-g1-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 1
+          }
+        },
+        {
+          "name": "backend-g2-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 1
+          }
+        }
+      ],
+      "metadata": {
+        "description": "The SKU of the back-end tier App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
+      }
+    },
+    "utilsAppServicePlanSku": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "utils-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 1
+          }
+        }
+      ],
+      "metadata": {
+        "description": "The SKU of the utils tier App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
+      }
     }
   },
   "variables": {
