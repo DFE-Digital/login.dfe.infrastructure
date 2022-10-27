@@ -107,7 +107,7 @@ stages:
         - ${{ if parameters.prereq }}:
           - template: pipeline/preDeployInfrastrusture.yml@devopsTemplates
             parameters:
-              ${{ if eq(parameter.key, 'dev') }}:
+              ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
                 serviceConnection: $(devServiceConnection)
               ${{ elseif eq(parameter.key, 'pr') }}:
                 serviceConnection: $(prodServiceConnection)
