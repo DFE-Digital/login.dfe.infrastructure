@@ -53,7 +53,7 @@ parameters:
 variables:
 - group: dsi-global
 - name: tran
-  ${{ if or(eq(parameters.tran, 'true'), }}:
+  ${{ if or(eq(parameters.tran, 'true') }}:
     value: true
   ${{ else }}:
     value: false
