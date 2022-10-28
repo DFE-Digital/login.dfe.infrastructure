@@ -114,7 +114,6 @@ stages:
               ${{ else }}:
                 serviceConnection: $(testServiceConnection)
               environmentName: ${{parameter.key}}
-              environmentId: $(environmentId)
               infrastuctureType: pre_req_infr
 
         - ${{ else }}:
@@ -127,7 +126,6 @@ stages:
               ${{ else }}:
                 serviceConnection: $(testServiceConnection)
               environmentName: ${{parameter.key}}
-              environmentId: $(environmentId)
               infrastuctureType: base_infr
               templatePath:  $(System.DefaultWorkingDirectory)/login.dfe.infrastructure/DevOps/templates/template.json
               deployPrivateEndpoint: false
