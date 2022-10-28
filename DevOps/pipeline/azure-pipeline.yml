@@ -87,20 +87,20 @@ variables:
 
 stages:
 
-# Code Scans & Build the artifact for deployment
-- stage: scanInfra
-  displayName: "Scan tools"
-  jobs:
-    # Code scaning tools
-    - template:  pipeline/checkov.yml@devopsTemplates
+# # Code Scans & Build the artifact for deployment
+# - stage: scanInfra
+#   displayName: "Scan tools"
+#   jobs:
+#     # Code scaning tools
+#     - template:  pipeline/checkov.yml@devopsTemplates
 
 - ${{ each parameter in parameters }}:
   - ${{ if ne(parameter.key, 'prereq') }}:
     - ${{ if eq(parameter.value, 'true') }}:
       - stage: Deployment_${{parameter.Key}}
         displayName: "Deployment [${{parameter.Key}}]"
-        dependsOn: 
-        - scanInfra
+        # dependsOn: 
+        # - scanInfra
         variables:
         - group: dsi-${{parameter.key}}-kv
         jobs:
