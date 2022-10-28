@@ -219,6 +219,7 @@
       "type": "string",
       "allowedValues": [
         "d01",
+        "d03",
         "t01",
         "t02",
         "t03",
