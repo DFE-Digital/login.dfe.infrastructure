@@ -119,7 +119,7 @@ stages:
         - ${{ else }}:
           - template: pipeline/infrastructure.yml@devopsTemplates
             parameters:
-              ${{ if eq(parameter.key, 'dev') }}:
+              ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
                 serviceConnection: $(devServiceConnection)
               ${{ elseif eq(parameter.key, 'pr') }}:
                 serviceConnection: $(prodServiceConnection)
