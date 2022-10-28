@@ -19,19 +19,23 @@ For the time this document has been created 2 prerequisites are needed before th
 4. Check the code to see if any inner dependency exists as maybe added later
 5. Create 6 Variable groups
    1. dsi-global that will host all service connections names and custRegAuth for the npm library
-   2. The rest 5 will be for each environment with the name `dsi-<enviroment ID>-kv` that will connect in the key vault. For the First deployment, the list of the below value must be added manually in the group variables and after moving to the respected environment key vaults.
-      1. templatesBaseUri -> will be created by the preDeployInfrastrusture and added in the key vault but need to transfer to the local group for the base infrastructure deployment
-      2. redisCacheSku -> The Redis Cache SKU 
-      3. sqlAdministratorLogin & sqlAdministratorLoginPassword -> The cretentials for the Sql server 
-      4. databaseNames -> The secret will have array of JSON with database names and the max-size bytes for example `[{"name":"dbname1","maxSizeBytes":"size"},{"name":"dbname1","maxSizeBytes":"size"}]`
-      5. CHGWIP -> The IP that use to access the SQL server
-      6. elasticPoolProperties -> The Elastic Pool Properties for the SQL serves
-      7. environmentId -> The environment Id for the environment that the group is represents
-      8. platformGlobalName -> The global platform name that uses of the name the services
-      9. azureActiveDirectoryAdmin -> The name of the app registration for connectin in SQL Servers
-      10. azureActiveDirectoryAdminSID -> The app registration object id for connectin in SQL Servers
-      11. azureDevOpsObjectId -> The object Id of the service connection for the new key vault
-      12. microsoftAzureWebsitesRPObjectId -> The object Id of the app registration for app services to connect in the key vault
+   2. The rest 5 will be for each environment with the name `dsi-<enviroment ID>-kv` that will connect in the key vault. For the First deployment, the list of the below value must be added manually in the group variables and after moving to the respected environment key vaults. This step is build two sections
+      1. Pre-requzet Infrastructure
+         1. environmentId -> The environment Id for the environment that the group is represents
+         2.  platformGlobalName -> The global platform name that uses the name of the services
+         3.  azureDevOpsObjectId -> The object Id of the service connection for the new key vault
+         4.  microsoftAzureWebsitesRPObjectId -> The object Id of the app registration for app services to connect in the key vault
+         5.  subscriptionId -> The subscription id of azure for the deployment
+         6.  tags -> Tags that have been designated tags that have been set by the CIP team
+      2. Base infrastructure Deployment that has been added in keyvault after the Pre-request Infrastructure pipeline runs (manually)
+         1. templatesBaseUri -> will be created by the preDeployInfrastrusture and added in the keyvault but need to transfer to the local group for the base infrastructure deployment
+         2. redisCacheSku -> The Redis Cache SKU 
+         3. sqlAdministratorLogin & sqlAdministratorLoginPassword -> The cretentials for the Sql server 
+         4. databaseNames -> The secret will have array of JSON with database names and the max-size bytes for example `[{"name":"dbname1","maxSizeBytes":"size"},{"name":"dbname1","maxSizeBytes":"size"}]`
+         5. CHGWIP -> The IP that use to access the SQL server
+         6. elasticPoolProperties -> The Elastic Pool Properties for the SQL serves
+         7.  azureActiveDirectoryAdmin -> The name of the app registration for connectin in SQL Servers
+         8.  azureActiveDirectoryAdminSID -> The app registration object id for connectin in SQL Servers
 6. Updated parameter `deployPrivateEndpoint` from false to true for deployeing all the private enpoints and after deployement changes back to false
 7. Check the Deploy Pre-Requisites and Enviroment you deploy in the first run for creation of the Logic app and the KeyVault. The Logic app will deploy only in the Dev environment. 
 
