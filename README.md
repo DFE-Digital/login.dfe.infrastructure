@@ -29,13 +29,14 @@ For the time this document has been created 2 prerequisites are needed before th
          6.  tags -> Tags that have been designated tags that have been set by the CIP team. They need to be added manualy in keyvault
       2. Base infrastructure Deployment that has been added in keyvault after the Pre-request Infrastructure pipeline runs (manually)
          1. templatesBaseUri -> will be created by the preDeployInfrastrusture and added in the keyvault but need to transfer to the local group for the base infrastructure deployment
-         2. redisCacheSku -> The Redis Cache SKU 
-         3. sqlAdministratorLogin & sqlAdministratorLoginPassword -> The cretentials for the Sql server 
-         4. databaseNames -> The secret will have array of JSON with database names and the max-size bytes for example `[{"name":"dbname1","maxSizeBytes":"size"},{"name":"dbname1","maxSizeBytes":"size"}]`
-         5. CHGWIP -> The IP that use to access the SQL server from DfE workstations
-         6. elasticPoolProperties -> The Elastic Pool Properties for the SQL serves
-         7.  azureActiveDirectoryAdmin -> The name of the group for connectin in SQL Servers
-         8.  azureActiveDirectoryAdminSID -> The group object id for connectin in SQL Servers
+         2. gitToken -> 
+         3. redisCacheSku -> The Redis Cache SKU 
+         4. sqlAdministratorLogin & sqlAdministratorLoginPassword -> The cretentials for the Sql server 
+         5. databaseNames -> The secret will have array of JSON with database names and the max-size bytes for example `[{"name":"dbname1","maxSizeBytes":"size"},{"name":"dbname1","maxSizeBytes":"size"}]`
+         6. CHGWIP -> The IP that use to access the SQL server from DfE workstations
+         7. elasticPoolProperties -> The Elastic Pool Properties for the SQL serves
+         8.  azureActiveDirectoryAdmin -> The name of the group for connectin in SQL Servers
+         9.  azureActiveDirectoryAdminSID -> The group object id for connectin in SQL Servers
 6. Updated parameter `deployPrivateEndpoint` from false to true for deployeing all the private enpoints and after deployement changes back to false
 7. Check the Deploy Pre-Requisites and Enviroment you deploy in the first run for creation of the Logic app and the KeyVault. The Logic app will deploy only in the Dev environment. 
 
