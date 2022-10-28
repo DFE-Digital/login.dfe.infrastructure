@@ -26,7 +26,7 @@ For the time this document has been created 2 prerequisites are needed before th
          3.  azureDevOpsObjectId -> The object Id of the service connection for the new key vault
          4.  microsoftAzureWebsitesRPObjectId -> The object Id of the app registration for app services to connect in the key vault
          5.  subscriptionId -> The subscription id of azure for the deployment
-         6.  tags -> Tags that have been designated tags that have been set by the CIP team. They need to single quotes for been writen as string 
+         6.  tags -> Tags that have been designated tags that have been set by the CIP team. They need to be added manualy in 
       2. Base infrastructure Deployment that has been added in keyvault after the Pre-request Infrastructure pipeline runs (manually)
          1. templatesBaseUri -> will be created by the preDeployInfrastrusture and added in the keyvault but need to transfer to the local group for the base infrastructure deployment
          2. redisCacheSku -> The Redis Cache SKU 
