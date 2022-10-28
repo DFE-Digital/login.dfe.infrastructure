@@ -1405,7 +1405,7 @@
       }
     },
     {
-      "condition": "[equals(parameters('environmentId')), 'd1')]",
+      "condition": "[equals(parameters('environmentId'), 'd1')]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('pireanAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
