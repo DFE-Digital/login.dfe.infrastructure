@@ -1250,7 +1250,7 @@
       ]
     },
     {
-      "condition": "[eq(parameters('environmentId'), d03)]",
+      "condition": "[eq(parameters('environmentId'), 'd03')]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('samltierAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
@@ -1281,7 +1281,7 @@
       }
     },
     {
-      "condition": "[eq(parameters('environmentId'), d03)]",
+      "condition": "[eq(parameters('environmentId'), 'd03')]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('prestierAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
@@ -1312,7 +1312,7 @@
       }
     },
     {
-      "condition": "[eq(parameters('environmentId'), d03)]",
+      "condition": "[eq(parameters('environmentId'), 'd03')]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('midtierAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
@@ -1343,7 +1343,7 @@
       }
     },
     {
-      "condition": "[eq(parameters('environmentId'), d03)]",
+      "condition": "[eq(parameters('environmentId'), 'd03')]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('backEndAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
@@ -1374,7 +1374,7 @@
       }
     },
     {
-      "condition": "[eq(parameters('environmentId'), d1)]",
+      "condition": "[eq(parameters('environmentId'), 'd1')]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('utilsAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
@@ -1405,7 +1405,7 @@
       }
     },
     {
-      "condition": "[eq(parameters('environmentId')), d1)]",
+      "condition": "[eq(parameters('environmentId')), 'd1')]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('pireanAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
