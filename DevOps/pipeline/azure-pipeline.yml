@@ -117,7 +117,7 @@ stages:
               infrastuctureType: pre_req_infr
 
         - ${{ else }}:
-          - template: pipeline/infrastrusture.yml@devopsTemplates
+          - template: pipeline/infrastructure.yml@devopsTemplates
             parameters:
               ${{ if eq(parameter.key, 'dev') }}:
                 serviceConnection: $(devServiceConnection)
