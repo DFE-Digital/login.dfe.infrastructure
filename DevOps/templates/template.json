@@ -142,7 +142,7 @@
     "elasticPoolSku": {
       "type": "object",
       "metadata": {
-        "description": "SKUfor the elastic pool"
+        "description": "SKU for the elastic pool"
       }
     },
     "elasticPoolProperties": {
