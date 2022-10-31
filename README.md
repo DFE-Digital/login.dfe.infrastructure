@@ -38,8 +38,9 @@ For the time this document has been created 2 prerequisites are needed before th
          8. elasticPoolProperties -> The Elastic Pool Properties for the SQL serves
          9.  azureActiveDirectoryAdmin -> The name of the group for connectin in SQL Servers
          10. azureActiveDirectoryAdminSID -> The group object id for connectin in SQL Servers
-6. Updated parameter `deployPrivateEndpoint` from false to true for deployeing all the private enpoints and after deployement changes back to false
-7. Check the Deploy Pre-Requisites and Enviroment you deploy in the first run for creation of the Logic app and the KeyVault. The Logic app will deploy only in the Dev environment. 
+6. Updated parameter `deployPrivateEndpoint` from false to true for deploying all the private enpoints and after deployement changes back to false
+7. Updated variable `destructiveVirtualNetworkDeploy` from Disable to Enabled for deploying the vnet First time and after deployement changes back to Disable
+8. Check the Deploy Pre-Requisites and Enviroment you deploy in the first run for creation of the Logic app and the KeyVault. The Logic app will deploy only in the Dev environment. 
 
 ## Deployment
 ---
