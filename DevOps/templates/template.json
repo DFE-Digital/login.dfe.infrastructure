@@ -139,6 +139,12 @@
         "description": "Names of the certificates stored in keyvault"
       }
     },
+    "elasticPoolSku": {
+      "type": "object",
+      "metadata": {
+        "description": "SKUfor the elastic pool"
+      }
+    },
     "elasticPoolProperties": {
       "type": "object",
       "metadata": {
@@ -813,6 +819,9 @@
           },
           "CHGWIP": {
             "value": "[parameters('CHGWIP')]"
+          },
+          "elasticPoolSku": {
+            "value": "[parameters('elasticPoolSku')]"
           },
           "elasticPoolProperties": {
             "value": "[parameters('elasticPoolProperties')]"

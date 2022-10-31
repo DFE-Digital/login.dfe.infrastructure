@@ -34,9 +34,10 @@ For the time this document has been created 2 prerequisites are needed before th
          4. sqlAdministratorLogin & sqlAdministratorLoginPassword -> The cretentials for the Sql server 
          5. databaseNames -> The secret will have array of JSON with database names and the max-size bytes for example `[{"name":"dbname1","maxSizeBytes":"size"},{"name":"dbname1","maxSizeBytes":"size"}]`
          6. CHGWIP -> The IP that use to access the SQL server from DfE workstations
-         7. elasticPoolProperties -> The Elastic Pool Properties for the SQL serves
-         8.  azureActiveDirectoryAdmin -> The name of the group for connectin in SQL Servers
-         9.  azureActiveDirectoryAdminSID -> The group object id for connectin in SQL Servers
+         7. elasticPoolSku -> The Elastic Pool sku for the SQL serves
+         8. elasticPoolProperties -> The Elastic Pool Properties for the SQL serves
+         9.  azureActiveDirectoryAdmin -> The name of the group for connectin in SQL Servers
+         10. azureActiveDirectoryAdminSID -> The group object id for connectin in SQL Servers
 6. Updated parameter `deployPrivateEndpoint` from false to true for deployeing all the private enpoints and after deployement changes back to false
 7. Check the Deploy Pre-Requisites and Enviroment you deploy in the first run for creation of the Logic app and the KeyVault. The Logic app will deploy only in the Dev environment. 
 
