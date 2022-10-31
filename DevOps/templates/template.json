@@ -1120,10 +1120,7 @@
             "value": "[if(parameters('deployVirtualNetwork'), reference('virtual-network').outputs.applicationSubnetConfiguration.value, variables('emptyArray'))]"
           }
         }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'virtual-network')]"
-      ]
+      }
     },
     {
       "condition": "[parameters('deployServiceBus')]",
