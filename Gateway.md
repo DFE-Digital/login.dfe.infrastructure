@@ -11,7 +11,8 @@ This document refers to the DevOps engineers who will maintain this pipeline.Als
 ---
 1. Subnet for the gateway
 2. Certificate in the Keyvault for the identity management to link
-3. All service components that under the gateway must be deploy 
+3. If new resource group deployed with different name, CIP team needs to allow the public Ip address creation in that resource group
+4. All service components that under the gateway must be deploy 
 
 ## Stages
 ---

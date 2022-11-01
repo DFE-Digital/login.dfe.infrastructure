@@ -39,8 +39,9 @@ For the time this document has been created 2 prerequisites are needed before th
          9.  azureActiveDirectoryAdmin -> The name of the group for connectin in SQL Servers
          10. azureActiveDirectoryAdminSID -> The group object id for connectin in SQL Servers
 6. Updated parameter `deployPrivateEndpoint` from false to true for deploying all the private enpoints and after deployement changes back to false
-7. Updated variable `destructiveVirtualNetworkDeploy` from Disabled to Enabled for deploying the vnet First time and after deployement changes back to Disabled
-8. Check the Deploy Pre-Requisites and Enviroment you deploy in the first run for creation of the Logic app and the KeyVault. The Logic app will deploy only in the Dev environment. 
+7. If new resource group deployed with different name, CIP team needs to allow the virtual Network creation in that resource group
+8. Updated variable `destructiveVirtualNetworkDeploy` from Disabled to Enabled for deploying the vnet First time and after deployement changes back to Disabled
+9. Check the Deploy Pre-Requisites and Enviroment you deploy in the first run for creation of the Logic app and the KeyVault. The Logic app will deploy only in the Dev environment. 
 
 ## Deployment
 ---
