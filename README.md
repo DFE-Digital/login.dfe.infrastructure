@@ -14,10 +14,15 @@ For the time this document has been created 2 prerequisites are needed before th
    1. Service connections for the pipeline to be able to deploy in all environments
    2. Azure Active Directory Admin for the use of connection in the SQL server
    3. Microsoft Azure App Service that will give access to the app services to access the key vaults
-2. Personal access token from GitHub to access the private repo for the deployment 
-3. Comment out the scan tool stage of the pipeline for the first time you deploy an empty subscription
-4. Check the code to see if any inner dependency exists as maybe added later
-5. Create 6 Variable groups
+2. Azure Active Directory needs 2 App registrations that created manualy by devops team.
+   1. The will be the authetication for the app services with name `S141EnvId-app` how to created [here]()
+   2. The will be the authetication for the client services with name `S141EnvId-client` how to created [here]()
+   3. Add `S141EnvId-app` objectid in the keyvault with name `aadshdappid`
+   4. Add `S141EnvId-client` objectid in the keyvault with name `aadshdclientid` & secret with name `aadshdclientsecret`
+3. Personal access token from GitHub to access the private repo for the deployment 
+4. Comment out the scan tool stage of the pipeline for the first time you deploy an empty subscription
+5. Check the code to see if any inner dependency exists as maybe added later
+6. Create 6 Variable groups
    1. dsi-global that will host all service connections names and custRegAuth for the npm library
    2. The rest 5 will be for each environment with the name `dsi-<enviroment ID>-kv` that will connect in the key vault. For the First deployment, the list of the below value must be added manually in the group variables and after moving to the respected environment key vaults. This step is build two sections
       1. Pre-requzet Infrastructure
@@ -38,10 +43,14 @@ For the time this document has been created 2 prerequisites are needed before th
          8. elasticPoolProperties -> The Elastic Pool Properties for the SQL serves
          9.  azureActiveDirectoryAdmin -> The name of the group for connectin in SQL Servers
          10. azureActiveDirectoryAdminSID -> The group object id for connectin in SQL Servers
-6. Updated parameter `deployPrivateEndpoint` from false to true for deploying all the private enpoints and after deployement changes back to false
-7. If new resource group deployed with different name, CIP team needs to allow the virtual Network creation in that resource group
-8. Updated variable `destructiveVirtualNetworkDeploy` from Disabled to Enabled for deploying the vnet First time and after deployement changes back to Disabled
-9. Check the Deploy Pre-Requisites and Enviroment you deploy in the first run for creation of the Logic app and the KeyVault. The Logic app will deploy only in the Dev environment. 
+         11. platformGlobalIdentifier -> The global identifier `s141`
+         12. platformGlobalMinTlsVersion -> The min Tls Version `1.2`
+         13. platformGlobalName -> The global name `signin`
+         14. platformGlobalUserFeedbackUrl -> The User Feed back Url that will provided by the DfE team
+7. Updated parameter `deployPrivateEndpoint` from false to true for deploying all the private enpoints and after deployement changes back to false
+8. If new resource group deployed with different name, CIP team needs to allow the virtual Network creation in that resource group
+9.  Updated variable `destructiveVirtualNetworkDeploy` from Disabled to Enabled for deploying the vnet First time and after deployement changes back to Disabled
+10. Check the Deploy Pre-Requisites and Enviroment you deploy in the first run for creation of the Logic app and the KeyVault. The Logic app will deploy only in the Dev environment. 
 
 ## Deployment
 ---
@@ -56,3 +65,15 @@ Infrastrucuter pipeline has two satges:
 More information of trigger & Approvols please check [here](https://github.com/DFE-Digital/login.dfe.devops/blob/main/Docs/PipelineTrigger.md)
 
 Also this pipeline has an extra parameter in pipeline trigger the Pre-Requisites for deploying the pre requisites infrastructure if needed 
+
+## Post Deployment
+
+1. Add app insights instrumentation key in the keyvault with name `appInsightsInstrumentationKey`
+2. Add audit Service Bus Subscription Name in the keyvault with name  `auditServiceBusSubscriptionName`
+3. Add audit Service Bus Topic Name in the keyvault with name  `auditServiceBusTopicName`
+4. Add audit Sql Database Name in the keyvault with name  `auditSqlDbName`
+5. Add audit Sql Host Name in the keyvault with name  `auditSqlHostName`
+6. Add tenant Url in the keyvault with name `tenantUrl`
+7. Add cdn Assets Version in the keyvault with name `cdnAssetsVersion`
+8. Add cdn Host Name in the keyvault with name `cdnHostName`
+9. Add all hosts/Urls names of the app services with the name schema `standalone<Appservice Full Name>HostName`. P.S For All frond end services use the Certificate domain/if not certificate exist for the domain use the app service default schema 
