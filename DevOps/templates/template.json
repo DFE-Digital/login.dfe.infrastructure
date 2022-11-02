@@ -206,10 +206,8 @@
         "pfl-sn",
         "sch-sn",
         "schwkr-sn",
-        "sup-sn-1",
-        "svc-sn",
-        "svc-sn-1",
-        "svc-sn-2"        
+        "sup-sn",
+        "svc-sn"       
       ],
       "metadata": {
         "description": "Names of additional subnets to create for application integration"
