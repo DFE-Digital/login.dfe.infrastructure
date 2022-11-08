@@ -77,3 +77,9 @@ Also this pipeline has an extra parameter in pipeline trigger the Pre-Requisites
 7. Add cdn Assets Version in the keyvault with name `cdnAssetsVersion`
 8. Add cdn Host Name in the keyvault with name `cdnHostName`
 9. Add all hosts/Urls names of the app services with the name schema `standalone<Appservice Full Name>HostName`. P.S For All frond end services use the Certificate domain/if not certificate exist for the domain use the app service default schema 
+10. Add redis Connection in the keyvault with name `redisConn` 
+11. Add Node start file path in the keyvault with name `platformGlobalNodeStart`
+12. Add Pm2 Instances in the keyvault with name `platformGlobalPm2Instances`
+13. Add Pm2 Execution Mode in the keyvault with name `platformGlobalPm2ExecMode`
+14. Add Organisations Database Name in the keyvault with name `platformGlobalOrganisationsDatabaseName`
+15. Add Directories Database Name in the keyvault with name `platformGlobalDirectoriesDatabaseName`
