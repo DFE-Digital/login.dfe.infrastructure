@@ -83,3 +83,5 @@ Also this pipeline has an extra parameter in pipeline trigger the Pre-Requisites
 13. Add Pm2 Execution Mode in the keyvault with name `platformGlobalPm2ExecMode`
 14. Add Organisations Database Name in the keyvault with name `platformGlobalOrganisationsDatabaseName`
 15. Add Directories Database Name in the keyvault with name `platformGlobalDirectoriesDatabaseName`
+16. Add user Feedback Url in the keyvault with name `userFeedbackUrl` 
+17. Add support Email Address in the keyvault with name `supportEmailAddress` 
