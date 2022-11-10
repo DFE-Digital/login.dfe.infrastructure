@@ -76,5 +76,5 @@ stages:
             sslCertificateName: signin-generic
             isProduction: true
           ${{ else }}:
-            sslCertificateName: non-prod-gateway
+            sslCertificateName: signin-test
             isProduction: false
