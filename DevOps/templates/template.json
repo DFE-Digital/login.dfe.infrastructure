@@ -946,7 +946,7 @@
             "value": "appInsightsInstrumentationKey"
           },
           "secretValue": {
-            "value": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsightsName'))).InstrumentationKey]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', parameters('appInsightsName'))).properties.InstrumentationKey]"
           },
           "contentType": {
             "value": "AppInsights instrumentation key"
