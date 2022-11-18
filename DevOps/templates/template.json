@@ -205,6 +205,27 @@
         "description": "Names of additional subnets to create for application integration"
       }
     },
+    "TopicNames": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "audit",
+          "subscription":"audit-messages",
+          "secretNameTopic": "auditServiceBusTopicName",
+          "secretNameSubscription": "auditServiceBusSubscriptionName"
+        },
+        {
+          "name": "securealert",
+          "subscription":"securealert-messages",
+          "secretNameTopic": "secureServiceBusTopicName",
+          "secretNameSubscription": "secureServiceBusSubscriptionName"
+        }
+        
+      ],
+      "metadata": {
+        "description": "Topic names & subscriptions of service bus"
+      }
+    },
     "platformGlobalIdentifier": {
       "type": "string",
       "defaultValue": "s141"
@@ -908,6 +929,35 @@
       "dependsOn": []
     },
     {
+      "apiVersion": "2020-10-01",
+      "name": "add-appInsights-instrumentation-key-vault-secret",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "appInsightsInstrumentationKey"
+          },
+          "secretValue": {
+            "value": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsightsName'))).InstrumentationKey]"
+          },
+          "contentType": {
+            "value": "AppInsights instrumentation key"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'app-insights')]"
+      ]
+    },
+    {
       "name": "azure-datafactory",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
@@ -1431,6 +1481,200 @@
         "count": "[length(parameters('pireanAppServicePlanSku'))]",
         "mode": "Parallel"
       }
+    },
+    {
+      "condition": "[not(empty(parameters('databaseNames')))]",
+      "name": "[if(empty(parameters('databaseNames')),'no-databases-to-add-in-keyvault',parameters('databaseNames')[copyIndex()].secretName)]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "[parameters('databaseNames')[copyIndex()].secretName]"
+          },
+          "secretValue": {
+            "value": "[parameters('databaseNames')[copyIndex()].name]"
+          },
+          "contentType": {
+            "value": ""
+          }
+        }
+      },
+      "copy": {
+        "name": "databasecopy",
+        "count": "[length(parameters('databaseNames'))]",
+        "mode": "Parallel"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]"
+      ]
+    },
+    {
+      "apiVersion": "2020-10-01",
+      "name": "add-appInsights-instrumentation-key-vault-secret",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "platformGlobalServerName"
+          },
+          "secretValue": {
+            "value": "[parameters('sqlServerName')]"
+          },
+          "contentType": {
+            "value": ""
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]"
+      ]
+    },
+    {
+      "condition": "[not(empty(parameters('TopicNames')))]",
+      "name": "[if(empty(parameters('TopicNames')),'no-topics-to-deploy', concat(parameters('serviceBusNamespaceName'), '/', parameters('TopicNames')[copyIndex()].name))]",
+      "type": "Microsoft.ServiceBus/namespaces/topics",
+      "apiVersion": "2022-01-01-preview",
+      "properties": {
+        "properties": {
+          "maxMessageSizeInKilobytes": 1024,
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "maxSizeInMegabytes": 1024,
+          "requiresDuplicateDetection": false,
+          "duplicateDetectionHistoryTimeWindow": "PT10M",
+          "enableBatchedOperations": true,
+          "status": "Active",
+          "supportOrdering": true,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "enablePartitioning": false,
+          "enableExpress": false
+      }
+      },
+      "copy": {
+        "name": "TopicNames",
+        "count": "[length(parameters('TopicNames'))]",
+        "mode": "Parallel"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'service-bus')]"
+      ]
+    },
+    {
+      "condition": "[not(empty(parameters('TopicNames')))]",
+      "name": "[if(empty(parameters('TopicNames')),'no-subscriptions-to-deploy', concat(parameters('serviceBusNamespaceName'), '/', parameters('TopicNames')[copyIndex()].name, '/', parameters('TopicNames')[copyIndex()].subscription))]",
+      "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
+      "apiVersion": "2022-01-01-preview",
+      "properties": {
+        "properties": {
+          "isClientAffine": false,
+          "lockDuration": "PT1M",
+          "requiresSession": false,
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "maxDeliveryCount": 10,
+          "status": "Active",
+          "enableBatchedOperations": true,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S"
+      }
+      },
+      "copy": {
+        "name": "TopicNames",
+        "count": "[length(parameters('TopicNames'))]",
+        "mode": "Parallel"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'service-bus')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'audit')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'securealert')]"
+      ]
+    },
+    {
+      "condition": "[not(empty(parameters('TopicNames')))]",
+      "name": "[if(empty(parameters('TopicNames')),'no-TopicNames-to-add-in-keyvault', parameters('TopicNames')[copyIndex()].secretNameTopic)]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "[parameters('TopicNames')[copyIndex()].secretNameTopic]"
+          },
+          "secretValue": {
+            "value": "[parameters('TopicNames')[copyIndex()].name]"
+          },
+          "contentType": {
+            "value": ""
+          }
+        }
+      },
+      "copy": {
+        "name": "topicscopy",
+        "count": "[length(parameters('TopicNames'))]",
+        "mode": "Parallel"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'service-bus')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'audit')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'securealert')]"
+      ]
+    },
+    {
+      "condition": "[not(empty(parameters('TopicNames')))]",
+      "name": "[if(empty(parameters('TopicNames')),'no-Subscriptions-to-add-in-keyvault', parameters('TopicNames')[copyIndex()].secretNameSubscription)]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "[parameters('TopicNames')[copyIndex()].secretNameSubscription]"
+          },
+          "secretValue": {
+            "value": "[parameters('TopicNames')[copyIndex()].subscription]"
+          },
+          "contentType": {
+            "value": ""
+          }
+        }
+      },
+      "copy": {
+        "name": "subscriptionscopy",
+        "count": "[length(parameters('TopicNames'))]",
+        "mode": "Parallel"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'service-bus')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'audit')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'securealert')]"
+      ]
     }
   ],
   "outputs": {}
