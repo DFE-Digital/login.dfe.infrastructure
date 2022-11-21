@@ -1534,7 +1534,7 @@
             "value": "platformGlobalServerName"
           },
           "secretValue": {
-            "value": "[parameters('sqlServerName')]"
+            "value": "[concat(parameters('sqlServerName'),'.database.windows.net')]"
           },
           "contentType": {
             "value": ""
