@@ -1675,6 +1675,64 @@
         "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'audit')]",
         "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'securealert')]"
       ]
+    },
+    {
+      "apiVersion": "2020-10-01",
+      "name": "add-Search-Name-key-vault-secret",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "azureSearchName"
+          },
+          "secretValue": {
+            "value": "parameters('azureSearchName')"
+          },
+          "contentType": {
+            "value": ""
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'azure-search')]"
+      ]
+    },
+    {
+      "apiVersion": "2020-10-01",
+      "name": "add-Search-Apikey-key-vault-secret",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "azureSearchkey"
+          },
+          "secretValue": {
+            "value": "[reference('azure-search').outputs.azureSearchKey.value]"
+          },
+          "contentType": {
+            "value": ""
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'azure-search')]"
+      ]
     }
   ],
   "outputs": {}
