@@ -946,7 +946,7 @@
             "value": "appInsightsInstrumentationKey"
           },
           "secretValue": {
-            "value": "test"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'app-insights')).InstrumentationKey]"
           },
           "contentType": {
             "value": "AppInsights instrumentation key"
@@ -1677,5 +1677,10 @@
       ]
     }
   ],
-  "outputs": {}
+  "outputs": {
+    "PrimaryEndpoints": {
+      "type": "object",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'app-insights'))]"
+    }
+  }
 }
