@@ -946,7 +946,7 @@
             "value": "appInsightsInstrumentationKey"
           },
           "secretValue": {
-            "value": "[reference('app-insights').InstrumentationKey]"
+            "value": "[reference('app-insights').properties.InstrumentationKey]"
           },
           "contentType": {
             "value": "AppInsights instrumentation key"
@@ -1677,10 +1677,5 @@
       ]
     }
   ],
-  "outputs": {
-    "PrimaryEndpoints": {
-      "type": "object",
-      "value": "[reference('app-insights')]"
-    }
-  }
+  "outputs": {}
 }
