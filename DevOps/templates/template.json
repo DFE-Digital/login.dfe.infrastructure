@@ -946,7 +946,7 @@
             "value": "appInsightsInstrumentationKey"
           },
           "secretValue": {
-            "value": "[reference('app-insights').properties.InstrumentationKey]"
+            "value": "[reference(parameters('appInsightsName')).InstrumentationKey]"
           },
           "contentType": {
             "value": "AppInsights instrumentation key"
