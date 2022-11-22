@@ -86,6 +86,12 @@
         "description": "Name of the Key Vault resource"
       }
     },
+    "keyVaultNameDevices": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Key Vault Devices resource for Digipass"
+      }
+    },
     "azureSearchName": {
       "type": "string",
       "metadata": {
@@ -151,12 +157,11 @@
         "description": "Properties for the elastic pool"
       }
     },
-    "microsoftAzureWebsitesRPObjectId": {
+    "aadshdclientid": {
       "type": "string",
       "metadata": {
-        "description": "Object Id of the Azure Websites RP",
-        "environmentVariable": "microsoftAzureWebsitesRPObjectId"
-      }
+        "description": "Object Id of the aad shd client id for Devices vault connection"
+      }  
     },
     "azureDevOpsObjectId": {
       "type": "string",
@@ -577,7 +582,7 @@
     },
     "keyVaultAccessPolicies": [
       {
-        "objectId": "[parameters('microsoftAzureWebsitesRPObjectId')]",
+        "objectId": "[parameters('aadshdclientid')]",
         "tenantId": "[subscription().tenantId]",
         "permissions": {
           "secrets": [
@@ -588,70 +593,6 @@
             "Recover",
             "Backup",
             "Restore"
-          ]
-        }
-      },
-      {
-        "objectId": "[parameters('keyVaultApplicationObjectId')]",
-        "tenantId": "[subscription().tenantId]",
-        "permissions": {
-          "secrets": [
-            "Get",
-            "List",
-            "Set",
-            "Delete",
-            "Recover",
-            "Backup",
-            "Restore"
-          ]
-        }
-      },
-      {
-        "objectId": "[parameters('azureDevOpsObjectId')]",
-        "tenantId": "[subscription().tenantId]",
-        "permissions": {
-          "keys": [
-            "Get",
-            "List",
-            "Update",
-            "Create",
-            "Import",
-            "Delete",
-            "Recover",
-            "Backup",
-            "Restore",
-            "Decrypt",
-            "Encrypt",
-            "UnwrapKey",
-            "WrapKey",
-            "Verify",
-            "Sign"
-          ],
-          "secrets": [
-            "Get",
-            "List",
-            "Set",
-            "Delete",
-            "Recover",
-            "Backup",
-            "Restore"
-          ],
-          "certificates": [
-            "Get",
-            "List",
-            "Update",
-            "Create",
-            "Import",
-            "Delete",
-            "Recover",
-            "Backup",
-            "Restore",
-            "ManageContacts",
-            "ManageIssuers",
-            "GetIssuers",
-            "ListIssuers",
-            "SetIssuers",
-            "DeleteIssuers"
           ]
         }
       }
@@ -1733,6 +1674,21 @@
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'azure-search')]"
       ]
+    },
+    {
+        "type": "Microsoft.KeyVault/vaults",
+        "name": "[variable('keyVaultNameDevices')]",
+        "apiVersion": "2015-06-01",
+        "location": "[resourceGroup().location]",
+        "properties": {
+            "enabledForTemplateDeployment": "true",
+            "accessPolicies": "[variables('keyVaultAccessPolicies')]",
+            "tenantId": "[subscription().tenantId]",
+            "sku": {
+                "name": "Standard",
+                "family": "A"
+            }
+        }
     }
   ],
   "outputs": {}
