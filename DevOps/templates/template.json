@@ -1689,6 +1689,35 @@
                 "family": "A"
             }
         }
+    },
+    {
+      "apiVersion": "2020-10-01",
+      "name": "add-Digi-Pass-name-key-vault-secret",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "keyVaultDigiPassName"
+          },
+          "secretValue": {
+            "value": "[parameters('keyVaultDigiPassName')]"
+          },
+          "contentType": {
+            "value": ""
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultDigiPassName'))]"
+      ]
     }
   ],
   "outputs": {}
