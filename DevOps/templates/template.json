@@ -86,7 +86,7 @@
         "description": "Name of the Key Vault resource"
       }
     },
-    "keyVaultNameDevices": {
+    "keyVaultDigiPassName": {
       "type": "string",
       "metadata": {
         "description": "Name of the Key Vault Devices resource for Digipass"
@@ -1677,7 +1677,7 @@
     },
     {
         "type": "Microsoft.KeyVault/vaults",
-        "name": "[variable('keyVaultNameDevices')]",
+        "name": "[parameters('keyVaultDigiPassName')]",
         "apiVersion": "2015-06-01",
         "location": "[resourceGroup().location]",
         "properties": {
