@@ -55,26 +55,27 @@ stages:
     - template:  pipeline/checkov.yml@devopsTemplates
 
 - ${{ each parameter in parameters }}:
-  - ${{ if eq(parameter.value, 'true') }}:
-    - stage: Deployment_${{parameter.Key}}
-      displayName: "Deployment [${{parameter.Key}}]"
-      dependsOn: 
-      - scanGateway
-      variables:
-      - group: dsi-${{parameter.key}}-kv
-      jobs:
-      - template: pipeline/gateway.yml@devopsTemplates
-        parameters:
-          ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
-            serviceConnection: $(devServiceConnection)
-          ${{ elseif eq(parameter.key, 'pr') }}:
-            serviceConnection: $(prodServiceConnection)
-          ${{ else }}:
-            serviceConnection: $(testServiceConnection)
-          environmentName: ${{parameter.key}}
-          ${{ if eq(parameter.key, 'pr') }}:
-            sslCertificateName: signin-generic
-            isProduction: true
-          ${{ else }}:
-            sslCertificateName: signin-test
-            isProduction: false
+  - ${{ if in(parameter.key, 'tran','dev','test','int','pp','pr') }}:
+    - ${{ if eq(parameter.value, 'true') }}:
+      - stage: Deployment_${{parameter.Key}}
+        displayName: "Deployment [${{parameter.Key}}]"
+        dependsOn: 
+        - scanGateway
+        variables:
+        - group: dsi-${{parameter.key}}-kv
+        jobs:
+        - template: pipeline/gateway.yml@devopsTemplates
+          parameters:
+            ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
+              serviceConnection: $(devServiceConnection)
+            ${{ elseif eq(parameter.key, 'pr') }}:
+              serviceConnection: $(prodServiceConnection)
+            ${{ else }}:
+              serviceConnection: $(testServiceConnection)
+            environmentName: ${{parameter.key}}
+            ${{ if eq(parameter.key, 'pr') }}:
+              sslCertificateName: signin-generic
+              isProduction: true
+            ${{ else }}:
+              sslCertificateName: signin-test
+              isProduction: false
