@@ -1635,7 +1635,7 @@
             "value": "azureSearchName"
           },
           "secretValue": {
-            "value": "parameters('azureSearchName')"
+            "value": "[parameters('azureSearchName')]"
           },
           "contentType": {
             "value": ""
