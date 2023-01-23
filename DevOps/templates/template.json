@@ -340,7 +340,7 @@
     "cdnIpRules": {
         "type": "array"
     },
-    "LogicAppConnectionIpRules": {
+    "LogicAppConnectionIpRulesServiceBus": {
         "type": "array",
         "defaultValue": [
           "52.174.88.118",
@@ -350,6 +350,22 @@
           "13.93.36.78",
           "20.86.93.32/27",
           "20.86.93.64/28",
+          "20.126.243.151",
+          "20.126.241.238",
+          "20.103.132.139",
+          "20.103.131.1"
+        ]
+    },
+    "LogicAppConnectionIpRulesSql": {
+        "type": "array",
+        "defaultValue": [
+          "52.174.88.118",
+          "40.91.208.65",
+          "13.69.64.208-13.69.64.223",
+          "13.69.71.192-13.69.71.223",
+          "13.93.36.78",
+          "20.86.93.32-20.86.93.63",
+          "20.86.93.64-20.86.93.79",
           "20.126.243.151",
           "20.126.241.238",
           "20.103.132.139",
@@ -823,7 +839,7 @@
             "value": "[parameters('sqlFirewallRulesCopyMode')]"
           },
           "ipAddresses": {
-            "value": "[parameters('LogicAppConnectionIpRules')]"
+            "value": "[parameters('LogicAppConnectionIpRulesSql')]"
           }
         }
       },
@@ -1251,7 +1267,7 @@
             "value": "[if(parameters('deployVirtualNetwork'), reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value, variables('emptyArray'))]"
           },
           "ipAddresses": {
-            "value": "[parameters('LogicAppConnectionIpRules')]"
+            "value": "[parameters('LogicAppConnectionIpRulesServiceBus')]"
           }
         }
       },
