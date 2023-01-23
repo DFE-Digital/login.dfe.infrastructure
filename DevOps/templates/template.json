@@ -840,6 +840,9 @@
           },
           "ipAddresses": {
             "value": "[parameters('LogicAppConnectionIpRulesSql')]"
+          },
+          "firewallRuleNamePrefix": {
+            "value": "logicAppConnections"
           }
         }
       },
