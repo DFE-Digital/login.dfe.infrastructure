@@ -97,4 +97,4 @@ stages:
               infrastuctureType: base_infr
               templatePath:  $(System.DefaultWorkingDirectory)/login.dfe.infrastructure/DevOps/templates/template.json
               deployPrivateEndpoint: "false"
-              destructiveVirtualNetworkDeploy: "Disable" #Enable,Disable
+              destructiveVirtualNetworkDeploy: "Disabled" #Disabled,Enabled
