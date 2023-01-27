@@ -1705,7 +1705,7 @@
             "value": "azureSearchkey"
           },
           "secretValue": {
-            "value": "[reference('azure-search').outputs.azureSearchKey.value]"
+            "value": "[reference('azure-search', '2020-10-01').outputs.azureSearchKey.value]"
           },
           "contentType": {
             "value": ""
