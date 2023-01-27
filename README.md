@@ -27,9 +27,9 @@ For the time this document has been created 2 prerequisites are needed before th
    2. The rest 5 will be for each environment with the name `dsi-<enviroment ID>-kv` that will connect in the key vault. For the First deployment, the list of the below value must be added manually in the group variables and after moving to the respected environment key vaults. This step is build two sections
       1. Pre-requzet Infrastructure
          1.  environmentId -> The environment Id for the environment that the group is represents
-         2.  platformGlobalName -> The global platform name that uses the name of the services
-         3.  azureDevOpsObjectId -> The object Id of the service connection for the new key vault
-         4.  microsoftAzureWebsitesRPObjectId -> The object Id of the app registration for app services to connect in the key vault
+         2.  platformGlobalName -> The global platform name that uses the name of the services. Value: `signin`
+         3.  azureDevOpsObjectId -> The object Id of the service connection Enterprise applications for the new key vault
+         4.  microsoftAzureWebsitesRPObjectId -> The object Id of the Enterprise applications for app services to connect in the key vault
          5.  subscriptionId -> The subscription id of azure for the deployment
          6.  tags -> Tags that have been designated tags that have been set by the CIP team. They need to be added manualy in keyvault
       2. Base infrastructure Deployment that has been added in keyvault after the Pre-request Infrastructure pipeline runs (manually)
@@ -47,7 +47,7 @@ For the time this document has been created 2 prerequisites are needed before th
          12. platformGlobalMinTlsVersion -> The min Tls Version `1.2`
          13. platformGlobalName -> The global name `signin`
          14. platformGlobalUserFeedbackUrl -> The User Feed back Url that will provided by the DfE team
-7. Updated parameter `deployPrivateEndpoint` from false to true for deploying all the private enpoints and after deployement changes back to false
+7. Updated parameter `deployPrivateEndpoint` from false to true for deploying all the private enpoints and after deployement changes back to false in azure-pipeline.yml
 8. If new resource group deployed with different name, CIP team needs to allow the virtual Network creation in that resource group
 9.  Updated variable `destructiveVirtualNetworkDeploy` from Disabled to Enabled for deploying the vnet First time and after deployement changes back to Disabled
 10. Check the Deploy Pre-Requisites and Enviroment you deploy in the first run for creation of the Logic app and the KeyVault. The Logic app will deploy only in the Dev environment. 
