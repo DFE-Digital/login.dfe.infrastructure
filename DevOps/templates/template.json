@@ -179,7 +179,7 @@
     },
     "destructiveVirtualNetworkDeploy": {
       "type": "string",
-      "defaultValue": "Enabled",
+      "defaultValue": "Disabled",
       "allowedValues": [
         "Disabled",
         "Enabled"
