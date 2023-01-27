@@ -49,7 +49,7 @@ For the time this document has been created 2 prerequisites are needed before th
          14. platformGlobalUserFeedbackUrl -> The User Feed back Url that will provided by the DfE team
 7. Updated parameter `deployPrivateEndpoint` from false to true for deploying all the private enpoints and after deployement changes back to false in azure-pipeline.yml
 8. If new resource group deployed with different name, CIP team needs to allow the virtual Network creation in that resource group
-9.  Updated variable `destructiveVirtualNetworkDeploy` from Disabled to Enabled for deploying the vnet First time and after deployement changes back to Disabled
+9.  Updated variable `destructiveVirtualNetworkDeploy` from Disabled to Enabled for deploying the vnet First time and after deployement changes back to Disabled in infrastructure.yml in devops repo
 10. Check the Deploy Pre-Requisites and Enviroment you deploy in the first run for creation of the Logic app and the KeyVault.
 
 ## Deployment
