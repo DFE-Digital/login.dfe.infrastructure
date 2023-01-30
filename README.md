@@ -46,7 +46,8 @@ For the time this document has been created 2 prerequisites are needed before th
          11. platformGlobalIdentifier -> The global identifier `s141`
          12. platformGlobalMinTlsVersion -> The min Tls Version `1.2`
          13. platformGlobalName -> The global name `signin`
-         14. platformGlobalUserFeedbackUrl -> The User Feed back Url that will provided by the DfE team
+         14. UIContainerName -> Name of the cdn container in storage account `ui-assets`
+         15. platformGlobalUserFeedbackUrl -> The User Feed back Url that will provided by the DfE team
 7. Updated parameter `deployPrivateEndpoint` from false to true for deploying all the private enpoints and after deployement changes back to false in azure-pipeline.yml
 8. If new resource group deployed with different name, CIP team needs to allow the virtual Network creation in that resource group
 9.  Updated variable `destructiveVirtualNetworkDeploy` from Disabled to Enabled for deploying the vnet First time and after deployement changes back to Disabled in azure-pipeline.yml
