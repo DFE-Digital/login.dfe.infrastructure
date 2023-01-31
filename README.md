@@ -46,8 +46,10 @@ For the time this document has been created 2 prerequisites are needed before th
          11. platformGlobalIdentifier -> The global identifier `s141`
          12. platformGlobalMinTlsVersion -> The min Tls Version `1.2`
          13. platformGlobalName -> The global name `signin`
-         14. UIContainerName -> Name of the cdn container in storage account `ui-assets`
-         15. platformGlobalUserFeedbackUrl -> The User Feed back Url that will provided by the DfE team
+         14. platformGlobalUserFeedbackUrl -> The User Feed back Url that will provided by the DfE team
+         15. UIContainerName -> Name of the cdn container in storage account `ui-assets`
+         16. cdnAssetsVersion -> Version of the cdn `1`
+         17. cdnHostName -> Host of the cdn is the full endpoint with `https` includet
 7. Updated parameter `deployPrivateEndpoint` from false to true for deploying all the private enpoints and after deployement changes back to false in azure-pipeline.yml
 8. If new resource group deployed with different name, CIP team needs to allow the virtual Network creation in that resource group
 9.  Updated variable `destructiveVirtualNetworkDeploy` from Disabled to Enabled for deploying the vnet First time and after deployement changes back to Disabled in azure-pipeline.yml
@@ -78,7 +80,7 @@ Also this pipeline has an extra parameter in pipeline trigger the Pre-Requisites
 7. Add cdn Assets Version in the keyvault with name `cdnAssetsVersion`
 8. Add cdn Host Name in the keyvault with name `cdnHostName`
 9. Add all hosts/Urls names of the app services with the name schema `standalone<Appservice Full Name>HostName`. P.S For All frond end services use the Certificate domain/if not certificate exist for the domain use the app service default schema 
-10. Add redis Connection in the keyvault with name `redisConn` 
+10. Add redis Connection in the keyvault with name `redisConn` & format `redis://:<primary key>@<resource name>:<port name>`
 11. Add Node start file path in the keyvault with name `platformGlobalNodeStart`
 12. Add Pm2 Instances in the keyvault with name `platformGlobalPm2Instances`
 13. Add Pm2 Execution Mode in the keyvault with name `platformGlobalPm2ExecMode`
@@ -86,3 +88,4 @@ Also this pipeline has an extra parameter in pipeline trigger the Pre-Requisites
 15. Add Directories Database Name in the keyvault with name `platformGlobalDirectoriesDatabaseName`
 16. Add user Feedback Url in the keyvault with name `userFeedbackUrl` 
 17. Add support Email Address in the keyvault with name `supportEmailAddress` 
+18. Add service Now url in the keyvault with name `SNContactUrl`
