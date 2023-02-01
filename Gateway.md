@@ -1,8 +1,6 @@
 # Application Gateway for DfE Signin Services
 This reposatory deploys the application gateway for DfE Signin Services. The application gateway is where all the public and private traffic will pass to reach the DfE Signin Services
 
-P.S Until now only 5 service are under the gateway
-
 ## Audience
 ---
 This document refers to the DevOps engineers who will maintain this pipeline.Also, the responsibility to keep this document up to date with the latest information
