@@ -33,7 +33,7 @@ This document refers to the DevOps engineers who will maintain this pipeline. Al
          6.  tags -> Tags that have been designated tags that have been set by the CIP team. They need to be added manualy in keyvault
       2. Base infrastructure Deployment that has been added in keyvault after the Pre-request Infrastructure pipeline runs (manually)
          1. templatesBaseUri -> will be created by the preDeployInfrastrusture and added in the keyvault but need to transfer to the local group for the base infrastructure deployment
-         2. gitToken -> Personal token how to be created [here]()
+         2. gitToken -> Personal token how to be created [here](https://github.com/DFE-Digital/login.dfe.devops/blob/feature/DSI-5680/Docs/GithubSecret.md)
          3. redisCacheSku -> The Redis Cache SKU 
          4. sqlAdministratorLogin & sqlAdministratorLoginPassword -> The cretentials for the Sql server 
          5. databaseNames -> The secret will have array of JSON with database names and the max-size bytes for example `[{"name":"dbname1","maxSizeBytes":"size"},{"name":"dbname1","maxSizeBytes":"size"}]`
@@ -97,6 +97,12 @@ Also this pipeline has an extra parameter in pipeline trigger the Pre-Requisites
 23. Add gias service password in the keyvault with name `giasServicePassword`
 24. Add gias application id in the keyvault with name `giasApplicationId`
 25. Add gias Data url in the keyvault with name `giasAllGroupsDataUrl`
+
+
+## Set Variable group
+---
+
+[here](https://github.com/DFE-Digital/login.dfe.devops/blob/feature/DSI-5680/Docs/VariableGroupSecrets.md)
 
 ## Next Pipelines 
 ---
