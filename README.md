@@ -97,3 +97,13 @@ Also this pipeline has an extra parameter in pipeline trigger the Pre-Requisites
 23. Add gias service password in the keyvault with name `giasServicePassword`
 24. Add gias application id in the keyvault with name `giasApplicationId`
 25. Add gias Data url in the keyvault with name `giasAllGroupsDataUrl`
+
+## Next Pipelines 
+---
+P.S All below pipelines except the gateway the flow can show in [here](https://github.com/DFE-Digital/login.dfe.devops/blob/main/Docs/PipelineFlow.md)
+
+1. Gateway Pipeline [Document](Gateway.md)
+2. Directory & applications Pipelines
+3. Oidc & interaction Pipelines
+4. Service Pipeline
+5. The rest pipelines after them 
