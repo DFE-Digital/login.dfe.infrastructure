@@ -1,6 +1,6 @@
 # Infrastructure
 
-This repo contains the base infrastructure for the deployment of DfE signin services.
+This repo contains pre & base infrastructure for the deployment of DfE signin services.
 
 ## Audience
 ---
@@ -8,18 +8,17 @@ This document refers to the DevOps engineers who will maintain this pipeline. Al
 
 ## Prerequisite
 ---
-For the time this document has been created 2 prerequisites are needed before the pipeline will run
 
-1. Azure Active Directory needs 3 App registrations that will be created by the CIP team
-   1. Service connections for the pipeline to be able to deploy in all environments
-   2. Azure Active Directory Admin for the use of connection in the SQL server
-   3. Microsoft Azure App Service that will give access to the app services to access the key vaults
-2. Azure Active Directory needs 2 App registrations that created manualy by devops team.
-   1. The will be the authetication for the app services with name `S141EnvId-app` how to created [here]()
-   2. The will be the authetication for the client services with name `S141EnvId-client` how to created [here]()
+1. Azure Active Directory needs 3 App registrations that created by the DevOps team. (This Prerequisite is all ready set. This may needed when moving tenants )
+   1. Service connections for the pipeline to be able to deploy in all environments. May need approvole from CIP team
+   2. Azure Active Directory Admin for the use of connection in the SQL server. May need approvole from CIP team
+   3. Microsoft Azure App Service that will give access to the app services to access the key vaults. May need approvole from CIP team
+2. Azure Active Directory needs 2 App registrations that created by devops team.(This Prerequisite is all ready set. But for new environments they will needed)
+   1. The will be the authetication for the app services with name `S141EnvId-app` how to created [here](https://github.com/DFE-Digital/login.dfe.devops/blob/feature/DSI-5680/Docs/AppRegistrations.md)
+   2. The will be the authetication for the client services with name `S141EnvId-client` how to created [here](https://github.com/DFE-Digital/login.dfe.devops/blob/feature/DSI-5680/Docs/AppRegistrations.md)
    3. Add `S141EnvId-app` objectid in the keyvault with name `aadshdappid`
    4. Add `S141EnvId-client` objectid in the keyvault with name `aadshdclientid` & secret with name `aadshdclientsecret`
-3. Personal access token from GitHub to access the private repo for the deployment 
+3. Personal access token from GitHub to access the private repo for the deployment. How to created [here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 4. Comment out the scan tool stage of the pipeline for the first time you deploy an empty subscription
 5. Check the code to see if any inner dependency exists as maybe added later
 6. Create 6 Variable groups
@@ -71,21 +70,30 @@ Also this pipeline has an extra parameter in pipeline trigger the Pre-Requisites
 
 ## Post Deployment
 
-1. Add app insights instrumentation key in the keyvault with name `appInsightsInstrumentationKey`
-2. Add audit Service Bus Subscription Name in the keyvault with name  `auditServiceBusSubscriptionName`
-3. Add audit Service Bus Topic Name in the keyvault with name  `auditServiceBusTopicName`
-4. Add audit Sql Database Name in the keyvault with name  `auditSqlDbName`
-5. Add audit Sql Host Name in the keyvault with name  `auditSqlHostName`
+*All Add by pipeline secret will automaticly be added in the keyvault after pre deploy infrastrucute completes 
+
+1. Add by pipeline, app insights instrumentation key in the keyvault with name `appInsightsInstrumentationKey`
+2. Add by pipeline, audit Service Bus Subscription Name in the keyvault with name  `auditServiceBusSubscriptionName`
+3. Add by pipeline, audit Service Bus Topic Name in the keyvault with name  `auditServiceBusTopicName`
+4. Add by pipeline, audit Sql Database Name in the keyvault with name  `auditSqlDbName`
+5. Add by pipeline, audit Sql Host Name in the keyvault with name  `auditSqlHostName`
 6. Add tenant Url in the keyvault with name `tenantUrl`
-7. Add cdn Assets Version in the keyvault with name `cdnAssetsVersion`
-8. Add cdn Host Name in the keyvault with name `cdnHostName`
-9. Add all hosts/Urls names of the app services with the name schema `standalone<Appservice Full Name>HostName`. P.S For All frond end services use the Certificate domain/if not certificate exist for the domain use the app service default schema 
+7. Add by pipeline, cdn Assets Version in the keyvault with name `cdnAssetsVersion`
+8. Add by pipeline, cdn Host Name in the keyvault with name `cdnHostName`
+9. All Add by pipeline hosts/Urls names of the app services with the name schema `standalone<Appservice Full Name>HostName`. P.S For All frond end services use the Certificate domain/if not certificate exist for the domain use the app service default schema 
 10. Add redis Connection in the keyvault with name `redisConn` & format `redis://:<primary key>@<resource name>:<port name>`
-11. Add Node start file path in the keyvault with name `platformGlobalNodeStart`
-12. Add Pm2 Instances in the keyvault with name `platformGlobalPm2Instances`
-13. Add Pm2 Execution Mode in the keyvault with name `platformGlobalPm2ExecMode`
-14. Add Organisations Database Name in the keyvault with name `platformGlobalOrganisationsDatabaseName`
-15. Add Directories Database Name in the keyvault with name `platformGlobalDirectoriesDatabaseName`
+11. Add by pipeline, Node start file path in the keyvault with name `platformGlobalNodeStart`
+12. Add by pipeline, Pm2 Instances in the keyvault with name `platformGlobalPm2Instances`
+13. Add by pipeline, Pm2 Execution Mode in the keyvault with name `platformGlobalPm2ExecMode`
+14. Add by pipeline, Organisations Database Name in the keyvault with name `platformGlobalOrganisationsDatabaseName`
+15. Add by pipeline, Directories Database Name in the keyvault with name `platformGlobalDirectoriesDatabaseName`
 16. Add user Feedback Url in the keyvault with name `userFeedbackUrl` 
 17. Add support Email Address in the keyvault with name `supportEmailAddress` 
 18. Add service Now url in the keyvault with name `SNContactUrl`
+19. Add google Analytics ID in the keyvault with name `googleAnalyticsID`
+20. Add gias settings in the keyvault with name `giasSettings`
+21. Add gias service username in the keyvault with name `giasServiceUsername`
+22. Add gias service url in the keyvault with name `giasServiceUrl`
+23. Add gias service password in the keyvault with name `giasServicePassword`
+24. Add gias application id in the keyvault with name `giasApplicationId`
+25. Add gias Data url in the keyvault with name `giasAllGroupsDataUrl`
