@@ -137,7 +137,8 @@ How to Set the variable group [here](https://github.com/DFE-Digital/login.dfe.de
 P.S All below pipelines except the gateway flow can show [here](https://github.com/DFE-Digital/login.dfe.devops/blob/main/Docs/PipelineFlow.md)
 
 1. Gateway Pipeline [Document](https://github.com/DFE-Digital/login.dfe.devops/blob/feature/DSI-5680/Docs/Gateway.md)
-2. Directory & applications Pipelines
-3. Oidc & interaction Pipelines
-4. Service Pipeline
-5. The rest pipelines after them 
+2. ui.toole.kit & audit-logger
+3. Directory & applications Pipelines
+4. Oidc & interaction Pipelines
+5. Service Pipeline
+6. The rest pipelines after them 
