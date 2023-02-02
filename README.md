@@ -83,7 +83,7 @@ Also, this pipeline has an extra parameter in the pipeline to trigger the Pre-Re
 7. Add by pipeline, CDN Assets Version in the keyvault with the name `cdnAssetsVersion`
 8. Add by pipeline, CDN Host Name in the keyvault with the name `cdnHostName`
 9. All Add by pipeline hosts/Urls names of the app services with the name schema `standalone<Appservice Full Name>HostName`. P.S For All frond-end services use the Certificate domain/if no certificate exists for the domain use the app service default schema 
-10. Add redis Connection in the keyvault with the name `redisConn` & format `redis://:<primary key>@<resource name>:<port name>`
+10. Add redis Connection in the keyvault with the name `redisConn` & format `redis://:<primary key>@<Host name>:<port name>`
 11. Add by pipeline, Node start file path in the keyvault with the name `platformGlobalNodeStart`
 12. Add by pipeline, Pm2 Instances in the keyvault with the name `platformGlobalPm2Instances`
 13. Add by pipeline, Pm2 Execution Mode in the keyvault with the name `platformGlobalPm2ExecMode`
