@@ -70,6 +70,8 @@ Also this pipeline has an extra parameter in pipeline trigger the Pre-Requisites
 
 ## Post Deployment
 
+### Secrets
+--- 
 *All Add by pipeline secret will automaticly be added in the keyvault after pre deploy infrastrucute completes 
 
 1. Add by pipeline, app insights instrumentation key in the keyvault with name `appInsightsInstrumentationKey`
@@ -98,6 +100,32 @@ Also this pipeline has an extra parameter in pipeline trigger the Pre-Requisites
 24. Add gias application id in the keyvault with name `giasApplicationId`
 25. Add gias Data url in the keyvault with name `giasAllGroupsDataUrl`
 
+### Certificates
+--- 
+For adding the certificate that gateway
+1. Add Certificate Authoritie in Keyvault following this [Doc](https://learn.microsoft.com/en-us/azure/key-vault/certificates/how-to-integrate-certificate-authority)
+2. If certificates not generated before
+   1. Click Generate/Import in certificate section in KeyVault
+   2. Add the name
+   3. Select Certificate Authoritie from step 1
+   4. Add you first DNS like that `CN=exampole.com`
+   5. Add the rest DNS Names
+   6. Set Validity Period in 12 months
+   7. Set Content Type Base on the team needs
+   8. Set Lifetime Action type Base on the team needs
+   9. Set Percentage Lifetime Base on the team needs of gettng alerted 
+   10. Set Advanced Policy Configuration Base on the team needs
+   11. Click Create
+3. If certificates generated before
+   1. Click Generate/Import in certificate section in KeyVault
+   2. Select import in Methods of certificate creation
+   3. Add the name
+   4. Upload the certificate file
+   5. Add Password if needed
+   6. Click Create
+4. Update the azure-pipelines-gw.yml to have the name of the certificate if is Change in the value `sslCertificateName`
+
+More info look [here](https://learn.microsoft.com/en-us/azure/key-vault/certificates/create-certificate-signing-request?tabs=azure-portal)
 
 ## Set Variable group
 ---
@@ -108,7 +136,7 @@ Also this pipeline has an extra parameter in pipeline trigger the Pre-Requisites
 ---
 P.S All below pipelines except the gateway the flow can show in [here](https://github.com/DFE-Digital/login.dfe.devops/blob/main/Docs/PipelineFlow.md)
 
-1. Gateway Pipeline [Document](Gateway.md)
+1. Gateway Pipeline [Document](https://github.com/DFE-Digital/login.dfe.devops/blob/feature/DSI-5680/Docs/Gateway.md)
 2. Directory & applications Pipelines
 3. Oidc & interaction Pipelines
 4. Service Pipeline
