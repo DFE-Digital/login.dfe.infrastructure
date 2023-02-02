@@ -130,7 +130,7 @@ More info look [here](https://learn.microsoft.com/en-us/azure/key-vault/certific
 ## Set Variable group
 ---
 
-[here](https://github.com/DFE-Digital/login.dfe.devops/blob/feature/DSI-5680/Docs/VariableGroupSecrets.md)
+How to Set the variable group [here](https://github.com/DFE-Digital/login.dfe.devops/blob/feature/DSI-5680/Docs/VariableGroupSecrets.md)
 
 ## Next Pipelines 
 ---
