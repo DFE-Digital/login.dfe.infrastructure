@@ -138,7 +138,7 @@ P.S All below pipelines except the gateway flow can show [here](https://github.c
 
 1. Gateway Pipeline [Document](https://github.com/DFE-Digital/login.dfe.devops/blob/feature/DSI-5680/Docs/Gateway.md)
 2. ui.toole.kit & audit-logger
-3. Directory & applications Pipelines
-4. Oidc & interaction Pipelines
-5. Service Pipeline
-6. The rest pipelines after them 
+3. Access, Directory & applications Pipelines
+4. Organasation & organasation-worker
+5. Oidc & interaction Pipelines
+6. Service Pipeline
