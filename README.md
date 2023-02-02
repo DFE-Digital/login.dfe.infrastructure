@@ -89,7 +89,7 @@ Also, this pipeline has an extra parameter in the pipeline to trigger the Pre-Re
 13. Add by pipeline, Pm2 Execution Mode in the keyvault with the name `platformGlobalPm2ExecMode`
 14. Add by pipeline, the Organisations Database Name in the keyvault with the name `platformGlobalOrganisationsDatabaseName`
 15. Add by pipeline, Directories Database Name in the keyvault with the name `platformGlobalDirectoriesDatabaseName`
-16. Add the user Feedback Url in the keyvault with the name `userFeedbackUrl` 
+16. Add the user Feedback Url in the keyvault with the name `platformGlobalUserFeedbackUrl` 
 17. Add a support Email Address in the keyvault with the name `supportEmailAddress` 
 18. Add service Now url in the keyvault with the name `SNContactUrl`
 19. Add Google Analytics ID in the keyvault with the name `googleAnalyticsID`
@@ -99,6 +99,14 @@ Also, this pipeline has an extra parameter in the pipeline to trigger the Pre-Re
 23. Add the gias service password in the keyvault with the name `giasServicePassword`
 24. Add the gias application id in the keyvault with the name `giasApplicationId`
 25. Add the gias Data url in the keyvault with the name `giasAllGroupsDataUrl`
+26. Add the fe connect url for access the manage your education and skills funding in the keyvault with the name `feConnectUrl` 
+27. Add the Notify key for SMS `GovNotify` in the keyvault with the name `NotifyKey`
+28. Add the Banner base on the environment in the keyvault with the name `environmentBannerMessage`
+29. Add the session secret for interaction in the keyvault with the name `sessionSecret`
+30. Add the session encryption secret for interaction  in the keyvault with the name `sessionEncryptionSecret`
+31. Add the crypto Private Key that used by interactions in the keyvault with the name `cryptoPublicKey`
+32. Add the crypto Private Key that used by interactions in the keyvault with the name `cryptoPrivateKey`
+33. Add the corona form redirect url in the keyvault with the name `coronaFormRedirectUrl`
 
 ### Certificates
 --- 
