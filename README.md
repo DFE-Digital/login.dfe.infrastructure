@@ -107,6 +107,14 @@ Also, this pipeline has an extra parameter in the pipeline to trigger the Pre-Re
 31. Add the crypto Private Key that used by interactions in the keyvault with the name `cryptoPublicKey`
 32. Add the crypto Private Key that used by interactions in the keyvault with the name `cryptoPrivateKey`
 33. Add the corona form redirect url in the keyvault with the name `coronaFormRedirectUrl`
+34. Add the client secret for help in the keyvault with the name `helpClientSecret`
+35. Add the assertions secret in the keyvault with the name `assertionsSecret`
+36. Add the afroms client secret in the keyvault with the name `afromsClientSecret`
+37. Add the afroms client id in the keyvault with the name `afromsClientId`
+38. Add the aforms setting in the keyvault with the name `aformsSetting`
+39. Add the asp setting in the keyvault with the name `aspSettings`
+40. Add the s2s setting in the keyvault with the name `s2sSettings`
+41. Add the collect setting in the keyvault with the name `collectSettings`
 
 ### Certificates
 --- 
@@ -146,7 +154,11 @@ P.S All below pipelines except the gateway flow can show [here](https://github.c
 
 1. Gateway Pipeline [Document](https://github.com/DFE-Digital/login.dfe.devops/blob/feature/DSI-5680/Docs/Gateway.md)
 2. ui.toole.kit & audit-logger
-3. Access, Directory & applications Pipelines
-4. Organasation & organasation-worker
-5. Oidc & interaction Pipelines
-6. Service Pipeline
+3. Access, Directory & applications 
+4. Organasation, organasation-worker, search & search-worker
+5. Jobs
+6. Oidc & interaction 
+7. Service 
+8. Help, profile, support & public-api
+9. Saml-assertions
+10. All Saml services (Aform, asp, collect, gias, s2s)
