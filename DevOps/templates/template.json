@@ -406,7 +406,7 @@
             "tier": "PremiumV2",
             "size": "P1v2",
             "family": "Pv2",
-            "capacity": 1
+            "capacity": 3
           }
         },
         {
@@ -416,7 +416,7 @@
             "tier": "PremiumV2",
             "size": "P1v2",
             "family": "Pv2",
-            "capacity": 1
+            "capacity": 3
           }
         }
       ],
@@ -434,7 +434,7 @@
             "tier": "PremiumV2",
             "size": "P1v2",
             "family": "Pv2",
-            "capacity": 1
+            "capacity": 3
           }
         },
         {
@@ -444,7 +444,7 @@
             "tier": "PremiumV2",
             "size": "P1v2",
             "family": "Pv2",
-            "capacity": 1
+            "capacity": 3
           }
         },
         {
@@ -454,7 +454,7 @@
             "tier": "PremiumV2",
             "size": "P1v2",
             "family": "Pv2",
-            "capacity": 1
+            "capacity": 3
           }
         },
         {
@@ -464,7 +464,7 @@
             "tier": "PremiumV2",
             "size": "P1v2",
             "family": "Pv2",
-            "capacity": 1
+            "capacity": 3
           }
         }
       ],
@@ -482,7 +482,7 @@
             "tier": "PremiumV2",
             "size": "P1v2",
             "family": "Pv2",
-            "capacity": 1
+            "capacity": 3
           }
         },
         {
@@ -492,7 +492,7 @@
             "tier": "PremiumV2",
             "size": "P1v2",
             "family": "Pv2",
-            "capacity": 1
+            "capacity": 3
           }
         },
         {
@@ -502,7 +502,7 @@
             "tier": "PremiumV2",
             "size": "P1v2",
             "family": "Pv2",
-            "capacity": 1
+            "capacity": 3
           }
         }
       ],
@@ -520,7 +520,7 @@
             "tier": "PremiumV2",
             "size": "P2v2",
             "family": "Pv2",
-            "capacity": 1
+            "capacity": 3
           }
         },
         {
@@ -530,7 +530,7 @@
             "tier": "PremiumV2",
             "size": "P1v2",
             "family": "Pv2",
-            "capacity": 1
+            "capacity": 3
           }
         }
       ],
@@ -548,7 +548,7 @@
             "tier": "PremiumV2",
             "size": "S1",
             "family": "",
-            "capacity": 1
+            "capacity": 3
           }
         }
       ],
@@ -566,7 +566,7 @@
             "tier": "PremiumV2",
             "size": "P1v2",
             "family": "Pv2",
-            "capacity": 1
+            "capacity": 3
           }
         }
       ],
