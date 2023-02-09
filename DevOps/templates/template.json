@@ -198,6 +198,7 @@
         "prestier-g2-sn",        
         "prestier-g3-sn",
         "prestier-g4-sn",
+        "prestier-g5-sn",
         "midtier-g1-sn",
         "midtier-g2-sn",
         "midtier-g3-sn",
@@ -434,7 +435,7 @@
             "tier": "PremiumV2",
             "size": "P1v2",
             "family": "Pv2",
-            "capacity": 3
+            "capacity": 6
           }
         },
         {
@@ -444,7 +445,7 @@
             "tier": "PremiumV2",
             "size": "P1v2",
             "family": "Pv2",
-            "capacity": 3
+            "capacity": 6
           }
         },
         {
@@ -459,6 +460,16 @@
         },
         {
           "name": "prestier-g4-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 3
+          }
+        },
+        {
+          "name": "prestier-g5-asp",
           "sku": {
             "name": "P1v2",
             "tier": "PremiumV2",
@@ -1300,6 +1311,9 @@
           },
           "appServicePlanIsLinux": {
             "value": true
+          },
+          "defaultCapacity": {
+            "value": "[parameters('samltierAppServicePlanSku')[copyIndex()].sku.capacity]"
           }
         }
       },
@@ -1331,6 +1345,9 @@
           },
           "appServicePlanIsLinux": {
             "value": true
+          },
+          "defaultCapacity": {
+            "value": "[parameters('prestierAppServicePlanSku')[copyIndex()].sku.capacity]"
           }
         }
       },
@@ -1362,6 +1379,9 @@
           },
           "appServicePlanIsLinux": {
             "value": true
+          },
+          "defaultCapacity": {
+            "value": "[parameters('midtierAppServicePlanSku')[copyIndex()].sku.capacity]"
           }
         }
       },
@@ -1393,7 +1413,11 @@
           },
           "appServicePlanIsLinux": {
             "value": true
+          },
+          "defaultCapacity": {
+            "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku.capacity]"
           }
+
         }
       },
       "copy": {
@@ -1424,6 +1448,9 @@
           },
           "appServicePlanIsLinux": {
             "value": true
+          },
+          "defaultCapacity": {
+            "value": "[parameters('utilsAppServicePlanSku')[copyIndex()].sku.capacity]"
           }
         }
       },
@@ -1455,6 +1482,9 @@
           },
           "appServicePlanIsLinux": {
             "value": true
+          },
+          "defaultCapacity": {
+            "value": "[parameters('pireanAppServicePlanSku')[copyIndex()].sku.capacity]"
           }
         }
       },
