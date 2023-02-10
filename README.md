@@ -159,7 +159,7 @@ P.S For Access, Directory, applications, Organasation, organasation-worker, sear
 4. Organasation, organasation-worker, search & search-worker
 5. Jobs
 6. Oidc & interaction 
-7. Service 
-8. Help, profile, support & public-api
+7. Service
+8. Help, profile, support, public-api & manage
 9. Saml-assertions
 10. All Saml services (Aform, asp, collect, dqt, gias, s2s)
