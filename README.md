@@ -151,6 +151,7 @@ How to Set the variable group [here](https://github.com/DFE-Digital/login.dfe.de
 ## Next Pipelines 
 ---
 P.S All below pipelines except the gateway flow can show [here](https://github.com/DFE-Digital/login.dfe.devops/blob/main/Docs/PipelineFlow.md)
+P.S For Access, Directory, applications, Organasation, organasation-worker, search, search-worker & Jobs you need to run Infrastructure first and will see that the task `Add Web Ip Access restriction for backend & mid tier` will fail but the `Create infrastructure` will run. Then run the full pipeline
 
 1. Gateway Pipeline [Document](https://github.com/DFE-Digital/login.dfe.devops/blob/feature/DSI-5680/Docs/Gateway.md)
 2. ui.toole.kit & audit-logger
@@ -161,4 +162,4 @@ P.S All below pipelines except the gateway flow can show [here](https://github.c
 7. Service 
 8. Help, profile, support & public-api
 9. Saml-assertions
-10. All Saml services (Aform, asp, collect, gias, s2s)
+10. All Saml services (Aform, asp, collect, dqt, gias, s2s)
