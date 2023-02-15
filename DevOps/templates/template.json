@@ -1594,7 +1594,7 @@
       "properties": {
         "properties": {
           "isClientAffine": false,
-          "lockDuration": "PT1M",
+          "lockDuration": "PT2M",
           "requiresSession": false,
           "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
           "deadLetteringOnMessageExpiration": false,
