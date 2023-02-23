@@ -135,7 +135,7 @@
     "CHGWIP": {
       "type": "string",
       "metadata": {
-        "description": "Firewall IP"
+        "description": "GovWiFi | Purple | Guest"
       }
     },
     "keyvaultCertificateNames": {
