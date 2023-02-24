@@ -117,6 +117,7 @@ Also, this pipeline has an extra parameter in the pipeline to trigger the Pre-Re
 39. Add the asp setting in the keyvault with the name `aspSettings`
 40. Add the s2s setting in the keyvault with the name `s2sSettings`
 41. Add the collect setting in the keyvault with the name `collectSettings`
+42. Add the webhook of slack channel `dfe_sign_in_deployments`   in the keyvault with the name`uriSlack`
 
 ### Certificates
 --- 
