@@ -8,22 +8,23 @@ This document refers to the DevOps engineers who will maintain this pipeline. Al
 
 ## Prerequisite
 ---
+*The `keyvault` that is mention below is representing the deploy keyvault in the specific environment that the Pre-requzet Infrastructure has run
 
 1. Azure Active Directory needs 3 App registrations created by the DevOps team. (This Prerequisite is already set. This may be needed when moving tenants )
-   1. Service connections for the pipeline to be able to deploy in all environments. May need approval from the CIP team
-   2. Azure Active Directory Admin for the use of connection in the SQL server. May need approval from the CIP team
-   3. Microsoft Azure App Service that will give access to the app services to access the key vaults. May need approval from the CIP team
+   1. Service connections for the pipeline to be able to deploy in all environments. May need approval from the CIP team -> Name: `S141<Subscriptions enitial Letter>.bsvc.cip.azdo`
+   2. Azure Active Directory Admin for the use of connection in the SQL server. May need approval from the CIP team -> Name: `s141-dfesignin-<Environment Name>-sql-admin`
+   3. Microsoft Azure App Service that will give access to the app services to access the key vaults. May need approval from the CIP team -> Name: `Microsoft Azure App Service`
 2. Azure Active Directory needs 2 App registrations created by the devops team. (This Prerequisite is already set. But for new environments they will be needed)
    1. The will be the authentication for the app services with the name `S141EnvId-app` how to create [here](https://github.com/DFE-Digital/login.dfe.devops/blob/feature/DSI-5680/Docs/AppRegistrations.md)
    2. The will be the authentication for the client services with the name `S141EnvId-client` how to created [here](https://github.com/DFE-Digital/login.dfe.devops/blob/feature/DSI-5680/Docs/AppRegistrations.md)
-   3. Add the `S141EnvId-app` objectId in the keyvault with the name `aadshdappid`
-   4. Add the `S141EnvId-client` objectId in the keyvault with the name `aadshdclientid` & secret with the name `aadshdclientsecret`
+   3. Add the `S141<EnvId>-app` objectId in the keyvault (`s141<EnvId>-signin-kv`) with the name `aadshdappid`  
+   4. Add the `S141<EnvId>-client` objectId in the keyvault(`s141<EnvId>-signin-kv`) with the name `aadshdclientid` & secret with the name `aadshdclientsecret`
 3. Personal access token from GitHub to access the private repo for the deployment. How to create [here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
-4. Comment out the scan tool stage of the pipeline for the first time you deploy an empty subscription
-5. Check the code to see if any inner dependency exists as may be added later
-6. Create 6 Variable groups
+4. Comment out the scan tool stage of the pipeline for the first time you deploy an empty subscription -> File: azure-pipeline.yml
+5. Check the code to see if any inner dependency exists as may be added later in azure-pipeline.yml file
+6. Create 7 Variable groups 
    1. dsi-global that will host all service connections names and custRegAuth for the npm library
-   2. The rest 5 will be for each environment with the name `dsi-<enviroment ID>-kv` that will connect in the key vault. For the First deployment, the list of the below value must be added manually in the group variables and after moving to the respected environment key vaults. This step is to build two sections
+   2. The rest 6 will be for each environment with the name `dsi-<enviroment ID>-kv` that will connect in the keyvault. For the First deployment, the list of the below value must be added manually in the group variables and after moving to the respected environment keyvaults. This step is to build two sections
       1. Pre-requzet Infrastructure
          1.  environmentId -> The environment Id for the environment that the group is represents
          2.  platformGlobalName -> The global platform name that uses the name of the services. Value: `signin`
@@ -72,6 +73,7 @@ Also, this pipeline has an extra parameter in the pipeline to trigger the Pre-Re
 
 ### Secrets
 --- 
+*All secret must be added in the deployed environment
 *All Add by pipeline secrets will automatically be added in the keyvault after the pre-deployment infrastructure completes 
 
 1. Add by pipeline, app insights instrumentation key in the keyvault with the name `appInsightsInstrumentationKey`
