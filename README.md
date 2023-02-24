@@ -8,7 +8,7 @@ This document refers to the DevOps engineers who will maintain this pipeline. Al
 
 ## Prerequisite
 ---
-*The `keyvault` that is mention below is representing the deploy keyvault in the specific environment that the Pre-requzet Infrastructure has run
+*The `keyvault` that is mention below is representing the deploy keyvault in the specific environment that the Pre-requzet Infrastructure has run with name format `s141<EnvId>-signin-kv`
 
 1. Azure Active Directory needs 3 App registrations created by the DevOps team. (This Prerequisite is already set. This may be needed when moving tenants )
    1. Service connections for the pipeline to be able to deploy in all environments. May need approval from the CIP team -> Name: `S141<Subscriptions enitial Letter>.bsvc.cip.azdo`
@@ -22,9 +22,9 @@ This document refers to the DevOps engineers who will maintain this pipeline. Al
 3. Personal access token from GitHub to access the private repo for the deployment. How to create [here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 4. Comment out the scan tool stage of the pipeline for the first time you deploy an empty subscription -> File: azure-pipeline.yml
 5. Check the code to see if any inner dependency exists as may be added later in azure-pipeline.yml file
-6. Create 7 Variable groups 
+6. Create 7 Variable groups, if not there not exist or new variable group for the new environment (Follow step 2)
    1. dsi-global that will host all service connections names and custRegAuth for the npm library
-   2. The rest 6 will be for each environment with the name `dsi-<enviroment ID>-kv` that will connect in the keyvault. For the First deployment, the list of the below value must be added manually in the group variables and after moving to the respected environment keyvaults. This step is to build two sections
+   2. The rest 6 will be for each environment with the name `dsi-<enviroment name>-kv` that will connect in the keyvault. For the First deployment, the list of the below value must be added manually in the group variables and after moving to the respected environment keyvaults. This step is to build two sections
       1. Pre-requzet Infrastructure
          1.  environmentId -> The environment Id for the environment that the group is represents
          2.  platformGlobalName -> The global platform name that uses the name of the services. Value: `signin`
@@ -37,8 +37,8 @@ This document refers to the DevOps engineers who will maintain this pipeline. Al
          2. gitToken -> Personal token how to be created [here](https://github.com/DFE-Digital/login.dfe.devops/blob/feature/DSI-5680/Docs/GithubSecret.md)
          3. redisCacheSku -> The Redis Cache SKU 
          4. sqlAdministratorLogin & sqlAdministratorLoginPassword -> The cretentials for the Sql server 
-         5. databaseNames -> The secret will have an array of JSON with database names and the max-size bytes for example `[{"name": "dbname1", "maxSizeBytes": "size"},{"name": "dbname1", "maxSizeBytes": "size"}]`
-         6. CHGWIP -> The IP that use to access the SQL server from DfE workstations
+         5. databaseNames -> The secret will have an array of JSON with database names and the max-size bytes for example `[{"name": "dbname1", "maxSizeBytes": "size"},{"name": "dbname1", "maxSizeBytes": "size"}]`. The size will set be the team base on the environment of deployemnt
+         6. CHGWIP -> The IP that use to access the SQL server from DfE Wifi `GovWiFi | Purple | Guest` for Coventry Office
          7. elasticPoolSku -> The Elastic Pool SKU for the SQL serves
          8. elasticPoolProperties -> The Elastic Pool Properties for the SQL serves
          9.  azureActiveDirectoryAdmin -> The name of the group for connectin in SQL Servers
@@ -51,19 +51,19 @@ This document refers to the DevOps engineers who will maintain this pipeline. Al
          16. cdnAssetsVersion -> Version of the cdn `1`
          17. cdnHostName -> Host of the CDN is the full endpoint with `https` including
 7. Updated parameter `deployPrivateEndpoint` from false to true for deploying all the private endpoints and after deployment changes back to false in azure-pipeline.yml
-8. If a new resource group is deployed with a different name, the CIP team needs to allow the virtual Network creation in that resource group
-9.  Updated variable `destructiveVirtualNetworkDeploy` from Disabled to Enabled for deploying the vnet the First time and after deployment changes back to Disabled in azure-pipeline.yml
+8. Updated variable `destructiveVirtualNetworkDeploy` from Disabled to Enabled for deploying the vnet the First time and after deployment changes back to Disabled in azure-pipeline.yml
+9. When new `s141<EnvId>-shd` resource group or any other resource group is deployed with a need of virtual Network creation, the CIP team needs to allow the virtual Network creation in that resource group
 10. Check the Deploy Pre-Requisites and environment you deploy in the first run for the creation of the Logic app and the KeyVault.
 
 ## Deployment
 ---
-All external files are located in login.dfe.devops 
+All external files are located in login.dfe.devops such us Global ARM templates, Sripts & YAML files
 The infrastructure pipeline has two stages:
 
 1. Scan Infrastructure that will use checkov to scan the yml & ARM templates for the deployment
-2. Deployment stage that has to job under:
-   1. Pre-deployments Job that will create the logic app in the dev environment and the Keyvault that will use in all the environments and for the variable groups in azure devops after the first run of any new subscription or environment. The ARM template for that job is located in login.dfe.devops.
-   2. Base infrastructure Job that will deploy all the specified componets that are different in the template.json under the DevOps/templates folder
+2. Deployment stage that has two jobs under:
+   1. Pre-deployments Job that will create the logic app `s141<EnvId>-signin-git` and the Keyvault that will use in the deployed environment and for the variable group in azure devops after the first run of any new subscription or environment. The ARM template is located in login.dfe.devops with name `preDeployInfrastrusture.json`
+   2. Base infrastructure Job that will deploy all the specified componets using the template.json under the DevOps/templates folder
 
 More information of trigger & Approvols please check [here](https://github.com/DFE-Digital/login.dfe.devops/blob/main/Docs/PipelineTrigger.md)
 
