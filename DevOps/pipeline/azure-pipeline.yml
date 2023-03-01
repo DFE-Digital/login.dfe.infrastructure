@@ -79,7 +79,7 @@ stages:
         - ${{ if parameters.prereq }}:
           - template: pipeline/infrastructure.yml@devopsTemplates
             parameters:
-              ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
+              ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran'), eq(parameter.key,'idm')) }}:
                 serviceConnection: $(devServiceConnection)
               ${{ elseif eq(parameter.key, 'pr') }}:
                 serviceConnection: $(prodServiceConnection)
@@ -91,7 +91,7 @@ stages:
         - ${{ else }}:
           - template: pipeline/infrastructure.yml@devopsTemplates
             parameters:
-              ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
+              ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran'), eq(parameter.key,'idm')) }}:
                 serviceConnection: $(devServiceConnection)
               ${{ elseif eq(parameter.key, 'pr') }}:
                 serviceConnection: $(prodServiceConnection)
