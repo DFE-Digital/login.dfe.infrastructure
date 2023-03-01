@@ -6,7 +6,7 @@ resources:
       type: github
       endpoint: DfE-Digital
       name: DFE-Digital/login.dfe.devops
-      ref: feature/DSI-5680
+      ref: feature/IDM
 
 trigger:
   branches:
@@ -24,6 +24,10 @@ parameters:
 - name: prereq
   type: boolean
   displayName: 'Deploy Pre-Requisites only'
+  default: false
+- name: idm
+  type: boolean
+  displayName: 'Transformation Deployment'
   default: false
 - name: tran
   type: boolean
@@ -63,7 +67,7 @@ stages:
     - template:  pipeline/checkov.yml@devopsTemplates
 
 - ${{ each parameter in parameters }}:
-  - ${{ if in(parameter.key, 'tran','dev','test','int','pp','pr') }}:
+  - ${{ if in(parameter.key, 'idm','tran','dev','test','int','pp','pr') }}:
     - ${{ if eq(parameter.value, 'true') }}:
       - stage: Deployment_${{parameter.Key}}
         displayName: "Deployment [${{parameter.Key}}]"
