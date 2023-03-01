@@ -27,7 +27,7 @@ parameters:
   default: false
 - name: idm
   type: boolean
-  displayName: 'Transformation Deployment'
+  displayName: 'IDM Deployment'
   default: false
 - name: tran
   type: boolean
