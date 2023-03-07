@@ -74,8 +74,8 @@ stages:
               serviceConnection: $(testServiceConnection)
             environmentName: ${{parameter.key}}
             ${{ if eq(parameter.key, 'pr') }}:
-              sslCertificateName: signin-generic
+              sslCertificateName: prod-services-signin
               isProduction: true
             ${{ else }}:
-              sslCertificateName: signin-test
+              sslCertificateName: ${{parameter.Key}}-services-signin
               isProduction: false
