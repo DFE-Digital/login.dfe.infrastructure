@@ -593,7 +593,7 @@
     "amplsSubnetName": "ampls-sn-1",
     "elasticSku": {
       "name": "ElasticPool",
-      "tier": "Standard"
+      "tier": "Premium"
     },
     "emptyArray": [],
     "redisCachePrivateEndpoint": {
