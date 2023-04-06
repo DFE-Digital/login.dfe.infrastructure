@@ -1,9 +1,0 @@
-<policy>
-    <rules>
-        <rule>
-            <match.request.request-header.regex name="Origin" result="match" value="https?:\/\/([a-z]*-*[a-z]*\.signin\.education\.gov\.uk)$" ignore-case="true">
-                <feature.headers.modify-client-response-header action="set" name="Access-Control-Allow-Origin" value="%{http_origin}"/>
-            </match.request.request-header.regex>
-        </rule>
-    </rules>
-</policy>
