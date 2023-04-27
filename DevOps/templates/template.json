@@ -584,6 +584,13 @@
       "metadata": {
         "description": "The SKU of the pirean tier App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
       }
+    },
+    "deployASP": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Whether to deploy the Application Service Plans"
+      }
     }
   },
   "variables": {
@@ -1290,6 +1297,7 @@
       ]
     },
     {
+      "condition": "[parameters('deployASP')]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('samltierAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
@@ -1323,6 +1331,7 @@
       }
     },
     {
+      "condition": "[parameters('deployASP')]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('prestierAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
@@ -1356,6 +1365,7 @@
       }
     },
     {
+      "condition": "[parameters('deployASP')]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('midtierAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
@@ -1389,6 +1399,7 @@
       }
     },
     {
+      "condition": "[parameters('deployASP')]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('backEndAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
@@ -1423,7 +1434,7 @@
       }
     },
     {
-      "condition": "[equals(parameters('environmentId'), 'd01')]",
+      "condition": "[and(equals(parameters('environmentId'), 'd01'),parameters('deployASP'))]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('utilsAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
@@ -1457,7 +1468,7 @@
       }
     },
     {
-      "condition": "[not(equals(parameters('environmentId'), 't03'))]",
+      "condition": "[and(not(equals(parameters('environmentId'), 't03'),parameters('deployASP'))]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('pireanAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
