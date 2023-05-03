@@ -86,6 +86,12 @@
         "description": "Name of the Key Vault resource"
       }
     },
+    "keyVaultDigiPassName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Key Vault Devices resource for Digipass"
+      }
+    },
     "azureSearchName": {
       "type": "string",
       "metadata": {
@@ -129,7 +135,7 @@
     "CHGWIP": {
       "type": "string",
       "metadata": {
-        "description": "Firewall IP"
+        "description": "GovWiFi | Purple | Guest"
       }
     },
     "keyvaultCertificateNames": {
@@ -139,18 +145,23 @@
         "description": "Names of the certificates stored in keyvault"
       }
     },
+    "elasticPoolSku": {
+      "type": "object",
+      "metadata": {
+        "description": "SKU for the elastic pool"
+      }
+    },
     "elasticPoolProperties": {
       "type": "object",
       "metadata": {
         "description": "Properties for the elastic pool"
       }
     },
-    "microsoftAzureWebsitesRPObjectId": {
+    "aadshdclientid": {
       "type": "string",
       "metadata": {
-        "description": "Object Id of the Azure Websites RP",
-        "environmentVariable": "microsoftAzureWebsitesRPObjectId"
-      }
+        "description": "Object Id of the aad shd client id for Devices vault connection"
+      }  
     },
     "azureDevOpsObjectId": {
       "type": "string",
@@ -181,34 +192,44 @@
     "applicationSubnets": {
       "type": "array",
       "defaultValue": [
-        "auth-sn",
-        "acc-sn",
-        "adtbus-sn",
-        "adtcln-sn",        
-        "app-sn",
-        "ass-sn",
-        "dev-sn",
-        "dir-sn",
-        "hlp-sn",
-        "int-sn-1",
-        "int-sn-2",
-        "jobs-sn",
-        "mng-sn",
-        "oidc-sn-1",
-        "oidc-sn-2",
-        "org-sn",
-        "orgwkr-sn",
-        "papi-sn",
-        "pfl-sn",
-        "sch-sn",
-        "schwkr-sn",
-        "sup-sn-1",
-        "svc-sn",
-        "svc-sn-1",
-        "svc-sn-2"        
+        "samltier-g1-sn",
+        "samltier-g2-sn",
+        "prestier-g1-sn",
+        "prestier-g2-sn",        
+        "prestier-g3-sn",
+        "prestier-g4-sn",
+        "prestier-g5-sn",
+        "midtier-g1-sn",
+        "midtier-g2-sn",
+        "midtier-g3-sn",
+        "backend-g1-sn",
+        "backend-g2-sn",
+        "backend-g3-sn",
+        "utils-sn"
       ],
       "metadata": {
         "description": "Names of additional subnets to create for application integration"
+      }
+    },
+    "TopicNames": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "audit",
+          "subscription":"audit-messages",
+          "secretNameTopic": "auditServiceBusTopicName",
+          "secretNameSubscription": "auditServiceBusSubscriptionName"
+        },
+        {
+          "name": "securealert",
+          "subscription":"securealert-messages",
+          "secretNameTopic": "secureServiceBusTopicName",
+          "secretNameSubscription": "secureServiceBusSubscriptionName"
+        }
+        
+      ],
+      "metadata": {
+        "description": "Topic names & subscriptions of service bus"
       }
     },
     "platformGlobalIdentifier": {
@@ -219,6 +240,7 @@
       "type": "string",
       "allowedValues": [
         "d01",
+        "d03",
         "t01",
         "t02",
         "t03",
@@ -319,6 +341,38 @@
     "cdnIpRules": {
         "type": "array"
     },
+    "LogicAppConnectionIpRulesServiceBus": {
+        "type": "array",
+        "defaultValue": [
+          "52.174.88.118",
+          "40.91.208.65",
+          "13.69.64.208/28",
+          "13.69.71.192/27",
+          "13.93.36.78",
+          "20.86.93.32/27",
+          "20.86.93.64/28",
+          "20.126.243.151",
+          "20.126.241.238",
+          "20.103.132.139",
+          "20.103.131.1"
+        ]
+    },
+    "LogicAppConnectionIpRulesSql": {
+        "type": "array",
+        "defaultValue": [
+          "52.174.88.118",
+          "40.91.208.65",
+          "13.69.64.208-13.69.64.223",
+          "13.69.71.192-13.69.71.223",
+          "13.93.36.78",
+          "20.86.93.32-20.86.93.63",
+          "20.86.93.64-20.86.93.79",
+          "20.126.243.151",
+          "20.126.241.238",
+          "20.103.132.139",
+          "20.103.131.1"
+        ]
+    },
     "azureActiveDirectoryAdmin": {
       "type": "string",
       "metadata": {
@@ -342,6 +396,201 @@
       "metadata": {
         "description": "Service Bus Name"
       }
+    },
+    "samltierAppServicePlanSku": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "samltier-g1-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 3
+          }
+        },
+        {
+          "name": "samltier-g2-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 3
+          }
+        }
+      ],
+      "metadata": {
+        "description": "The SKU of the saml tier App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
+      }
+    },
+    "prestierAppServicePlanSku": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "prestier-g1-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 6
+          }
+        },
+        {
+          "name": "prestier-g2-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 6
+          }
+        },
+        {
+          "name": "prestier-g3-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 3
+          }
+        },
+        {
+          "name": "prestier-g4-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 3
+          }
+        },
+        {
+          "name": "prestier-g5-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 3
+          }
+        }
+      ],
+      "metadata": {
+        "description": "The SKU of the front-end tier App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
+      }
+    },
+    "midtierAppServicePlanSku": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "midtier-g1-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 3
+          }
+        },
+        {
+          "name": "midtier-g2-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 3
+          }
+        },
+        {
+          "name": "midtier-g3-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 3
+          }
+        }
+      ],
+      "metadata": {
+        "description": "The SKU of the mid tier App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
+      }
+    },
+    "backEndAppServicePlanSku": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "backend-g1-asp",
+          "sku": {
+            "name": "P2v2",
+            "tier": "PremiumV2",
+            "size": "P2v2",
+            "family": "Pv2",
+            "capacity": 3
+          }
+        },
+        {
+          "name": "backend-g2-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 3
+          }
+        }
+      ],
+      "metadata": {
+        "description": "The SKU of the back-end tier App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
+      }
+    },
+    "utilsAppServicePlanSku": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "utils-asp",
+          "sku": {
+            "name": "S1",
+            "tier": "PremiumV2",
+            "size": "S1",
+            "family": "",
+            "capacity": 3
+          }
+        }
+      ],
+      "metadata": {
+        "description": "The SKU of the utils tier App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
+      }
+    },
+    "pireanAppServicePlanSku": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "backend-g3-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 3
+          }
+        }
+      ],
+      "metadata": {
+        "description": "The SKU of the pirean tier App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
+      }
+    },
+    "deployASP": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Whether to deploy the Application Service Plans"
+      }
     }
   },
   "variables": {
@@ -351,7 +600,7 @@
     "amplsSubnetName": "ampls-sn-1",
     "elasticSku": {
       "name": "ElasticPool",
-      "tier": "Standard"
+      "tier": "Premium"
     },
     "emptyArray": [],
     "redisCachePrivateEndpoint": {
@@ -383,7 +632,7 @@
     },
     "keyVaultAccessPolicies": [
       {
-        "objectId": "[parameters('microsoftAzureWebsitesRPObjectId')]",
+        "objectId": "[parameters('aadshdclientid')]",
         "tenantId": "[subscription().tenantId]",
         "permissions": {
           "secrets": [
@@ -394,70 +643,6 @@
             "Recover",
             "Backup",
             "Restore"
-          ]
-        }
-      },
-      {
-        "objectId": "[parameters('keyVaultApplicationObjectId')]",
-        "tenantId": "[subscription().tenantId]",
-        "permissions": {
-          "secrets": [
-            "Get",
-            "List",
-            "Set",
-            "Delete",
-            "Recover",
-            "Backup",
-            "Restore"
-          ]
-        }
-      },
-      {
-        "objectId": "[parameters('azureDevOpsObjectId')]",
-        "tenantId": "[subscription().tenantId]",
-        "permissions": {
-          "keys": [
-            "Get",
-            "List",
-            "Update",
-            "Create",
-            "Import",
-            "Delete",
-            "Recover",
-            "Backup",
-            "Restore",
-            "Decrypt",
-            "Encrypt",
-            "UnwrapKey",
-            "WrapKey",
-            "Verify",
-            "Sign"
-          ],
-          "secrets": [
-            "Get",
-            "List",
-            "Set",
-            "Delete",
-            "Recover",
-            "Backup",
-            "Restore"
-          ],
-          "certificates": [
-            "Get",
-            "List",
-            "Update",
-            "Create",
-            "Import",
-            "Delete",
-            "Recover",
-            "Backup",
-            "Restore",
-            "ManageContacts",
-            "ManageIssuers",
-            "GetIssuers",
-            "ListIssuers",
-            "SetIssuers",
-            "DeleteIssuers"
           ]
         }
       }
@@ -635,6 +820,9 @@
           "CHGWIP": {
             "value": "[parameters('CHGWIP')]"
           },
+          "elasticPoolSku": {
+            "value": "[parameters('elasticPoolSku')]"
+          },
           "elasticPoolProperties": {
             "value": "[parameters('elasticPoolProperties')]"
           },
@@ -667,6 +855,12 @@
           },
           "copyMode": {
             "value": "[parameters('sqlFirewallRulesCopyMode')]"
+          },
+          "ipAddresses": {
+            "value": "[parameters('LogicAppConnectionIpRulesSql')]"
+          },
+          "firewallRuleNamePrefix": {
+            "value": "logicAppConnections"
           }
         }
       },
@@ -730,6 +924,35 @@
         }
       },
       "dependsOn": []
+    },
+    {
+      "apiVersion": "2020-10-01",
+      "name": "add-appInsights-instrumentation-key-vault-secret",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "appInsightsInstrumentationKey"
+          },
+          "secretValue": {
+            "value": "[reference('app-insights').outputs.InstrumentationKey.value]"
+          },
+          "contentType": {
+            "value": "AppInsights instrumentation key"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'app-insights')]"
+      ]
     },
     {
       "name": "azure-datafactory",
@@ -1063,11 +1286,471 @@
           },
           "subnetResourceIdList": {
             "value": "[if(parameters('deployVirtualNetwork'), reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value, variables('emptyArray'))]"
+          },
+          "ipAddresses": {
+            "value": "[parameters('LogicAppConnectionIpRulesServiceBus')]"
           }
         }
       },
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'service-bus')]"
+      ]
+    },
+    {
+      "condition": "[parameters('deployASP')]",
+      "apiVersion": "2020-10-01",
+      "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('samltierAppServicePlanSku')[copyIndex()].name)]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/app-service-plan.json')]"
+        },
+        "parameters": {
+          "appServicePlanName": {
+            "value": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('samltierAppServicePlanSku')[copyIndex()].name)]"
+          },
+          "appServicePlanSku": {
+            "value": "[parameters('samltierAppServicePlanSku')[copyIndex()].sku]"
+          },
+          "appServicePlanOS": {
+            "value": "Linux"
+          },
+          "appServicePlanIsLinux": {
+            "value": true
+          },
+          "defaultCapacity": {
+            "value": "[parameters('samltierAppServicePlanSku')[copyIndex()].sku.capacity]"
+          }
+        }
+      },
+      "copy": {
+        "name": "FeAspCopy",
+        "count": "[length(parameters('samltierAppServicePlanSku'))]",
+        "mode": "Parallel"
+      }
+    },
+    {
+      "condition": "[parameters('deployASP')]",
+      "apiVersion": "2020-10-01",
+      "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('prestierAppServicePlanSku')[copyIndex()].name)]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/app-service-plan.json')]"
+        },
+        "parameters": {
+          "appServicePlanName": {
+            "value": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('prestierAppServicePlanSku')[copyIndex()].name)]"
+          },
+          "appServicePlanSku": {
+            "value": "[parameters('prestierAppServicePlanSku')[copyIndex()].sku]"
+          },
+          "appServicePlanOS": {
+            "value": "Linux"
+          },
+          "appServicePlanIsLinux": {
+            "value": true
+          },
+          "defaultCapacity": {
+            "value": "[parameters('prestierAppServicePlanSku')[copyIndex()].sku.capacity]"
+          }
+        }
+      },
+      "copy": {
+        "name": "FeAspCopy",
+        "count": "[length(parameters('prestierAppServicePlanSku'))]",
+        "mode": "Parallel"
+      }
+    },
+    {
+      "condition": "[parameters('deployASP')]",
+      "apiVersion": "2020-10-01",
+      "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('midtierAppServicePlanSku')[copyIndex()].name)]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/app-service-plan.json')]"
+        },
+        "parameters": {
+          "appServicePlanName": {
+            "value": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('midtierAppServicePlanSku')[copyIndex()].name)]"
+          },
+          "appServicePlanSku": {
+            "value": "[parameters('midtierAppServicePlanSku')[copyIndex()].sku]"
+          },
+          "appServicePlanOS": {
+            "value": "Linux"
+          },
+          "appServicePlanIsLinux": {
+            "value": true
+          },
+          "defaultCapacity": {
+            "value": "[parameters('midtierAppServicePlanSku')[copyIndex()].sku.capacity]"
+          }
+        }
+      },
+      "copy": {
+        "name": "FeAspCopy",
+        "count": "[length(parameters('midtierAppServicePlanSku'))]",
+        "mode": "Parallel"
+      }
+    },
+    {
+      "condition": "[parameters('deployASP')]",
+      "apiVersion": "2020-10-01",
+      "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('backEndAppServicePlanSku')[copyIndex()].name)]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/app-service-plan.json')]"
+        },
+        "parameters": {
+          "appServicePlanName": {
+            "value": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('backEndAppServicePlanSku')[copyIndex()].name)]"
+          },
+          "appServicePlanSku": {
+            "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku]"
+          },
+          "appServicePlanOS": {
+            "value": "Linux"
+          },
+          "appServicePlanIsLinux": {
+            "value": true
+          },
+          "defaultCapacity": {
+            "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku.capacity]"
+          }
+
+        }
+      },
+      "copy": {
+        "name": "FeAspCopy",
+        "count": "[length(parameters('backEndAppServicePlanSku'))]",
+        "mode": "Parallel"
+      }
+    },
+    {
+      "condition": "[and(equals(parameters('environmentId'), 'd01'),parameters('deployASP'))]",
+      "apiVersion": "2020-10-01",
+      "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('utilsAppServicePlanSku')[copyIndex()].name)]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/app-service-plan.json')]"
+        },
+        "parameters": {
+          "appServicePlanName": {
+            "value": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('utilsAppServicePlanSku')[copyIndex()].name)]"
+          },
+          "appServicePlanSku": {
+            "value": "[parameters('utilsAppServicePlanSku')[copyIndex()].sku]"
+          },
+          "appServicePlanOS": {
+            "value": "Linux"
+          },
+          "appServicePlanIsLinux": {
+            "value": true
+          },
+          "defaultCapacity": {
+            "value": "[parameters('utilsAppServicePlanSku')[copyIndex()].sku.capacity]"
+          }
+        }
+      },
+      "copy": {
+        "name": "FeAspCopy",
+        "count": "[length(parameters('utilsAppServicePlanSku'))]",
+        "mode": "Parallel"
+      }
+    },
+    {
+      "condition": "[and(not(equals(parameters('environmentId'), 't03')),parameters('deployASP'))]",
+      "apiVersion": "2020-10-01",
+      "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('pireanAppServicePlanSku')[copyIndex()].name)]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/app-service-plan.json')]"
+        },
+        "parameters": {
+          "appServicePlanName": {
+            "value": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('pireanAppServicePlanSku')[copyIndex()].name)]"
+          },
+          "appServicePlanSku": {
+            "value": "[parameters('pireanAppServicePlanSku')[copyIndex()].sku]"
+          },
+          "appServicePlanOS": {
+            "value": "Linux"
+          },
+          "appServicePlanIsLinux": {
+            "value": true
+          },
+          "defaultCapacity": {
+            "value": "[parameters('pireanAppServicePlanSku')[copyIndex()].sku.capacity]"
+          }
+        }
+      },
+      "copy": {
+        "name": "FeAspCopy",
+        "count": "[length(parameters('pireanAppServicePlanSku'))]",
+        "mode": "Parallel"
+      }
+    },
+    {
+      "condition": "[not(empty(parameters('databaseNames')))]",
+      "name": "[if(empty(parameters('databaseNames')),'no-databases-to-add-in-keyvault',parameters('databaseNames')[copyIndex()].secretName)]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "[parameters('databaseNames')[copyIndex()].secretName]"
+          },
+          "secretValue": {
+            "value": "[parameters('databaseNames')[copyIndex()].name]"
+          },
+          "contentType": {
+            "value": ""
+          }
+        }
+      },
+      "copy": {
+        "name": "databasecopy",
+        "count": "[length(parameters('databaseNames'))]",
+        "mode": "Parallel"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]"
+      ]
+    },
+    {
+      "apiVersion": "2020-10-01",
+      "name": "add-sql-server-name-key-vault-secret",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "platformGlobalServerName"
+          },
+          "secretValue": {
+            "value": "[concat(parameters('sqlServerName'),'.database.windows.net')]"
+          },
+          "contentType": {
+            "value": ""
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]"
+      ]
+    },
+    {
+      "condition": "[not(empty(parameters('TopicNames')))]",
+      "name": "[if(empty(parameters('TopicNames')),'no-topics-to-deploy', concat(parameters('serviceBusNamespaceName'), '/', parameters('TopicNames')[copyIndex()].name))]",
+      "type": "Microsoft.ServiceBus/namespaces/topics",
+      "apiVersion": "2022-01-01-preview",
+      "properties": {
+        "properties": {
+          "maxMessageSizeInKilobytes": 1024,
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "maxSizeInMegabytes": 1024,
+          "requiresDuplicateDetection": false,
+          "duplicateDetectionHistoryTimeWindow": "PT10M",
+          "enableBatchedOperations": true,
+          "status": "Active",
+          "supportOrdering": true,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "enablePartitioning": false,
+          "enableExpress": false
+      }
+      },
+      "copy": {
+        "name": "TopicNames",
+        "count": "[length(parameters('TopicNames'))]",
+        "mode": "Parallel"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'service-bus')]"
+      ]
+    },
+    {
+      "condition": "[not(empty(parameters('TopicNames')))]",
+      "name": "[if(empty(parameters('TopicNames')),'no-subscriptions-to-deploy', concat(parameters('serviceBusNamespaceName'), '/', parameters('TopicNames')[copyIndex()].name, '/', parameters('TopicNames')[copyIndex()].subscription))]",
+      "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
+      "apiVersion": "2022-01-01-preview",
+      "properties": {
+        "properties": {
+          "isClientAffine": false,
+          "lockDuration": "PT2M",
+          "requiresSession": false,
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "maxDeliveryCount": 10,
+          "status": "Active",
+          "enableBatchedOperations": true,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S"
+      }
+      },
+      "copy": {
+        "name": "TopicNames",
+        "count": "[length(parameters('TopicNames'))]",
+        "mode": "Parallel"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'service-bus')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'audit')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'securealert')]"
+      ]
+    },
+    {
+      "condition": "[not(empty(parameters('TopicNames')))]",
+      "name": "[if(empty(parameters('TopicNames')),'no-TopicNames-to-add-in-keyvault', parameters('TopicNames')[copyIndex()].secretNameTopic)]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "[parameters('TopicNames')[copyIndex()].secretNameTopic]"
+          },
+          "secretValue": {
+            "value": "[parameters('TopicNames')[copyIndex()].name]"
+          },
+          "contentType": {
+            "value": ""
+          }
+        }
+      },
+      "copy": {
+        "name": "topicscopy",
+        "count": "[length(parameters('TopicNames'))]",
+        "mode": "Parallel"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'service-bus')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'audit')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'securealert')]"
+      ]
+    },
+    {
+      "condition": "[not(empty(parameters('TopicNames')))]",
+      "name": "[if(empty(parameters('TopicNames')),'no-Subscriptions-to-add-in-keyvault', parameters('TopicNames')[copyIndex()].secretNameSubscription)]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "[parameters('TopicNames')[copyIndex()].secretNameSubscription]"
+          },
+          "secretValue": {
+            "value": "[parameters('TopicNames')[copyIndex()].subscription]"
+          },
+          "contentType": {
+            "value": ""
+          }
+        }
+      },
+      "copy": {
+        "name": "subscriptionscopy",
+        "count": "[length(parameters('TopicNames'))]",
+        "mode": "Parallel"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'service-bus')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'audit')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'securealert')]"
+      ]
+    },
+    {
+      "apiVersion": "2020-10-01",
+      "name": "add-Search-Name-key-vault-secret",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "azureSearchName"
+          },
+          "secretValue": {
+            "value": "[parameters('azureSearchName')]"
+          },
+          "contentType": {
+            "value": ""
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'azure-search')]"
+      ]
+    },
+    {
+      "apiVersion": "2020-10-01",
+      "name": "add-Search-Apikey-key-vault-secret",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "azureSearchkey"
+          },
+          "secretValue": {
+            "value": "[reference('azure-search', '2020-10-01').outputs.azureSearchKey.value]"
+          },
+          "contentType": {
+            "value": ""
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'azure-search')]"
       ]
     }
   ],
