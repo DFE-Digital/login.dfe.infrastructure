@@ -15,8 +15,8 @@ This document refers to the DevOps engineers who will maintain this pipeline. Al
    2. Azure Active Directory Admin for the use of connection in the SQL server. May need approval from the CIP team -> Name: `s141-dfesignin-<Environment Name>-sql-admin`
    3. Microsoft Azure App Service that will give access to the app services to access the key vaults. May need approval from the CIP team -> Name: `Microsoft Azure App Service`
 2. Azure Active Directory needs 2 App registrations created by the devops team. (This Prerequisite is already set. But for new environments they will be needed)
-   1. The will be the authentication for the app services with the name `S141EnvId-app` how to create [here](https://github.com/DFE-Digital/login.dfe.devops/blob/feature/DSI-5680/Docs/AppRegistrations.md)
-   2. The will be the authentication for the client services with the name `S141EnvId-client` how to created [here](https://github.com/DFE-Digital/login.dfe.devops/blob/feature/DSI-5680/Docs/AppRegistrations.md)
+   1. The will be the authentication for the app services with the name `S141EnvId-app` how to create [here](https://github.com/DFE-Digital/login.dfe.devops/blob/main/Docs/AppRegistrations.md)
+   2. The will be the authentication for the client services with the name `S141EnvId-client` how to created [here](https://github.com/DFE-Digital/login.dfe.devops/blob/main/Docs/AppRegistrations.md)
    3. Add the `S141<EnvId>-app` objectId in the keyvault (`s141<EnvId>-signin-kv`) with the name `aadshdappid`  
    4. Add the `S141<EnvId>-client` objectId in the keyvault(`s141<EnvId>-signin-kv`) with the name `aadshdclientid` & secret with the name `aadshdclientsecret`
 3. Personal access token from GitHub to access the private repo for the deployment. How to create [here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
@@ -34,7 +34,7 @@ This document refers to the DevOps engineers who will maintain this pipeline. Al
          6.  tags -> Tags that have been designated tags that have been set by the CIP team. They need to be added manually in keyvault
       2. Base infrastructure Deployment that has been added in keyvault after the Pre-request Infrastructure pipeline runs (manually)
          1. templatesBaseUri -> will be created by the preDeployInfrastrusture and added in the keyvault but need to transfer to the local group for the base infrastructure deployment
-         2. gitToken -> Personal token how to be created [here](https://github.com/DFE-Digital/login.dfe.devops/blob/feature/DSI-5680/Docs/GithubSecret.md)
+         2. gitToken -> Personal token how to be created [here](https://github.com/DFE-Digital/login.dfe.devops/blob/main/Docs/GithubSecret.md)
          3. redisCacheSku -> The Redis Cache SKU 
          4. sqlAdministratorLogin & sqlAdministratorLoginPassword -> The cretentials for the Sql server 
          5. databaseNames -> The secret will have an array of JSON with database names and the max-size bytes for example `[{"name": "dbname1", "maxSizeBytes": "size"},{"name": "dbname1", "maxSizeBytes": "size"}]`. The size will set be the team base on the environment of deployemnt
@@ -149,14 +149,14 @@ For more info look [here](https://learn.microsoft.com/en-us/azure/key-vault/cert
 ## Set Variable group
 ---
 
-How to Set the variable group [here](https://github.com/DFE-Digital/login.dfe.devops/blob/feature/DSI-5680/Docs/VariableGroupSecrets.md)
+How to Set the variable group [here](https://github.com/DFE-Digital/login.dfe.devops/blob/main/Docs/VariableGroupSecrets.md)
 
 ## Next Pipelines 
 ---
 P.S All below pipelines except the gateway flow can show [here](https://github.com/DFE-Digital/login.dfe.devops/blob/main/Docs/PipelineFlow.md)
 P.S For Access, Directory, applications, Organasation, organasation-worker, search, search-worker & Jobs you need to run Infrastructure first and will see that the task `Add Web Ip Access restriction for backend & mid tier` will fail but the `Create infrastructure` will run. Then run the full pipeline
 
-1. Gateway Pipeline [Document](https://github.com/DFE-Digital/login.dfe.devops/blob/feature/DSI-5680/Docs/Gateway.md)
+1. Gateway Pipeline [Document](https://github.com/DFE-Digital/login.dfe.devops/blob/main/Docs/Gateway.md)
 2. ui.toole.kit & audit-logger
 3. Access, Directory & applications 
 4. Organasation, organasation-worker, search & search-worker
