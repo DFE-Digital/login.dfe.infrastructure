@@ -1331,7 +1331,7 @@
       }
     },
     {
-      "condition": "[and(parameters('deployASP'),equals(parameters('prestierAppServicePlanSku')[copyIndex()].name,'prestier-g1-sn'),equals(parameters('prestierAppServicePlanSku')[copyIndex()].name,'prestier-g2-sn'))]",
+      "condition": "[parameters('deployASP')]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('prestierAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
