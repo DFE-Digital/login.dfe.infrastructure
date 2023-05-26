@@ -1297,7 +1297,7 @@
       ]
     },
     {
-      "condition": "[parameters('deployASP')]",
+      "condition": "[not(parameters('deployASP'))]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('samltierAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
@@ -1365,7 +1365,7 @@
       }
     },
     {
-      "condition": "[parameters('deployASP')]",
+      "condition": "[not(parameters('deployASP'))]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('midtierAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
@@ -1399,7 +1399,7 @@
       }
     },
     {
-      "condition": "[parameters('deployASP')]",
+      "condition": "[not(parameters('deployASP'))]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('backEndAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
@@ -1434,7 +1434,7 @@
       }
     },
     {
-      "condition": "[and(equals(parameters('environmentId'), 'd01'),parameters('deployASP'))]",
+      "condition": "[and(equals(parameters('environmentId'), 'd01'),not(parameters('deployASP')))]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('utilsAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
@@ -1468,7 +1468,7 @@
       }
     },
     {
-      "condition": "[and(not(equals(parameters('environmentId'), 't03')),parameters('deployASP'))]",
+      "condition": "[and(not(equals(parameters('environmentId'), 't03')),not(parameters('deployASP')))]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('pireanAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
