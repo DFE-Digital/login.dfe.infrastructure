@@ -205,10 +205,7 @@
         "backend-g1-sn",
         "backend-g2-sn",
         "backend-g3-sn",
-        "utils-sn",
-        "pmppsyncfa-sn",
-        "pmppsyncst-sn"
-
+        "utils-sn"
       ],
       "metadata": {
         "description": "Names of additional subnets to create for application integration"
