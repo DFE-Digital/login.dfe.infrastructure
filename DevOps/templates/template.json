@@ -1274,33 +1274,7 @@
         }
       }
     },
-    {
-      "condition": "[and(parameters('deployVirtualNetwork'), parameters('deployServiceBus'))]",
-      "apiVersion": "2020-10-01",
-      "name": "service-bus-firewall-rule",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/service-bus-network-rules.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "serviceBusNamespaceName": {
-            "value": "[parameters('serviceBusNamespaceName')]"
-          },
-          "subnetResourceIdList": {
-            "value": "[if(parameters('deployVirtualNetwork'), reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value, variables('emptyArray'))]"
-          },
-          "ipAddresses": {
-            "value": "[parameters('LogicAppConnectionIpRulesServiceBus')]"
-          }
-        }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'service-bus')]"
-      ]
-    },
+   
     
      {
       "condition": "[and(parameters('deployVirtualNetwork'), parameters('deployServiceBus'))]",
