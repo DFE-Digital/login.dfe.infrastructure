@@ -659,19 +659,7 @@
         "state": "Succeeded"
       }
     }],
-    "Pirean-Subnets": 
-    {
-       "type": "array",
-      "defaultValue": [
-         "[concat(resourceId('Microsoft.Network/virtualNetworks', 's141d01-signin-shd-vnet'), '/subnets/', 'pmppsyncfa-sn')]"
-        
-       
-      ],
-      "metadata": {
-        "description": "Names of additional pirean subnets to create for service bus network rule"
-      }
-    }
-  },
+   
   "resources": [
     {
       "apiVersion": "2020-10-01",
@@ -1316,7 +1304,7 @@
     {
       "condition": "[and(parameters('deployVirtualNetwork'), parameters('deployServiceBus'))]",
       "apiVersion": "2020-10-01",
-      "name": "service-bus-firewall-rule",
+      "name": "service-bus-firewall-pirean-rule",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
