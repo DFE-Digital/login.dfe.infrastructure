@@ -205,15 +205,15 @@
         "backend-g1-sn",
         "backend-g2-sn",
         "backend-g3-sn",
-        "utils-sn",
-        "pmppsyncfa-sn",
-        "pmppsyncst-sn"
-
+        "utils-sn"
       ],
       "metadata": {
         "description": "Names of additional subnets to create for application integration"
       }
-    },
+    }
+    
+      
+    
     "TopicNames": {
       "type": "array",
       "defaultValue": [
@@ -658,7 +658,18 @@
         "action": "Allow",
         "state": "Succeeded"
       }
-    }]
+    }],
+    "Pirean-Subnets": 
+    {
+       "type": "array",
+      "defaultValue": [
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', 's141d01-signin-shd-vnet', 'pmppsyncfa-sn')]"
+       
+      ],
+      "metadata": {
+        "description": "Names of additional pirean subnets to create for service bus network rule"
+      }
+    }
   },
   "resources": [
     {
@@ -1288,8 +1299,10 @@
             "value": "[parameters('serviceBusNamespaceName')]"
           },
           "subnetResourceIdList": {
-            "value": "[if(parameters('deployVirtualNetwork'), reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value, variables('emptyArray'))]"
+            "value": "[if(parameters('deployVirtualNetwork'), union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('Pirean-Subnets')[0]), variables('emptyArray'))]"
+            
           },
+          
           "ipAddresses": {
             "value": "[parameters('LogicAppConnectionIpRulesServiceBus')]"
           }
