@@ -210,10 +210,7 @@
       "metadata": {
         "description": "Names of additional subnets to create for application integration"
       }
-    }
-    
-      
-    
+    },
     "TopicNames": {
       "type": "array",
       "defaultValue": [
@@ -658,8 +655,8 @@
         "action": "Allow",
         "state": "Succeeded"
       }
-    }],
-   
+    }]
+  },
   "resources": [
     {
       "apiVersion": "2020-10-01",
@@ -1289,9 +1286,7 @@
           },
           "subnetResourceIdList": {
             "value": "[if(parameters('deployVirtualNetwork'), reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value, variables('emptyArray'))]"
-            
           },
-          
           "ipAddresses": {
             "value": "[parameters('LogicAppConnectionIpRulesServiceBus')]"
           }
@@ -1301,7 +1296,7 @@
         "[resourceId('Microsoft.Resources/deployments', 'service-bus')]"
       ]
     },
-    {
+     {
       "condition": "[and(parameters('deployVirtualNetwork'), parameters('deployServiceBus'))]",
       "apiVersion": "2020-10-01",
       "name": "service-bus-firewall-pirean-rule",
@@ -1331,7 +1326,7 @@
       ]
     },
     {
-      "condition": "[not(parameters('deployASP'))]",
+      "condition": "[parameters('deployASP')]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('samltierAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
@@ -1399,7 +1394,7 @@
       }
     },
     {
-      "condition": "[not(parameters('deployASP'))]",
+      "condition": "[parameters('deployASP')]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('midtierAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
@@ -1433,7 +1428,7 @@
       }
     },
     {
-      "condition": "[not(parameters('deployASP'))]",
+      "condition": "[parameters('deployASP')]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('backEndAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
