@@ -630,6 +630,11 @@
       "amplsPrivateLinkResource": "[resourceId('Microsoft.insights/privateLinkScopes', parameters('amplsName'))]",
       "amplsPrivateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('amplsSubnetName'))]"
     },
+    "Pirean-Subnet-ResourceIds":[
+    "[resourceId('Microsoft.Network/virtualNetworks/subnets', 's141d01-signin-shd-vnet', 'pmppsyncfa-sn')]",
+    "[resourceId('Microsoft.Network/virtualNetworks/subnets', 's141d01-signin-shd-vnet', 'pmppsyncst-sn')]"
+    
+    ],
     "keyVaultAccessPolicies": [
       {
         "objectId": "[parameters('aadshdclientid')]",
@@ -1296,6 +1301,7 @@
         "[resourceId('Microsoft.Resources/deployments', 'service-bus')]"
       ]
     },
+    
      {
       "condition": "[and(parameters('deployVirtualNetwork'), parameters('deployServiceBus'))]",
       "apiVersion": "2020-10-01",
@@ -1312,7 +1318,7 @@
             "value": "[parameters('serviceBusNamespaceName')]"
           },
           "subnetResourceIdList": {
-            "value": "[concat(resourceId('Microsoft.Network/virtualNetworks', 's141d01-signin-shd-vnet'), '/subnets/', 'pmppsyncfa-sn')]"
+            "value": "variables('Pirean-Subnet-ResourceIds')"
             
           },
           
