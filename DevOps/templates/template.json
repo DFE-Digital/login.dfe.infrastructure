@@ -1274,12 +1274,10 @@
         }
       }
     },
-   
-    
-     {
+    {
       "condition": "[and(parameters('deployVirtualNetwork'), parameters('deployServiceBus'))]",
       "apiVersion": "2020-10-01",
-      "name": "service-bus-firewall-pirean-rule",
+      "name": "service-bus-firewall-rule",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -1292,10 +1290,8 @@
             "value": "[parameters('serviceBusNamespaceName')]"
           },
           "subnetResourceIdList": {
-            "value": "[if(parameters('deployVirtualNetwork'), variables('Pirean-Subnet-ResourceIds'), variables('emptyArray'))]"
-            
+            "value": "[if(parameters('deployVirtualNetwork'), union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('Pirean-Subnet-ResourceIds')), variables('emptyArray'))]"
           },
-          
           "ipAddresses": {
             "value": "[parameters('LogicAppConnectionIpRulesServiceBus')]"
           }
@@ -1305,6 +1301,7 @@
         "[resourceId('Microsoft.Resources/deployments', 'service-bus')]"
       ]
     },
+    
     {
       "condition": "[parameters('deployASP')]",
       "apiVersion": "2020-10-01",
