@@ -1318,7 +1318,7 @@
             "value": "[parameters('serviceBusNamespaceName')]"
           },
           "subnetResourceIdList": {
-            "value": "variables('Pirean-Subnet-ResourceIds')"
+            "value": "[if(parameters('deployVirtualNetwork'), variables('Pirean-Subnet-ResourceIds'), variables('emptyArray'))]"
             
           },
           
