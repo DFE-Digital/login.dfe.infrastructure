@@ -1329,7 +1329,7 @@
             "value": "[parameters('serviceBusNamespaceName')]"
           },
           "subnetResourceIdList": {
-            "value": "[if(parameters('deployVirtualNetwork'),variables('Pirean-Subnets')[0] , variables('emptyArray'))]"
+            "value": "[concat(resourceId('Microsoft.Network/virtualNetworks', 's141d01-signin-shd-vnet'), '/subnets/', 'pmppsyncfa-sn')]"
             
           },
           
