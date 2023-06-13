@@ -630,9 +630,19 @@
       "amplsPrivateLinkResource": "[resourceId('Microsoft.insights/privateLinkScopes', parameters('amplsName'))]",
       "amplsPrivateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('amplsSubnetName'))]"
     },
+    "pireanSyncFunctionSubnet": "pmppsyncfa-sn",
+    "pireanSyncStorageAccountSubnet": "pmppsyncst-sn",
+    "pireanOrgsSyncFunctionSubnet": "pmpporgssyncfa-sn",
+    "pireanOrgsSyncStorageAccountSubnet": "pmpporgssyncst-sn",
+    "pireanSyncDeltaFunctionSubnet": "pmppprodeltafa-sn",
+    "pireanSyncDeltaStorageAccountSubnet": "pmppprodeltast-sn",
     "Pirean-Subnet-ResourceIds":[
-    "[resourceId('Microsoft.Network/virtualNetworks/subnets', 's141d01-signin-shd-vnet', 'pmppsyncfa-sn')]",
-    "[resourceId('Microsoft.Network/virtualNetworks/subnets', 's141d01-signin-shd-vnet', 'pmppsyncst-sn')]"
+    "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('pireanSyncFunctionSubnet'))]",
+    "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('pireanSyncStorageAccountSubnet'))]",
+    "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('pireanOrgsSyncFunctionSubnet'))]",
+    "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('pireanOrgsSyncStorageAccountSubnet'))]",
+    "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('pireanSyncDeltaFunctionSubnet'))]",
+    "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('pireanSyncDeltaStorageAccountSubnet'))]"
     
     ],
     "keyVaultAccessPolicies": [
