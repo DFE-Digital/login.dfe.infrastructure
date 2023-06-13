@@ -211,6 +211,20 @@
         "description": "Names of additional subnets to create for application integration"
       }
     },
+     "pireanSubnets": {
+      "type": "array",
+      "defaultValue": [
+        "pmppsyncfa-sn",
+        "pmppsyncst-sn",
+        "pmpporgssyncfa-sn",
+        "pmpporgssyncst-sn",
+        "pmppprodeltafa-sn",
+        "pmppprodeltast-sn"
+      ],
+      "metadata": {
+        "description": "Names of pirean subnets to create for service bus integration"
+      }
+    },
     "TopicNames": {
       "type": "array",
       "defaultValue": [
@@ -630,21 +644,7 @@
       "amplsPrivateLinkResource": "[resourceId('Microsoft.insights/privateLinkScopes', parameters('amplsName'))]",
       "amplsPrivateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('amplsSubnetName'))]"
     },
-    "pireanSyncFunctionSubnet": "pmppsyncfa-sn",
-    "pireanSyncStorageAccountSubnet": "pmppsyncst-sn",
-    "pireanOrgsSyncFunctionSubnet": "pmpporgssyncfa-sn",
-    "pireanOrgsSyncStorageAccountSubnet": "pmpporgssyncst-sn",
-    "pireanSyncDeltaFunctionSubnet": "pmppprodeltafa-sn",
-    "pireanSyncDeltaStorageAccountSubnet": "pmppprodeltast-sn",
-    "Pirean-Subnet-ResourceIds":[
-    "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('pireanSyncFunctionSubnet'))]",
-    "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('pireanSyncStorageAccountSubnet'))]",
-    "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('pireanOrgsSyncFunctionSubnet'))]",
-    "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('pireanOrgsSyncStorageAccountSubnet'))]",
-    "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('pireanSyncDeltaFunctionSubnet'))]",
-    "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('pireanSyncDeltaStorageAccountSubnet'))]"
     
-    ],
     "keyVaultAccessPolicies": [
       {
         "objectId": "[parameters('aadshdclientid')]",
@@ -670,7 +670,12 @@
         "action": "Allow",
         "state": "Succeeded"
       }
-    }]
+    },
+    { 
+      "name": "pireanVnetSubnets",
+       "count": "[length(parameters('pireanSubnets'))]",
+       "input": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('pireanSubnets')[copyIndex('pireanVnetSubnets')])]" }
+    ]
   },
   "resources": [
     {
@@ -1300,7 +1305,7 @@
             "value": "[parameters('serviceBusNamespaceName')]"
           },
           "subnetResourceIdList": {
-            "value": "[if(parameters('deployVirtualNetwork'), union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('Pirean-Subnet-ResourceIds')), variables('emptyArray'))]"
+            "value": "[if(parameters('deployVirtualNetwork'), union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('pireanVnetSubnets')), variables('emptyArray'))]"
           },
           "ipAddresses": {
             "value": "[parameters('LogicAppConnectionIpRulesServiceBus')]"
