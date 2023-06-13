@@ -211,6 +211,20 @@
         "description": "Names of additional subnets to create for application integration"
       }
     },
+     "pireanSubnets": {
+      "type": "array",
+      "defaultValue": [
+        "pmppsyncfa-sn",
+        "pmppsyncst-sn",
+        "pmpporgssyncfa-sn",
+        "pmpporgssyncst-sn",
+        "pmppprodeltafa-sn",
+        "pmppprodeltast-sn"
+      ],
+      "metadata": {
+        "description": "Names of pirean subnets to create for service bus integration"
+      }
+    },
     "TopicNames": {
       "type": "array",
       "defaultValue": [
@@ -630,6 +644,7 @@
       "amplsPrivateLinkResource": "[resourceId('Microsoft.insights/privateLinkScopes', parameters('amplsName'))]",
       "amplsPrivateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('amplsSubnetName'))]"
     },
+    
     "keyVaultAccessPolicies": [
       {
         "objectId": "[parameters('aadshdclientid')]",
@@ -655,7 +670,12 @@
         "action": "Allow",
         "state": "Succeeded"
       }
-    }]
+    },
+    { 
+      "name": "pireanVnetSubnets",
+       "count": "[length(parameters('pireanSubnets'))]",
+       "input": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('pireanSubnets')[copyIndex('pireanVnetSubnets')])]" }
+    ]
   },
   "resources": [
     {
@@ -1285,7 +1305,7 @@
             "value": "[parameters('serviceBusNamespaceName')]"
           },
           "subnetResourceIdList": {
-            "value": "[if(parameters('deployVirtualNetwork'), reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value, variables('emptyArray'))]"
+            "value": "[if(parameters('deployVirtualNetwork'), union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('pireanVnetSubnets')), variables('emptyArray'))]"
           },
           "ipAddresses": {
             "value": "[parameters('LogicAppConnectionIpRulesServiceBus')]"
@@ -1296,6 +1316,7 @@
         "[resourceId('Microsoft.Resources/deployments', 'service-bus')]"
       ]
     },
+    
     {
       "condition": "[parameters('deployASP')]",
       "apiVersion": "2020-10-01",
