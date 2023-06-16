@@ -445,50 +445,50 @@
         {
           "name": "prestier-g1-asp",
           "sku": {
-            "name": "P1v2",
+            "name": "P1v3",
             "tier": "PremiumV2",
-            "size": "P1v2",
-            "family": "Pv2",
+            "size": "P1v3",
+            "family": "Pv3",
             "capacity": 6
           }
         },
         {
           "name": "prestier-g2-asp",
           "sku": {
-            "name": "P1v2",
+            "name": "P1v3",
             "tier": "PremiumV2",
-            "size": "P1v2",
-            "family": "Pv2",
+            "size": "P1v3",
+            "family": "Pv3",
             "capacity": 6
           }
         },
         {
           "name": "prestier-g3-asp",
           "sku": {
-            "name": "P1v2",
+            "name": "P1v3",
             "tier": "PremiumV2",
-            "size": "P1v2",
-            "family": "Pv2",
+            "size": "P1v3",
+            "family": "Pv3",
             "capacity": 3
           }
         },
         {
           "name": "prestier-g4-asp",
           "sku": {
-            "name": "P1v2",
+            "name": "P1v3",
             "tier": "PremiumV2",
-            "size": "P1v2",
-            "family": "Pv2",
+            "size": "P1v3",
+            "family": "Pv3",
             "capacity": 3
           }
         },
         {
           "name": "prestier-g5-asp",
           "sku": {
-            "name": "P1v2",
+            "name": "P1v3",
             "tier": "PremiumV2",
-            "size": "P1v2",
-            "family": "Pv2",
+            "size": "P1v3",
+            "family": "Pv3",
             "capacity": 3
           }
         }
@@ -503,30 +503,30 @@
         {
           "name": "midtier-g1-asp",
           "sku": {
-            "name": "P1v2",
+            "name": "P1v3",
             "tier": "PremiumV2",
-            "size": "P1v2",
-            "family": "Pv2",
+            "size": "P1v3",
+            "family": "Pv3",
             "capacity": 3
           }
         },
         {
           "name": "midtier-g2-asp",
           "sku": {
-            "name": "P1v2",
+            "name": "P1v3",
             "tier": "PremiumV2",
-            "size": "P1v2",
-            "family": "Pv2",
+            "size": "P1v3",
+            "family": "Pv3",
             "capacity": 3
           }
         },
         {
           "name": "midtier-g3-asp",
           "sku": {
-            "name": "P1v2",
+            "name": "P1v3",
             "tier": "PremiumV2",
-            "size": "P1v2",
-            "family": "Pv2",
+            "size": "P1v3",
+            "family": "Pv3",
             "capacity": 3
           }
         }
@@ -544,17 +544,17 @@
             "name": "P2v2",
             "tier": "PremiumV2",
             "size": "P2v2",
-            "family": "Pv2",
+            "family": "Pv3",
             "capacity": 3
           }
         },
         {
           "name": "backend-g2-asp",
           "sku": {
-            "name": "P1v2",
+            "name": "P1v3",
             "tier": "PremiumV2",
-            "size": "P1v2",
-            "family": "Pv2",
+            "size": "P1v3",
+            "family": "Pv3",
             "capacity": 3
           }
         }
@@ -587,10 +587,10 @@
         {
           "name": "backend-g3-asp",
           "sku": {
-            "name": "P1v2",
+            "name": "P1v3",
             "tier": "PremiumV2",
-            "size": "P1v2",
-            "family": "Pv2",
+            "size": "P1v3",
+            "family": "Pv3",
             "capacity": 3
           }
         }
