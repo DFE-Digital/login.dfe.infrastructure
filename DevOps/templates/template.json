@@ -449,7 +449,7 @@
             "tier": "PremiumV2",
             "size": "P1v3",
             "family": "Pv3",
-            "capacity": 6
+            "capacity": 3
           }
         },
         {
@@ -459,7 +459,7 @@
             "tier": "PremiumV2",
             "size": "P1v3",
             "family": "Pv3",
-            "capacity": 6
+            "capacity": 3
           }
         },
         {
