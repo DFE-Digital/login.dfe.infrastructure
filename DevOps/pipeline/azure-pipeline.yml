@@ -6,13 +6,12 @@ resources:
       type: github
       endpoint: DfE-Digital
       name: DFE-Digital/login.dfe.devops
-      ref: main
+      ref: feature/DSI-6152
 
 trigger:
   branches:
     include:
     - release/*
-    - feature/*
 
 pr:
   branches:
@@ -96,7 +95,7 @@ stages:
               environmentName: ${{parameter.key}}
               infrastuctureType: base_infr
               templatePath:  $(System.DefaultWorkingDirectory)/login.dfe.infrastructure/DevOps/templates/template.json
-              deployPrivateEndpoint: "true"
+              deployPrivateEndpoint: "false"
               destructiveVirtualNetworkDeploy: "Disabled" #Disabled,Enabled
               deployVirtualNetwork: "false" #Deploying the subnets
-              deployASP: "true" #Deploying the application service plans
+              deployASP: "false" #Deploying the application service plans
