@@ -919,9 +919,6 @@
       }
     },
     {
-      
-    },
-    {
       "condition": "[parameters('deployVirtualNetwork')]",
       "apiVersion": "2020-10-01",
       "name": "sql-server-firewall-rule",
