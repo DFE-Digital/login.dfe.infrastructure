@@ -55,7 +55,7 @@
         "description": "The password of the admin user of the SQL Server"
       }
     },
-    "sqlserveName": {
+    "sqlserverName": {
       "type": "string",
       "metadata": {
         "description": "The name of the SQL Server"
@@ -843,8 +843,8 @@
           "sqlAdministratorLoginPassword": {
             "value": "[parameters('sqlAdministratorLoginPassword')]"
           },
-          "sqlserveName": {
-            "value": "[parameters('sqlserveName')]"
+          "sqlserverName": {
+            "value": "[parameters('sqlserverName')]"
           },
           "elasticPoolName": {
             "value": "[parameters('elasticPoolName')]"
@@ -896,7 +896,7 @@
                   "sqlAdministratorLoginPassword": {
                     "value": "[parameters('sqlAdministratorLoginPassword')]"
                   },
-                  "sqlserveName": {
+                  "sqlserverName": {
                     "value": "[parameters('neuSqlServerName')]"
                   },
                   "elasticPoolName": {
