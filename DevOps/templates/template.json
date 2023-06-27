@@ -37,6 +37,12 @@
     "amplsName": {
       "type": "string"
     },
+    "neuResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "The North Europe Recource Group Name"
+      }
+    },
     "sqlAdministratorLogin": {
       "type": "string",
       "metadata": {
@@ -854,6 +860,66 @@
           }
         }
       }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "nestedTemplateForNEUResources",
+      "resourceGroup": "[parameters('neuResourceGroup')]",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {},
+          "variables": {},
+          "resources": [
+            {
+              "name": "sql-server-neu-deployment",
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2020-10-01",
+              "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                  "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-sql.json')]"
+                },
+                "parameters": {
+                  "sqlAdministratorLogin": {
+                    "value": "[parameters('sqlAdministratorLogin')]"
+                  },
+                  "sqlAdministratorLoginPassword": {
+                    "value": "[parameters('sqlAdministratorLoginPassword')]"
+                  },
+                  "sqlServerName": {
+                    "value": "[parameters('neuSqlServerName')]"
+                  },
+                  "elasticPoolName": {
+                    "value": "[parameters('elasticPoolName')]"
+                  },
+                  "CHGWIP": {
+                    "value": "[parameters('CHGWIP')]"
+                  },
+                  "elasticPoolSku": {
+                    "value": "[parameters('elasticPoolSku')]"
+                  },
+                  "elasticPoolProperties": {
+                    "value": "[parameters('elasticPoolProperties')]"
+                  },
+                  "azureActiveDirectoryAdmin": {
+                    "value": "[parameters('azureActiveDirectoryAdmin')]"
+                  },
+                  "azureActiveDirectoryAdminSID": {
+                    "value": "[parameters('azureActiveDirectoryAdminSID')]"
+                  }
+               }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      
     },
     {
       "condition": "[parameters('deployVirtualNetwork')]",
