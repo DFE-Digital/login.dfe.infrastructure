@@ -1524,7 +1524,7 @@
       }
     },
     {
-      "condition": "[and(equals(parameters('environmentId'), 'd01'),not(parameters('deployASP')))]",
+      "condition": "[and(equals(parameters('environmentId'), 'd01'),parameters('deployASP'))]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('utilsAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
