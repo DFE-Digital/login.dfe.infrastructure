@@ -959,7 +959,7 @@
             "value": "[resourceId('Microsoft.Sql/servers', parameters('neuSqlServerName'))]"
           },
           "databaseNames": {
-            "value": "[variable('listOfDatabaseNames')]"
+            "value": "[variables('listOfDatabaseNames')]"
         
           }
         }
