@@ -870,7 +870,7 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
-      "name": "nestedTemplateForNEUResources",
+      "name": "nested-Template-deployment-For-NEU-Resources",
       "resourceGroup": "[parameters('neuResourceGroup')]",
       "properties": {
         "mode": "Incremental",
@@ -923,6 +923,35 @@
           ]
         }
       }
+    },
+    {
+      "condition": "[parameters('provisionSQLGeoReplication')]",
+      "apiVersion": "2020-10-01",
+      "name": "sql-server-failover-group",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/sql-server-failover-groups.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "sqlserverName": {
+            "value": "[parameters('sqlServerName')]"
+          },
+          "neuSqlServerId": {
+            "value": "[resourceId('Microsoft.Sql/servers', parameters('neuSqlServerName'))]"
+          },
+          "databaseNames": {
+            "value": "[parameters('databaseNames')]"
+        
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]",
+        "[resourceId('Microsoft.Resources/deployments', 'nested-Template-deployment-For-NEU-Resources')]"
+      ]
     },
     {
       "condition": "[parameters('deployVirtualNetwork')]",
