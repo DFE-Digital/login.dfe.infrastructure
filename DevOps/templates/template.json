@@ -693,8 +693,17 @@
     { 
       "name": "pireanVnetSubnets",
        "count": "[length(parameters('pireanSubnets'))]",
-       "input": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('pireanSubnets')[copyIndex('pireanVnetSubnets')])]" }
+       "input": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('pireanSubnets')[copyIndex('pireanVnetSubnets')])]" 
+    },
+    { 
+      "name": "listOfDatabaseNames",
+       "count": "[length(parameters('databaseNames'))]",
+       "input": "[parameters('databaseNames')[copyIndex('listOfDatabaseNames')].name]" 
+    }
+       
+
     ]
+    
   },
   "resources": [
     {
@@ -950,14 +959,14 @@
             "value": "[resourceId('Microsoft.Sql/servers', parameters('neuSqlServerName'))]"
           },
           "databaseNames": {
-            "value": "[parameters('databaseNames')]"
+            "value": "[variable('listOfDatabaseNames')]"
         
           }
         }
       },
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'sql-server')]",
-        "nested-Template-deployment-For-NEU-Resources"
+        "[resourceId(parameters('neuResourceGroup'),'Microsoft.Resources/deployments', 'nested-Template-deployment-For-NEU-Resources')]"
       ]
     },
     {
