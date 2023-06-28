@@ -698,7 +698,8 @@
     { 
       "name": "listOfDatabaseNames",
        "count": "[length(parameters('databaseNames'))]",
-       "input": "[parameters('databaseNames')[copyIndex('listOfDatabaseNames')].name]" 
+       "input": "[concat(resourceGroup().id, '/providers/Microsoft.Sql/servers/', parameters('sqlServerName'), '/databases/', parameters('databaseNames')[copyIndex('listOfDatabaseNames')].name)]"
+ 
     }
        
 
