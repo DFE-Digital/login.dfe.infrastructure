@@ -957,7 +957,7 @@
       },
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'sql-server')]",
-        "[resourceId('Microsoft.Resources/deployments', 'nested-Template-deployment-For-NEU-Resources')]"
+        "nested-Template-deployment-For-NEU-Resources"
       ]
     },
     {
