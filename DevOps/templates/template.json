@@ -339,6 +339,13 @@
         "description": "Whether to deploy a Azure Monitor private link scope"
       }
     },
+    "provisionSQLGeoReplication": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Whether to provision SQL Server Geo Replication"
+      }
+    },
     "deployServiceBus": {
       "type": "bool",
       "defaultValue": false,
