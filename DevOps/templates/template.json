@@ -956,7 +956,7 @@
             "value": "[parameters('sqlServerName')]"
           },
           "neuSqlServerId": {
-            "value": "[resourceId('Microsoft.Sql/servers', parameters('neuSqlServerName'))]"
+            "value": "[resourceId(parameters('neuResourceGroup'),'Microsoft.Sql/servers', parameters('neuSqlServerName'))]"
           },
           "databaseNames": {
             "value": "[variables('listOfDatabaseNames')]"
