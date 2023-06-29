@@ -66,8 +66,8 @@ stages:
     - ${{ if eq(parameter.value, 'true') }}:
       - stage: Deployment_${{parameter.Key}}
         displayName: "Deployment [${{parameter.Key}}]"
-        # dependsOn: 
-        # - scanInfra
+        dependsOn: 
+         - scanInfra
         variables:
         - group: dsi-${{parameter.key}}-kv
         jobs:
