@@ -13,7 +13,7 @@
     },
     "branch": {
         "type": "string",
-        "defaultValue": "main",
+        "defaultValue": "feature/DSI-6150",
         "metadata": {
             "description": "Branch that use for the ARM templateLinks"
         }
@@ -678,6 +678,22 @@
     ]
   },
   "resources": [
+    {
+      "apiVersion": "2022-05-01",
+      "name": "log-analytics-workspace",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/log-analytics-workspace.json')]"
+        },
+        "parameters": {
+          "environmentId": {
+            "value": "[parameters('environmentId')]"
+          }
+        }
+      }
+    },
     {
       "apiVersion": "2020-10-01",
       "name": "redis-cache",
