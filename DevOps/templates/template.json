@@ -885,6 +885,7 @@
       }
     },
     {
+      "condition": "[parameters('provisionSQLGeoReplication')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "nested-Template-deployment-For-NEU-Resources",
