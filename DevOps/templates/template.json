@@ -624,6 +624,26 @@
       "metadata": {
         "description": "Whether to deploy the Application Service Plans"
       }
+    },
+    "sqlFireWallRules": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "Name": "DfE (London Peering)",
+          "IPRange": "104.209.113.99-104.209.113.99"
+        },
+        {
+          "Name": "DfE (London VPN)",
+          "IPRange": "217.38.175.55-217.38.175.58"
+        },
+        {
+          "Name": "DfE (Palo Alto VPN)",
+          "IPRange": "208.127.46.232-208.127.46.255"
+        }
+      ],
+      "metadata": {
+        "description": "White listed SQL Server Firewall rules"
+      }
     }
   },
   "variables": {
@@ -935,6 +955,43 @@
                   }
                }
               }
+            },
+            {
+              "apiVersion": "2020-10-01",
+              "name": "sql-server-firewall-rule",
+              "type": "Microsoft.Resources/deployments",
+              "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                  "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/sql-server-firewall-rules.json')]",
+                  "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                  "serverName": {
+                    "value": "[parameters('neuSqlServerName')]"
+                  },
+                  "subnetResourceIdList": {
+                    "value": "variables('emptyArray')"
+                  },
+                  "copyMode": {
+                    "value": "[parameters('sqlFirewallRulesCopyMode')]"
+                  },
+                  "ipAddresses": {
+                    "value": "[parameters('ipaddresscopy')[copyIndex()].IPRange]"
+                  },
+                  "firewallRuleNamePrefix": {
+                    "value": "[parameters('ipaddresscopy')[copyIndex()].Name]"
+                  }
+                }
+              },
+              "copy": {
+                "name": "ipaddresscopy",
+                "count": "[length(parameters('sqlFireWallRules'))]",
+                "mode": "Parallel"
+              },
+              "dependsOn": [
+                "[resourceId(parameters('neuResourceGroup'),'Microsoft.Sql/servers', parameters('neuSqlServerName'))]"
+              ]
             }
           ]
         }
@@ -967,6 +1024,7 @@
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'sql-server')]",
         "[resourceId(parameters('neuResourceGroup'),'Microsoft.Resources/deployments', 'neu-Resources-deployment')]"
+        
       ]
     },
     {
