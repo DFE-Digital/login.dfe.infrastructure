@@ -955,44 +955,43 @@
                   }
                }
               }
-            },
-            {
-              "apiVersion": "2020-10-01",
-              "name": "sql-server-firewall-rule",
-              "type": "Microsoft.Resources/deployments",
-              "resourceGroup": "[parameters('neuResourceGroup')]",
-              "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                  "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/sql-server-firewall-rules.json')]",
-                  "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                  "serverName": {
-                    "value": "[parameters('neuSqlServerName')]"
-                  },
-                  "subnetResourceIdList": {
-                    "value": "variables('emptyArray')"
-                  },
-                  "copyMode": {
-                    "value": "[parameters('sqlFirewallRulesCopyMode')]"
-                  },
-                  "ipAddresses": {
-                    "value": "104.209.113.99-104.209.113.99"
-                  },
-                  "firewallRuleNamePrefix": {
-                    "value": "DfE (London Peering)"
-                  }
-                }
-              },
-              
-              "dependsOn": [
-                "[resourceId(parameters('neuResourceGroup'),'Microsoft.Sql/servers', parameters('neuSqlServerName'))]"
-              ]
             }
           ]
         }
       }
+    },
+    {
+      "apiVersion": "2020-10-01",
+      "name": "sql-server-firewall-rule",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[parameters('neuResourceGroup')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/sql-server-firewall-rules.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "serverName": {
+            "value": "[parameters('neuSqlServerName')]"
+          },
+          "subnetResourceIdList": {
+            "value": "variables('emptyArray')"
+          },
+          "copyMode": {
+            "value": "[parameters('sqlFirewallRulesCopyMode')]"
+          },
+          "ipAddresses": {
+            "value": "104.209.113.99-104.209.113.99"
+          },
+          "firewallRuleNamePrefix": {
+            "value": "DfE (London Peering)"
+          }
+        }
+      },   
+      "dependsOn": [
+        "[resourceId(parameters('neuResourceGroup'),'Microsoft.Resources/deployments', 'neu-Resources-deployment')]"
+      ]
     },
     {
       "condition": "[parameters('provisionSQLGeoReplication')]",
