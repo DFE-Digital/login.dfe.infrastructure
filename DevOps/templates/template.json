@@ -977,10 +977,10 @@
                     "value": "[parameters('sqlFirewallRulesCopyMode')]"
                   },
                   "ipAddresses": {
-                    "value": "[parameters('ipaddresscopy')[copyIndex()].IPRange]"
+                    "value": "[parameters('sqlFireWallRules')[copyIndex()].IPRange]"
                   },
                   "firewallRuleNamePrefix": {
-                    "value": "[parameters('ipaddresscopy')[copyIndex()].Name]"
+                    "value": "[parameters('sqlFireWallRules')[copyIndex()].Name]"
                   }
                 }
               },
