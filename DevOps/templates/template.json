@@ -976,18 +976,23 @@
             "value": "[parameters('neuSqlServerName')]"
           },
           "subnetResourceIdList": {
-            "value": "variables('emptyArray')"
+            "value": "[createArray()]"
           },
           "copyMode": {
             "value": "[parameters('sqlFirewallRulesCopyMode')]"
           },
           "ipAddresses": {
-            "value": ["104.209.113.99-104.209.113.99"]
+            "value": ["[parameters('sqlFireWallRules')[copyIndex()].IPRange]"]
           },
           "firewallRuleNamePrefix": {
-            "value": "DfE (London Peering)"
+            "value": "[parameters('sqlFireWallRules')[copyIndex()].Name]"
           }
         }
+      },
+      "copy": {
+        "name": "ipaddresscopy",
+        "count": "[length(parameters('sqlFireWallRules'))]",
+        "mode": "Parallel"
       },   
       "dependsOn": [
         "[resourceId(parameters('neuResourceGroup'),'Microsoft.Resources/deployments', 'neu-Resources-deployment')]"
