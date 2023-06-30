@@ -977,18 +977,14 @@
                     "value": "[parameters('sqlFirewallRulesCopyMode')]"
                   },
                   "ipAddresses": {
-                    "value": "[parameters('sqlFireWallRules')[copyIndex()].IPRange]"
+                    "value": "104.209.113.99-104.209.113.99"
                   },
                   "firewallRuleNamePrefix": {
-                    "value": "[parameters('sqlFireWallRules')[copyIndex()].Name]"
+                    "value": "DfE (London Peering)"
                   }
                 }
               },
-              "copy": {
-                "name": "ipaddresscopy",
-                "count": "[length(parameters('sqlFireWallRules'))]",
-                "mode": "Parallel"
-              },
+              
               "dependsOn": [
                 "[resourceId(parameters('neuResourceGroup'),'Microsoft.Sql/servers', parameters('neuSqlServerName'))]"
               ]
