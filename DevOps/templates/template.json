@@ -982,7 +982,7 @@
             "value": "[parameters('sqlFirewallRulesCopyMode')]"
           },
           "ipAddresses": {
-            "value": "[104.209.113.99-104.209.113.99]"
+            "value": ["104.209.113.99-104.209.113.99"]
           },
           "firewallRuleNamePrefix": {
             "value": "DfE (London Peering)"
