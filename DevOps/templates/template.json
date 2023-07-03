@@ -37,6 +37,12 @@
     "amplsName": {
       "type": "string"
     },
+    "neuResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "The North Europe Recource Group Name"
+      }
+    },
     "sqlAdministratorLogin": {
       "type": "string",
       "metadata": {
@@ -49,10 +55,16 @@
         "description": "The password of the admin user of the SQL Server"
       }
     },
-    "sqlServerName": {
+    "sqlserverName": {
       "type": "string",
       "metadata": {
         "description": "The name of the SQL Server"
+      }
+    },
+    "neuSqlServerName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the SQL Server in North Europe"
       }
     },
     "elasticPoolName": {
@@ -325,6 +337,13 @@
       "defaultValue": false,
       "metadata": {
         "description": "Whether to deploy a Azure Monitor private link scope"
+      }
+    },
+    "provisionSQLGeoReplication": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Whether to provision SQL Server Geo Replication"
       }
     },
     "deployServiceBus": {
@@ -605,6 +624,29 @@
       "metadata": {
         "description": "Whether to deploy the Application Service Plans"
       }
+    },
+    "sqlFireWallRules": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "Name": "DfE-London-Peering",
+          "DisplayName": "DfE-(London Peering)",
+          "IPRange": "104.209.113.99-104.209.113.99"
+        },
+        {
+          "Name": "DfE-London-VPN",
+          "DisplayName": "DfE-(London VPN)",
+          "IPRange": "217.38.175.55-217.38.175.58"
+        },
+        {
+          "Name": "DfE-Palo-Alto-VPN",
+          "DisplayName": "DfE-(Palo Alto VPN)",
+          "IPRange": "208.127.46.232-208.127.46.255"
+        }
+      ],
+      "metadata": {
+        "description": "White listed SQL Server Firewall rules"
+      }
     }
   },
   "variables": {
@@ -675,8 +717,18 @@
     { 
       "name": "pireanVnetSubnets",
        "count": "[length(parameters('pireanSubnets'))]",
-       "input": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('pireanSubnets')[copyIndex('pireanVnetSubnets')])]" }
+       "input": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('pireanSubnets')[copyIndex('pireanVnetSubnets')])]" 
+    },
+    { 
+      "name": "listOfDatabaseNames",
+       "count": "[length(parameters('databaseNames'))]",
+       "input": "[concat(resourceGroup().id, '/providers/Microsoft.Sql/servers/', parameters('sqlServerName'), '/databases/', parameters('databaseNames')[copyIndex('listOfDatabaseNames')].name)]"
+ 
+    }
+       
+
     ]
+    
   },
   "resources": [
     {
@@ -848,8 +900,8 @@
           "sqlAdministratorLoginPassword": {
             "value": "[parameters('sqlAdministratorLoginPassword')]"
           },
-          "sqlServerName": {
-            "value": "[parameters('sqlServerName')]"
+          "sqlserverName": {
+            "value": "[parameters('sqlserverName')]"
           },
           "elasticPoolName": {
             "value": "[parameters('elasticPoolName')]"
@@ -871,6 +923,130 @@
           }
         }
       }
+    },
+    {
+      "condition": "[parameters('provisionSQLGeoReplication')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "neu-Resources-deployment",
+      "resourceGroup": "[parameters('neuResourceGroup')]",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": [
+            {
+              "name": "sql-server-neu-deployment",
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2020-10-01",
+              "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                  "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-sql.json')]"
+                },
+                "parameters": {
+                  "sqlAdministratorLogin": {
+                    "value": "[parameters('sqlAdministratorLogin')]"
+                  },
+                  "sqlAdministratorLoginPassword": {
+                    "value": "[parameters('sqlAdministratorLoginPassword')]"
+                  },
+                  "sqlserverName": {
+                    "value": "[parameters('neuSqlServerName')]"
+                  },
+                  "elasticPoolName": {
+                    "value": "[parameters('elasticPoolName')]"
+                  },
+                  "CHGWIP": {
+                    "value": "[parameters('CHGWIP')]"
+                  },
+                  "elasticPoolSku": {
+                    "value": "[parameters('elasticPoolSku')]"
+                  },
+                  "elasticPoolProperties": {
+                    "value": "[parameters('elasticPoolProperties')]"
+                  },
+                  "azureActiveDirectoryAdmin": {
+                    "value": "[parameters('azureActiveDirectoryAdmin')]"
+                  },
+                  "azureActiveDirectoryAdminSID": {
+                    "value": "[parameters('azureActiveDirectoryAdminSID')]"
+                  }
+               }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "apiVersion": "2020-10-01",
+      "name": "[concat('sql-server-firewall-rule-neu','-',parameters('sqlFireWallRules')[copyIndex()].Name)]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[parameters('neuResourceGroup')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/sql-server-firewall-rules.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "serverName": {
+            "value": "[parameters('neuSqlServerName')]"
+          },
+          "subnetResourceIdList": {
+            "value": "[createArray()]"
+          },
+          "copyMode": {
+            "value": "[parameters('sqlFirewallRulesCopyMode')]"
+          },
+          "ipAddresses": {
+            "value": ["[parameters('sqlFireWallRules')[copyIndex()].IPRange]"]
+          },
+          "firewallRuleNamePrefix": {
+            "value": "[parameters('sqlFireWallRules')[copyIndex()].DisplayName]"
+          }
+        }
+      },
+      "copy": {
+        "name": "ipaddresscopy",
+        "count": "[length(parameters('sqlFireWallRules'))]",
+        "mode": "Parallel"
+      },   
+      "dependsOn": [
+        "[resourceId(parameters('neuResourceGroup'),'Microsoft.Resources/deployments', 'neu-Resources-deployment')]"
+      ]
+    },
+    {
+      "condition": "[parameters('provisionSQLGeoReplication')]",
+      "apiVersion": "2020-10-01",
+      "name": "sql-server-failover-group",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/sql-server-failover-groups.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "sqlserverName": {
+            "value": "[parameters('sqlServerName')]"
+          },
+          "neuSqlServerId": {
+            "value": "[resourceId(parameters('neuResourceGroup'),'Microsoft.Sql/servers', parameters('neuSqlServerName'))]"
+          },
+          "databaseNames": {
+            "value": "[variables('listOfDatabaseNames')]"
+        
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]",
+        "[resourceId(parameters('neuResourceGroup'),'Microsoft.Resources/deployments', 'neu-Resources-deployment')]"
+        
+      ]
     },
     {
       "condition": "[parameters('deployVirtualNetwork')]",
@@ -1477,7 +1653,7 @@
       }
     },
     {
-      "condition": "[and(equals(parameters('environmentId'), 'd01'),not(parameters('deployASP')))]",
+      "condition": "[and(equals(parameters('environmentId'), 'd01'),parameters('deployASP'))]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('utilsAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
