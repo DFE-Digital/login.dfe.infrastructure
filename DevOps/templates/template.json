@@ -653,6 +653,7 @@
     "serviceBusApiVersion": "2017-04-01",
     "redisSubnetName": "redis-sn-1",
     "azureSearchSubnetName": "azureSearch-sn-1",
+    "workspaceId": "[tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-shd-laws'))]",
     "amplsSubnetName": "ampls-sn-1",
     "elasticSku": {
       "name": "ElasticPool",
@@ -730,6 +731,22 @@
     
   },
   "resources": [
+    {
+      "apiVersion": "2022-05-01",
+      "name": "log-analytics-workspace",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/log-analytics-workspace.json')]"
+        },
+        "parameters": {
+          "environmentId": {
+            "value": "[parameters('environmentId')]"
+          }
+        }
+      }
+    },
     {
       "apiVersion": "2020-10-01",
       "name": "redis-cache",
@@ -1116,10 +1133,15 @@
         "parameters": {
           "appInsightsName": {
             "value": "[parameters('appInsightsName')]"
+          },
+          "WorkspaceResourceId": {
+            "value": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('workspaceId'))]"
           }
         }
       },
-      "dependsOn": []
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'log-analytics-workspace')]"
+      ]
     },
     {
       "apiVersion": "2020-10-01",
