@@ -12,7 +12,6 @@ trigger:
   branches:
     include:
     - release/*
-    - feature/*
 
 pr:
   branches:
@@ -67,8 +66,8 @@ stages:
     - ${{ if eq(parameter.value, 'true') }}:
       - stage: Deployment_${{parameter.Key}}
         displayName: "Deployment [${{parameter.Key}}]"
-        # dependsOn: 
-        # - scanInfra
+       # dependsOn: 
+       #  - scanInfra
         variables:
         - group: dsi-${{parameter.key}}-kv
         jobs:
@@ -99,4 +98,4 @@ stages:
               deployPrivateEndpoint: "true"
               destructiveVirtualNetworkDeploy: "Disabled" #Disabled,Enabled
               deployVirtualNetwork: "false" #Deploying the subnets
-              deployASP: "true" #Deploying the application service plans
+              deployASP: "false" #Deploying the application service plans
