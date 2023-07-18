@@ -346,6 +346,13 @@
         "description": "Whether to provision SQL Server Geo Replication"
       }
     },
+    "deployDataFactory": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Whether to deploy Data Factory"
+      }
+    },
     "deployServiceBus": {
       "type": "bool",
       "defaultValue": false,
@@ -1173,6 +1180,7 @@
       ]
     },
     {
+      "condition": "[parameters('deployDataFactory')]",
       "name": "azure-datafactory",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
