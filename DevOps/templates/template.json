@@ -739,7 +739,7 @@
   },
   "resources": [
     {
-      "apiVersion": "2022-10-01",
+      "apiVersion": "2022-12-01",
       "name": "azure-managed-grafana",
       "type": "Microsoft.Resources/deployments",
       "properties": {
