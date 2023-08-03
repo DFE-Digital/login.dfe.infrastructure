@@ -472,7 +472,7 @@
           "name": "prestier-g1-asp",
           "sku": {
             "name": "P1v3",
-            "tier": "PremiumV2",
+            "tier": "PremiumV3",
             "size": "P1v3",
             "family": "Pv3",
             "capacity": 3
@@ -482,7 +482,7 @@
           "name": "prestier-g2-asp",
           "sku": {
             "name": "P1v3",
-            "tier": "PremiumV2",
+            "tier": "PremiumV3",
             "size": "P1v3",
             "family": "Pv3",
             "capacity": 3
@@ -492,7 +492,7 @@
           "name": "prestier-g3-asp",
           "sku": {
             "name": "P1v3",
-            "tier": "PremiumV2",
+            "tier": "PremiumV3",
             "size": "P1v3",
             "family": "Pv3",
             "capacity": 3
@@ -502,7 +502,7 @@
           "name": "prestier-g4-asp",
           "sku": {
             "name": "P1v3",
-            "tier": "PremiumV2",
+            "tier": "PremiumV3",
             "size": "P1v3",
             "family": "Pv3",
             "capacity": 3
@@ -512,7 +512,7 @@
           "name": "prestier-g5-asp",
           "sku": {
             "name": "P1v3",
-            "tier": "PremiumV2",
+            "tier": "PremiumV3",
             "size": "P1v3",
             "family": "Pv3",
             "capacity": 3
@@ -530,7 +530,7 @@
           "name": "midtier-g1-asp",
           "sku": {
             "name": "P1v3",
-            "tier": "PremiumV2",
+            "tier": "PremiumV3",
             "size": "P1v3",
             "family": "Pv3",
             "capacity": 3
@@ -540,7 +540,7 @@
           "name": "midtier-g2-asp",
           "sku": {
             "name": "P1v3",
-            "tier": "PremiumV2",
+            "tier": "PremiumV3",
             "size": "P1v3",
             "family": "Pv3",
             "capacity": 3
@@ -550,7 +550,7 @@
           "name": "midtier-g3-asp",
           "sku": {
             "name": "P1v3",
-            "tier": "PremiumV2",
+            "tier": "PremiumV3",
             "size": "P1v3",
             "family": "Pv3",
             "capacity": 3
@@ -568,7 +568,7 @@
           "name": "backend-g1-asp",
           "sku": {
             "name": "P2v2",
-            "tier": "PremiumV2",
+            "tier": "PremiumV3",
             "size": "P2v2",
             "family": "Pv3",
             "capacity": 1
@@ -578,7 +578,7 @@
           "name": "backend-g2-asp",
           "sku": {
             "name": "P1v3",
-            "tier": "PremiumV2",
+            "tier": "PremiumV3",
             "size": "P1v3",
             "family": "Pv3",
             "capacity": 1
@@ -596,7 +596,7 @@
           "name": "utils-asp",
           "sku": {
             "name": "S1",
-            "tier": "PremiumV2",
+            "tier": "StandardS1",
             "size": "S1",
             "family": "",
             "capacity": 3
@@ -614,7 +614,7 @@
           "name": "backend-g3-asp",
           "sku": {
             "name": "P1v3",
-            "tier": "PremiumV2",
+            "tier": "PremiumV3",
             "size": "P1v3",
             "family": "Pv3",
             "capacity": 3
@@ -1662,7 +1662,7 @@
       }
     },
     {
-      "condition": "[and(equals(parameters('environmentId'), 'd01'),parameters('deployASP'))]",
+      "condition": "[and(equals(parameters('environmentId'), 'd001'),parameters('deployASP'))]",
       "apiVersion": "2020-10-01",
       "name": "[concat(parameters('platformGlobalIdentifier'),parameters('environmentId'),'-',parameters('utilsAppServicePlanSku')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
