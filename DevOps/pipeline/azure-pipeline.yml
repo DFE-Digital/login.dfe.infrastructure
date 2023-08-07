@@ -98,4 +98,4 @@ stages:
               deployPrivateEndpoint: "true"
               destructiveVirtualNetworkDeploy: "Disabled" #Disabled,Enabled
               deployVirtualNetwork: "false" #Deploying the subnets
-              deployASP: "true" #Deploying the application service plans
+              deployASP: "false" #Deploying the application service plans
