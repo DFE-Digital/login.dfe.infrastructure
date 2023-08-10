@@ -339,7 +339,7 @@
         "description": "Whether to deploy a Azure Monitor private link scope"
       }
     },
-    "AzureManagedGrafana": {
+    "provisionAzureManagedGrafana": {
       "type": "bool",
       "defaultValue": true,
       "metadata": {
@@ -746,7 +746,7 @@
   },
   "resources": [
     {
-      "condition": "[parameters('AzureManagedGrafana')]",
+      "condition": "[parameters('provisionAzureManagedGrafana')]",
       "apiVersion": "2022-05-01",
       "name": "azure-managed-grafana",
       "type": "Microsoft.Resources/deployments",
