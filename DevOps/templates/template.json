@@ -339,6 +339,13 @@
         "description": "Whether to deploy a Azure Monitor private link scope"
       }
     },
+    "provisionAzureManagedGrafana": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Whether to provision Azure Managed Grafana Instance"
+      }
+    },
     "provisionSQLGeoReplication": {
       "type": "bool",
       "defaultValue": true,
@@ -738,6 +745,23 @@
     
   },
   "resources": [
+    {
+      "condition": "[parameters('provisionAzureManagedGrafana')]",
+      "apiVersion": "2022-05-01",
+      "name": "azure-managed-grafana",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-managed-grafana.json')]"
+        },
+        "parameters": {
+          "environmentId": {
+            "value": "[parameters('environmentId')]"
+          }
+        }
+      }
+    },
     {
       "apiVersion": "2022-05-01",
       "name": "log-analytics-workspace",
