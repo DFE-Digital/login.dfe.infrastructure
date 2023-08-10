@@ -339,6 +339,13 @@
         "description": "Whether to deploy a Azure Monitor private link scope"
       }
     },
+    "AzureManagedGrafana": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Whether to provision Azure Managed Grafana Instance"
+      }
+    },
     "provisionSQLGeoReplication": {
       "type": "bool",
       "defaultValue": true,
@@ -739,6 +746,7 @@
   },
   "resources": [
     {
+      "condition": "[parameters('AzureManagedGrafana')]",
       "apiVersion": "2022-05-01",
       "name": "azure-managed-grafana",
       "type": "Microsoft.Resources/deployments",
