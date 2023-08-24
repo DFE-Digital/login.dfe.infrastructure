@@ -580,16 +580,6 @@
             "family": "Pv3",
             "capacity": 1
           }
-        },
-        {
-          "name": "backend-g2-asp",
-          "sku": {
-            "name": "P1v3",
-            "tier": "PremiumV3",
-            "size": "P1v3",
-            "family": "Pv3",
-            "capacity": 1
-          }
         }
       ],
       "metadata": {
@@ -616,18 +606,7 @@
     },
     "pireanAppServicePlanSku": {
       "type": "array",
-      "defaultValue": [
-        {
-          "name": "backend-g3-asp",
-          "sku": {
-            "name": "P1v3",
-            "tier": "PremiumV3",
-            "size": "P1v3",
-            "family": "Pv3",
-            "capacity": 3
-          }
-        }
-      ],
+      "defaultValue": [],
       "metadata": {
         "description": "The SKU of the pirean tier App Service Plan. Add another plan by copying the existing JSON and incrementing the id field by 1"
       }
