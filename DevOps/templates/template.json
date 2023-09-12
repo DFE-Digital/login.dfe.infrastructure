@@ -584,10 +584,10 @@
         {
           "name": "backend-g2-asp",
           "sku": {
-            "name": "S1",
-            "tier": "Standard",
-            "size": "S1",
-            "family": "S1",
+            "name": "WS1",
+            "tier": "WorkflowStandard",
+            "size": "WS1",
+            "family": "WS1",
             "capacity": 1
           }
         }
@@ -1660,7 +1660,7 @@
             "value": "[if(contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2'),'','Linux')]"
           },
           "appServicePlanIsLinux": {
-            "value": "[contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2')]"
+            "value": "[not(contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2'))]"
           },
           "defaultCapacity": {
             "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku.capacity]"
