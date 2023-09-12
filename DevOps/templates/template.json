@@ -580,6 +580,16 @@
             "family": "Pv3",
             "capacity": 1
           }
+        },
+        {
+          "name": "backend-g2-asp",
+          "sku": {
+            "name": "S1",
+            "tier": "Standard",
+            "size": "S1",
+            "family": "S1",
+            "capacity": 1
+          }
         }
       ],
       "metadata": {
@@ -1647,10 +1657,10 @@
             "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku]"
           },
           "appServicePlanOS": {
-            "value": "Linux"
+            "value": "[if(contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2'),'','Linux')]"
           },
           "appServicePlanIsLinux": {
-            "value": true
+            "value": "[if(contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2'),'false','true')]"
           },
           "defaultCapacity": {
             "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku.capacity]"
