@@ -1660,7 +1660,7 @@
             "value": "[if(contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2'),'','Linux')]"
           },
           "appServicePlanIsLinux": {
-            "value": "[if(contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2'),'false','true')]"
+            "value": "[contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2')]"
           },
           "defaultCapacity": {
             "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku.capacity]"
