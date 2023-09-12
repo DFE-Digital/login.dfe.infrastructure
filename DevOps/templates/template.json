@@ -1255,9 +1255,6 @@
           "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-search-private-endpoint.json')]"
         },
         "parameters": {
-          "templatesBaseUri": {
-            "value": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=')]"
-          },
           "privateEndpointName": {
             "value": "[variables('azureSearchPrivateEndpoint').privateEndpointName]"
           },
@@ -1272,9 +1269,6 @@
           },
           "virtualNetworkId": {
             "value": "[variables('azureSearchPrivateEndpoint').virtualNetworkId]"
-          },
-          "azureSearchName": {
-            "value": "[parameters('azureSearchName')]"
           }
         }
       },
