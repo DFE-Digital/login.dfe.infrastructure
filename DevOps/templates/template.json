@@ -204,8 +204,8 @@
     "applicationSubnets": {
       "type": "array",
       "defaultValue": [
-        "backend-g2-sn",
-        "logicapp-backend-g2-sn"
+        "logicapp-backend-g2-sn",
+        "logicapp-backend-g2-pe-sn"
       ],
       "metadata": {
         "description": "Names of additional subnets to create for application integration"
