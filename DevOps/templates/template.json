@@ -204,7 +204,20 @@
     "applicationSubnets": {
       "type": "array",
       "defaultValue": [
+        "samltier-g1-sn",
+        "samltier-g2-sn",
+        "prestier-g1-sn",
+        "prestier-g2-sn",
+        "prestier-g3-sn",
+        "prestier-g4-sn",
+        "prestier-g5-sn",
+        "midtier-g1-sn",
+        "midtier-g2-sn",
+        "midtier-g3-sn",
+        "backend-g1-sn",
         "logicapp-backend-g2-sn",
+        "backend-g3-sn",
+        "utils-sn",
         "logicapp-backend-g2-pe-sn"
       ],
       "metadata": {
