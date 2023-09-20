@@ -659,6 +659,7 @@
     "azureSearchSubnetName": "azureSearch-sn-1",
     "workspaceId": "[tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-shd-laws'))]",
     "amplsSubnetName": "ampls-sn-1",
+    "schwkrLogicAppSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), 'logicapp-backend-g2-sn')]",
     "elasticSku": {
       "name": "ElasticPool",
       "tier": "Standard"
@@ -1232,7 +1233,7 @@
             "value": "[parameters('cdnIpRules')]"
           },
           "virtualNetworksSubNet": {
-            "value": ["logicapp-g1-sn"]
+            "value": ["[variables('schwkrLogicAppSubnetId')]"]
           }
         }
       },
