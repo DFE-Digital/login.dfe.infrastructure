@@ -1232,7 +1232,9 @@
             "value": "[parameters('cdnIpRules')]"
           },
           "virtualNetworksSubNet": {
-            "value": ["[variables('schwkrLogicAppSubnetId')]"]
+            "value": [{
+                "id":"[variables('schwkrLogicAppSubnetId')]"
+            }]
           }
         }
       },
