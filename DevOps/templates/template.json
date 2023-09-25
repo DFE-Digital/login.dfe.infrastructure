@@ -720,7 +720,7 @@
     },
     { 
       "name": "pireanVnetSubnets",
-       "count": "[length(parameters('pireanSubnets'))]",
+       "count": "[if(not(equals(parameters('environmentId'),'p01')),sub(length(parameters('pireanSubnets')),2),length(parameters('pireanSubnets')))]",
        "input": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('pireanSubnets')[copyIndex('pireanVnetSubnets')])]" 
     },
     { 
