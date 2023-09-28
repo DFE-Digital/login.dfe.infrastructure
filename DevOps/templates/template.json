@@ -941,8 +941,14 @@
           },
           "azureActiveDirectoryAdminSID": {
             "value": "[parameters('azureActiveDirectoryAdminSID')]"
+          },
+          "storageAccountName": {
+            "value": "[parameters('storageAccountName')]"
           }
-        }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Resources/deployments', 'storage-account')]"
+        ]
       }
     },
     {
@@ -993,8 +999,14 @@
                   },
                   "azureActiveDirectoryAdminSID": {
                     "value": "[parameters('azureActiveDirectoryAdminSID')]"
+                  },
+                  "storageAccountName": {
+                    "value": "[parameters('storageAccountName')]"
                   }
-               }
+                },
+                "dependsOn": [
+                  "[resourceId('Microsoft.Resources/deployments', 'storage-account')]"
+                ]
               }
             }
           ]
