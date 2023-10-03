@@ -7,14 +7,7 @@ resources:
       name: DFE-Digital/login.dfe.devops
       ref: main
 
-# trigger:
-#   branches:
-#     include:
-#       - master
-#       - develop
-#     #  - feature/*
-#     # exclude:
-#     # - feature/*
+trigger: none
 
 parameters:
 - name: tran
