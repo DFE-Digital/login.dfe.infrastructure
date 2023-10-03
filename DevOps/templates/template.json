@@ -1820,19 +1820,18 @@
       "type": "Microsoft.ServiceBus/namespaces/topics",
       "apiVersion": "2022-01-01-preview",
       "properties": {
-        "properties": {
-          "maxMessageSizeInKilobytes": 1024,
-          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
-          "maxSizeInMegabytes": 1024,
-          "requiresDuplicateDetection": false,
-          "duplicateDetectionHistoryTimeWindow": "PT10M",
-          "enableBatchedOperations": true,
-          "status": "Active",
-          "supportOrdering": true,
-          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
-          "enablePartitioning": false,
-          "enableExpress": false
-      }
+        "maxMessageSizeInKilobytes": 1024,
+        "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+        "maxSizeInMegabytes": 1024,
+        "requiresDuplicateDetection": false,
+        "duplicateDetectionHistoryTimeWindow": "PT10M",
+        "enableBatchedOperations": true,
+        "status": "Active",
+        "supportOrdering": true,
+        "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+        "enablePartitioning": false,
+        "enableExpress": false
+      
       },
       "copy": {
         "name": "TopicNames",
@@ -1849,18 +1848,16 @@
       "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
       "apiVersion": "2022-01-01-preview",
       "properties": {
-        "properties": {
-          "isClientAffine": false,
-          "lockDuration": "PT2M",
-          "requiresSession": false,
-          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
-          "deadLetteringOnMessageExpiration": false,
-          "deadLetteringOnFilterEvaluationExceptions": true,
-          "maxDeliveryCount": 10,
-          "status": "Active",
-          "enableBatchedOperations": true,
-          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S"
-      }
+        "isClientAffine": false,
+        "lockDuration": "PT5M",
+        "requiresSession": false,
+        "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+        "deadLetteringOnMessageExpiration": false,
+        "deadLetteringOnFilterEvaluationExceptions": true,
+        "maxDeliveryCount": 10,
+        "status": "Active",
+        "enableBatchedOperations": true,
+        "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S"
       },
       "copy": {
         "name": "TopicNames",
