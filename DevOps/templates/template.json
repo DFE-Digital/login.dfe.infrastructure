@@ -1207,7 +1207,6 @@
       ]
     },
     {
-      "condition": "[parameters('deployDataFactory')]",
       "name": "azure-datafactory",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
