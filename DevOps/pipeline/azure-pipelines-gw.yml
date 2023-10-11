@@ -7,14 +7,7 @@ resources:
       name: DFE-Digital/login.dfe.devops
       ref: feature/DSI-6338
 
-# trigger:
-#   branches:
-#     include:
-#       - master
-#       - develop
-#     #  - feature/*
-#     # exclude:
-#     # - feature/*
+trigger: none
 
 parameters:
 - name: tran
@@ -28,10 +21,6 @@ parameters:
 - name: test
   type: boolean
   displayName: 'Test Deployment'
-  default: false
-- name: int
-  type: boolean
-  displayName: 'INT Deployment'
   default: false
 - name: pp
   type: boolean
@@ -55,7 +44,7 @@ stages:
     - template:  pipeline/checkov.yml@devopsTemplates
 
 - ${{ each parameter in parameters }}:
-  - ${{ if in(parameter.key, 'tran','dev','test','int','pp','pr') }}:
+  - ${{ if in(parameter.key, 'tran','dev','test','pp','pr') }}:
     - ${{ if eq(parameter.value, 'true') }}:
       - stage: Deployment_${{parameter.Key}}
         displayName: "Deployment [${{parameter.Key}}]"

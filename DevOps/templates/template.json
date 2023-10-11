@@ -215,7 +215,7 @@
         "midtier-g2-sn",
         "midtier-g3-sn",
         "backend-g1-sn",
-        "backend-g2-sn",
+        "logicapp-backend-g2-sn",
         "backend-g3-sn",
         "utils-sn"
       ],
@@ -580,6 +580,16 @@
             "family": "Pv3",
             "capacity": 1
           }
+        },
+        {
+          "name": "backend-g2-asp",
+          "sku": {
+            "name": "WS1",
+            "tier": "WorkflowStandard",
+            "size": "WS1",
+            "family": "WS1",
+            "capacity": 1
+          }
         }
       ],
       "metadata": {
@@ -648,6 +658,7 @@
     "azureSearchSubnetName": "azureSearch-sn-1",
     "workspaceId": "[tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-shd-laws'))]",
     "amplsSubnetName": "ampls-sn-1",
+    "schwkrLogicAppSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), 'logicapp-backend-g2-sn')]",
     "elasticSku": {
       "name": "ElasticPool",
       "tier": "Standard"
@@ -709,7 +720,7 @@
     },
     { 
       "name": "pireanVnetSubnets",
-       "count": "[length(parameters('pireanSubnets'))]",
+       "count": "[if(not(equals(parameters('environmentId'),'p01')),sub(length(parameters('pireanSubnets')),2),length(parameters('pireanSubnets')))]",
        "input": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('pireanSubnets')[copyIndex('pireanVnetSubnets')])]" 
     },
     { 
@@ -930,8 +941,14 @@
           },
           "azureActiveDirectoryAdminSID": {
             "value": "[parameters('azureActiveDirectoryAdminSID')]"
+          },
+          "storageAccountName": {
+            "value": "[parameters('storageAccountName')]"
           }
-        }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Resources/deployments', 'storage-account')]"
+        ]
       }
     },
     {
@@ -982,8 +999,14 @@
                   },
                   "azureActiveDirectoryAdminSID": {
                     "value": "[parameters('azureActiveDirectoryAdminSID')]"
+                  },
+                  "storageAccountName": {
+                    "value": "[parameters('storageAccountName')]"
                   }
-               }
+                },
+                "dependsOn": [
+                  "[resourceId('Microsoft.Resources/deployments', 'storage-account')]"
+                ]
               }
             }
           ]
@@ -1221,7 +1244,9 @@
             "value": "[parameters('cdnIpRules')]"
           },
           "virtualNetworksSubNet": {
-            "value": []
+            "value": [{
+                "id":"[variables('schwkrLogicAppSubnetId')]"
+            }]
           }
         }
       },
@@ -1257,9 +1282,6 @@
           "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-search-private-endpoint.json')]"
         },
         "parameters": {
-          "templatesBaseUri": {
-            "value": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=')]"
-          },
           "privateEndpointName": {
             "value": "[variables('azureSearchPrivateEndpoint').privateEndpointName]"
           },
@@ -1274,9 +1296,6 @@
           },
           "virtualNetworkId": {
             "value": "[variables('azureSearchPrivateEndpoint').virtualNetworkId]"
-          },
-          "azureSearchName": {
-            "value": "[parameters('azureSearchName')]"
           }
         }
       },
@@ -1647,10 +1666,10 @@
             "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku]"
           },
           "appServicePlanOS": {
-            "value": "Linux"
+            "value": "[if(contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2'),'','Linux')]"
           },
           "appServicePlanIsLinux": {
-            "value": true
+            "value": "[not(contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2'))]"
           },
           "defaultCapacity": {
             "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku.capacity]"
@@ -1801,19 +1820,18 @@
       "type": "Microsoft.ServiceBus/namespaces/topics",
       "apiVersion": "2022-01-01-preview",
       "properties": {
-        "properties": {
-          "maxMessageSizeInKilobytes": 1024,
-          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
-          "maxSizeInMegabytes": 1024,
-          "requiresDuplicateDetection": false,
-          "duplicateDetectionHistoryTimeWindow": "PT10M",
-          "enableBatchedOperations": true,
-          "status": "Active",
-          "supportOrdering": true,
-          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
-          "enablePartitioning": false,
-          "enableExpress": false
-      }
+        "maxMessageSizeInKilobytes": 1024,
+        "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+        "maxSizeInMegabytes": 1024,
+        "requiresDuplicateDetection": false,
+        "duplicateDetectionHistoryTimeWindow": "PT10M",
+        "enableBatchedOperations": true,
+        "status": "Active",
+        "supportOrdering": true,
+        "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+        "enablePartitioning": false,
+        "enableExpress": false
+      
       },
       "copy": {
         "name": "TopicNames",
@@ -1830,18 +1848,16 @@
       "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
       "apiVersion": "2022-01-01-preview",
       "properties": {
-        "properties": {
-          "isClientAffine": false,
-          "lockDuration": "PT2M",
-          "requiresSession": false,
-          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
-          "deadLetteringOnMessageExpiration": false,
-          "deadLetteringOnFilterEvaluationExceptions": true,
-          "maxDeliveryCount": 10,
-          "status": "Active",
-          "enableBatchedOperations": true,
-          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S"
-      }
+        "isClientAffine": false,
+        "lockDuration": "PT5M",
+        "requiresSession": false,
+        "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+        "deadLetteringOnMessageExpiration": false,
+        "deadLetteringOnFilterEvaluationExceptions": true,
+        "maxDeliveryCount": 10,
+        "status": "Active",
+        "enableBatchedOperations": true,
+        "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S"
       },
       "copy": {
         "name": "TopicNames",
