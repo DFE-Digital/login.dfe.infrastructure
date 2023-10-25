@@ -947,7 +947,7 @@
             "value": "[variables('sqlServerDiagSettName')]"
           },
           "omsWorkspaceName": {
-            "value": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('workspaceId'))]"
+            "value": "[variables('workspaceId')]"
           }
         },
         "dependsOn": [
