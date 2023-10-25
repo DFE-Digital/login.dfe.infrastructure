@@ -657,6 +657,7 @@
     "redisSubnetName": "redis-sn-1",
     "azureSearchSubnetName": "azureSearch-sn-1",
     "workspaceId": "[tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-shd-laws'))]",
+    "sqlServerDiagSettName": "[tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-sql-laws'))]",
     "amplsSubnetName": "ampls-sn-1",
     "schwkrLogicAppSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), 'logicapp-backend-g2-sn')]",
     "elasticSku": {
@@ -942,8 +943,11 @@
           "azureActiveDirectoryAdminSID": {
             "value": "[parameters('azureActiveDirectoryAdminSID')]"
           },
-          "storageAccountName": {
-            "value": "[parameters('storageAccountName')]"
+          "diagnosticSettingsName": {
+            "value": "[variables('sqlServerDiagSettName')]"
+          },
+          "omsWorkspaceName": {
+            "value": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('workspaceId'))]"
           }
         },
         "dependsOn": [
