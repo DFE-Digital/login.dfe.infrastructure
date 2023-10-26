@@ -657,6 +657,9 @@
     "redisSubnetName": "redis-sn-1",
     "azureSearchSubnetName": "azureSearch-sn-1",
     "workspaceId": "[tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-shd-laws'))]",
+    "sqlServerDiagSettName": "[tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-sql-laws'))]",
+    "sbnServerDiagSettName": "[tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-sbn-laws'))]",
+    "schServerDiagSettName": "[tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-sch-laws'))]",
     "amplsSubnetName": "ampls-sn-1",
     "schwkrLogicAppSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), 'logicapp-backend-g2-sn')]",
     "elasticSku": {
@@ -942,8 +945,11 @@
           "azureActiveDirectoryAdminSID": {
             "value": "[parameters('azureActiveDirectoryAdminSID')]"
           },
-          "storageAccountName": {
-            "value": "[parameters('storageAccountName')]"
+          "diagnosticSettingsName": {
+            "value": "[variables('sqlServerDiagSettName')]"
+          },
+          "omsWorkspaceName": {
+            "value": "[variables('workspaceId')]"
           }
         },
         "dependsOn": [
@@ -1000,8 +1006,11 @@
                   "azureActiveDirectoryAdminSID": {
                     "value": "[parameters('azureActiveDirectoryAdminSID')]"
                   },
-                  "storageAccountName": {
-                    "value": "[parameters('storageAccountName')]"
+                  "diagnosticSettingsName": {
+                    "value": "[variables('sqlServerDiagSettName')]"
+                  },
+                  "omsWorkspaceName": {
+                    "value": "[variables('workspaceId')]"
                   }
                 },
                 "dependsOn": [
@@ -1267,6 +1276,12 @@
         "parameters": {
           "azureSearchName": {
             "value": "[parameters('azureSearchName')]"
+          },
+          "diagnosticSettingsName": {
+            "value": "[variables('schServerDiagSettName')]"
+          },
+          "omsWorkspaceName": {
+            "value": "[variables('workspaceId')]"
           }
         }
       }
@@ -1432,6 +1447,12 @@
           },
           "serviceBusSku": {
             "value": "[parameters('serviceBusSku')]"
+          },
+          "diagnosticSettingsName": {
+            "value": "[variables('sbnServerDiagSettName')]"
+          },
+          "omsWorkspaceName": {
+            "value": "[variables('workspaceId')]"
           }
         }
       }
