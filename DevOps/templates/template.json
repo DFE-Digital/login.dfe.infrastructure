@@ -656,7 +656,7 @@
     "serviceBusApiVersion": "2017-04-01",
     "redisSubnetName": "redis-sn-1",
     "azureSearchSubnetName": "azureSearch-sn-1",
-    "workspaceId": "[tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-shd-laws'))]",
+    "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-shd-laws')))]",
     "sqlServerDiagSettName": "[tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-sql-laws'))]",
     "sbnServerDiagSettName": "[tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-sbn-laws'))]",
     "schServerDiagSettName": "[tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-sch-laws'))]",
@@ -948,7 +948,7 @@
           "diagnosticSettingsName": {
             "value": "[variables('sqlServerDiagSettName')]"
           },
-          "omsWorkspaceName": {
+          "omsWorkspaceId": {
             "value": "[variables('workspaceId')]"
           }
         },
@@ -1009,7 +1009,7 @@
                   "diagnosticSettingsName": {
                     "value": "[variables('sqlServerDiagSettName')]"
                   },
-                  "omsWorkspaceName": {
+                  "omsWorkspaceId": {
                     "value": "[variables('workspaceId')]"
                   }
                 },
@@ -1178,7 +1178,7 @@
             "value": "[parameters('appInsightsName')]"
           },
           "WorkspaceResourceId": {
-            "value": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('workspaceId'))]"
+            "value": "[variables('workspaceId')]"
           }
         }
       },
@@ -1280,7 +1280,7 @@
           "diagnosticSettingsName": {
             "value": "[variables('schServerDiagSettName')]"
           },
-          "omsWorkspaceName": {
+          "omsWorkspaceId": {
             "value": "[variables('workspaceId')]"
           }
         }
@@ -1451,7 +1451,7 @@
           "diagnosticSettingsName": {
             "value": "[variables('sbnServerDiagSettName')]"
           },
-          "omsWorkspaceName": {
+          "omsWorkspaceId": {
             "value": "[variables('workspaceId')]"
           }
         }
