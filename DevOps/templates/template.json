@@ -215,7 +215,6 @@
         "midtier-g2-sn",
         "midtier-g3-sn",
         "backend-g1-sn",
-        "logicapp-backend-g2-sn",
         "backend-g3-sn",
         "utils-sn"
       ],
@@ -580,16 +579,6 @@
             "family": "Pv3",
             "capacity": 1
           }
-        },
-        {
-          "name": "backend-g2-asp",
-          "sku": {
-            "name": "WS1",
-            "tier": "WorkflowStandard",
-            "size": "WS1",
-            "family": "WS1",
-            "capacity": 1
-          }
         }
       ],
       "metadata": {
@@ -661,7 +650,6 @@
     "sbnServerDiagSettName": "[tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-sbn-laws'))]",
     "schServerDiagSettName": "[tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-sch-laws'))]",
     "amplsSubnetName": "ampls-sn-1",
-    "schwkrLogicAppSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), 'logicapp-backend-g2-sn')]",
     "elasticSku": {
       "name": "ElasticPool",
       "tier": "Standard"
