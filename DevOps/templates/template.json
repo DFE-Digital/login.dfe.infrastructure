@@ -1239,11 +1239,6 @@
           },
           "ipRules": {
             "value": "[parameters('cdnIpRules')]"
-          },
-          "virtualNetworksSubNet": {
-            "value": [{
-                "id":"[variables('schwkrLogicAppSubnetId')]"
-            }]
           }
         }
       },
