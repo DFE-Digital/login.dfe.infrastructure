@@ -53,7 +53,7 @@ stages:
         variables:
         - group: dsi-${{parameter.key}}-kv
         jobs:
-        - template: pipeline/frondDoor.yml@devopsTemplates
+        - template: pipeline/frontDoor.yml@devopsTemplates
           parameters:
             ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
               serviceConnection: $(devServiceConnection)
