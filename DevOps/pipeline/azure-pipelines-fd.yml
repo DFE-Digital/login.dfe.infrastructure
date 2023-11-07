@@ -68,4 +68,3 @@ stages:
             ${{ else }}:
               sslCertificateName: ${{parameter.Key}}-services-signin
               isProduction: false
-              pipDeploy: false # true when you need to create or update the pip
