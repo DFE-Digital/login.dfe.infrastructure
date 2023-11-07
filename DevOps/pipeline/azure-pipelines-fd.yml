@@ -1,0 +1,71 @@
+name: $(BuildDefinitionName)_tag-$(BuildID)_at-$(Date:yyyyMMdd)$(Rev:.r)
+resources:
+  repositories:
+    - repository: devopsTemplates
+      type: github
+      endpoint: DfE-Digital
+      name: DFE-Digital/login.dfe.devops
+      ref: main
+
+trigger: none
+
+parameters:
+- name: tran
+  type: boolean
+  displayName: 'Transformation Deployment'
+  default: false
+- name: dev
+  type: boolean
+  displayName: 'Dev Deployment'
+  default: false
+- name: test
+  type: boolean
+  displayName: 'Test Deployment'
+  default: false
+- name: pp
+  type: boolean
+  displayName: 'Pre-Prod Deployment'
+  default: false
+- name: pr
+  type: boolean
+  displayName: 'Prod Deployment'
+  default: false
+
+variables:
+- group: dsi-global
+
+stages:
+
+# Code Scans & Build the artifact for deployment
+- stage: scanGateway
+  displayName: "Scan tools"
+  jobs:
+    # Code scaning tools
+    - template:  pipeline/checkov.yml@devopsTemplates
+
+- ${{ each parameter in parameters }}:
+  - ${{ if in(parameter.key, 'tran','dev','test','pp','pr') }}:
+    - ${{ if eq(parameter.value, 'true') }}:
+      - stage: Deployment_${{parameter.Key}}
+        displayName: "Deployment [${{parameter.Key}}]"
+        dependsOn: 
+        - scanGateway
+        variables:
+        - group: dsi-${{parameter.key}}-kv
+        jobs:
+        - template: pipeline/frondDoor.yml@devopsTemplates
+          parameters:
+            ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
+              serviceConnection: $(devServiceConnection)
+            ${{ elseif eq(parameter.key, 'pr') }}:
+              serviceConnection: $(prodServiceConnection)
+            ${{ else }}:
+              serviceConnection: $(testServiceConnection)
+            environmentName: ${{parameter.key}}
+            ${{ if eq(parameter.key, 'pr') }}:
+              sslCertificateName: prod-services-signin
+              isProduction: true
+            ${{ else }}:
+              sslCertificateName: ${{parameter.Key}}-services-signin
+              isProduction: false
+              pipDeploy: false # true when you need to create or update the pip
