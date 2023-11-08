@@ -21,6 +21,12 @@ pr:
     - develop
 
 parameters:
+- name: env
+  type: string
+  displayName: 'Select the K6 test environment'
+  default: westeurope
+  values:
+    - northeurope
 - name: prereq
   type: boolean
   displayName: 'Deploy Pre-Requisites only'
