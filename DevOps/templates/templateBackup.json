@@ -37,6 +37,12 @@
     "amplsName": {
       "type": "string"
     },
+    "neuResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "The North Europe Recource Group Name"
+      }
+    },
     "sqlAdministratorLogin": {
       "type": "string",
       "metadata": {
@@ -53,6 +59,12 @@
       "type": "string",
       "metadata": {
         "description": "The name of the SQL Server"
+      }
+    },
+    "neuSqlServerName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the SQL Server in North Europe"
       }
     },
     "elasticPoolName": {
@@ -84,6 +96,12 @@
       "type": "string",
       "metadata": {
         "description": "Name of the Key Vault resource"
+      }
+    },
+    "keyVaultDigiPassName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Key Vault Devices resource for Digipass"
       }
     },
     "azureSearchName": {
@@ -132,6 +150,13 @@
         "description": "GovWiFi | Purple | Guest"
       }
     },
+    "keyvaultCertificateNames": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Names of the certificates stored in keyvault"
+      }
+    },
     "elasticPoolSku": {
       "type": "object",
       "metadata": {
@@ -149,6 +174,20 @@
       "metadata": {
         "description": "Object Id of the aad shd client id for Devices vault connection"
       }  
+    },
+    "azureDevOpsObjectId": {
+      "type": "string",
+      "metadata": {
+        "description": "Object Id of the Azure Websites RP",
+        "environmentVariable": "azureDevOpsObjectId"
+      }
+    },
+    "keyVaultApplicationObjectId": {
+      "type": "string",
+      "metadata": {
+        "description": "Object Id of the Key Vault application",
+        "environmentVariable": "keyVaultApplicationObjectId"
+      }
     },
     "destructiveVirtualNetworkDeploy": {
       "type": "string",
@@ -181,6 +220,20 @@
       ],
       "metadata": {
         "description": "Names of additional subnets to create for application integration"
+      }
+    },
+     "pireanSubnets": {
+      "type": "array",
+      "defaultValue": [
+        "pmppsyncfa-sn",
+        "pmppsyncst-sn",
+        "pmpporgssyncfa-sn",
+        "pmpporgssyncst-sn",
+        "pmppprodeltafa-sn",
+        "pmppprodeltast-sn"
+      ],
+      "metadata": {
+        "description": "Names of pirean subnets to create for service bus integration"
       }
     },
     "TopicNames": {
@@ -223,6 +276,10 @@
     "platformGlobalName": {
       "type": "string",
       "defaultValue": "signin"
+    },
+    "infrastructureName": {
+      "type": "string",
+      "defaultValue": "shd"
     },
     "serviceEndpointList": {
       "type": "array",
@@ -585,6 +642,7 @@
     }
   },
   "variables": {
+    "serviceBusApiVersion": "2017-04-01",
     "redisSubnetName": "redis-sn-1",
     "azureSearchSubnetName": "azureSearch-sn-1",
     "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-shd-laws')))]",
@@ -624,13 +682,46 @@
       "amplsPrivateLinkResource": "[resourceId('Microsoft.insights/privateLinkScopes', parameters('amplsName'))]",
       "amplsPrivateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('amplsSubnetName'))]"
     },
-    "copy": [
-      { 
-        "name": "listOfDatabaseNames",
-          "count": "[length(parameters('databaseNames'))]",
-          "input": "[concat(resourceGroup().id, '/providers/Microsoft.Sql/servers/', parameters('sqlServerName'), '/databases/', parameters('databaseNames')[copyIndex('listOfDatabaseNames')].name)]"
-
+    
+    "keyVaultAccessPolicies": [
+      {
+        "objectId": "[parameters('aadshdclientid')]",
+        "tenantId": "[subscription().tenantId]",
+        "permissions": {
+          "secrets": [
+            "Get",
+            "List",
+            "Set",
+            "Delete",
+            "Recover",
+            "Backup",
+            "Restore"
+          ]
+        }
       }
+    ],
+    "copy": [{
+      "name": "virtualNetworksSubNet",
+      "count": "[length(parameters('applicationSubnets'))]",
+      "input": {
+        "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('applicationSubnets')[copyIndex('virtualNetworksSubNet')])]",
+        "action": "Allow",
+        "state": "Succeeded"
+      }
+    },
+    { 
+      "name": "pireanVnetSubnets",
+       "count": "[if(not(equals(parameters('environmentId'),'p01')),sub(length(parameters('pireanSubnets')),2),length(parameters('pireanSubnets')))]",
+       "input": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('pireanSubnets')[copyIndex('pireanVnetSubnets')])]" 
+    },
+    { 
+      "name": "listOfDatabaseNames",
+       "count": "[length(parameters('databaseNames'))]",
+       "input": "[concat(resourceGroup().id, '/providers/Microsoft.Sql/servers/', parameters('sqlServerName'), '/databases/', parameters('databaseNames')[copyIndex('listOfDatabaseNames')].name)]"
+ 
+    }
+       
+
     ]
     
   },
@@ -853,6 +944,140 @@
           "[resourceId('Microsoft.Resources/deployments', 'storage-account')]"
         ]
       }
+    },
+    {
+      "condition": "[parameters('provisionSQLGeoReplication')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "neu-Resources-deployment",
+      "resourceGroup": "[parameters('neuResourceGroup')]",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": [
+            {
+              "name": "sql-server-neu-deployment",
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2020-10-01",
+              "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                  "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-sql.json')]"
+                },
+                "parameters": {
+                  "sqlAdministratorLogin": {
+                    "value": "[parameters('sqlAdministratorLogin')]"
+                  },
+                  "sqlAdministratorLoginPassword": {
+                    "value": "[parameters('sqlAdministratorLoginPassword')]"
+                  },
+                  "sqlserverName": {
+                    "value": "[parameters('neuSqlServerName')]"
+                  },
+                  "elasticPoolName": {
+                    "value": "[parameters('elasticPoolName')]"
+                  },
+                  "CHGWIP": {
+                    "value": "[parameters('CHGWIP')]"
+                  },
+                  "elasticPoolSku": {
+                    "value": "[parameters('elasticPoolSku')]"
+                  },
+                  "elasticPoolProperties": {
+                    "value": "[parameters('elasticPoolProperties')]"
+                  },
+                  "azureActiveDirectoryAdmin": {
+                    "value": "[parameters('azureActiveDirectoryAdmin')]"
+                  },
+                  "azureActiveDirectoryAdminSID": {
+                    "value": "[parameters('azureActiveDirectoryAdminSID')]"
+                  },
+                  "diagnosticSettingsName": {
+                    "value": "[variables('sqlServerDiagSettName')]"
+                  },
+                  "omsWorkspaceId": {
+                    "value": "[variables('workspaceId')]"
+                  }
+                },
+                "dependsOn": [
+                  "[resourceId('Microsoft.Resources/deployments', 'storage-account')]"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "condition": "[parameters('provisionSQLGeoReplication')]",
+      "apiVersion": "2020-10-01",
+      "name": "[concat('sql-server-firewall-rule-neu','-',parameters('sqlFireWallRules')[copyIndex()].Name)]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[parameters('neuResourceGroup')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/sql-server-firewall-rules.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "serverName": {
+            "value": "[parameters('neuSqlServerName')]"
+          },
+          "subnetResourceIdList": {
+            "value": "[createArray()]"
+          },
+          "copyMode": {
+            "value": "[parameters('sqlFirewallRulesCopyMode')]"
+          },
+          "ipAddresses": {
+            "value": ["[parameters('sqlFireWallRules')[copyIndex()].IPRange]"]
+          },
+          "firewallRuleNamePrefix": {
+            "value": "[parameters('sqlFireWallRules')[copyIndex()].DisplayName]"
+          }
+        }
+      },
+      "copy": {
+        "name": "ipaddresscopy",
+        "count": "[length(parameters('sqlFireWallRules'))]",
+        "mode": "Parallel"
+      },   
+      "dependsOn": [
+        "[resourceId(parameters('neuResourceGroup'),'Microsoft.Resources/deployments', 'neu-Resources-deployment')]"
+      ]
+    },
+    {
+      "condition": "[parameters('provisionSQLGeoReplication')]",
+      "apiVersion": "2020-10-01",
+      "name": "sql-server-failover-group",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/sql-server-failover-groups.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "sqlserverName": {
+            "value": "[parameters('sqlServerName')]"
+          },
+          "neuSqlServerId": {
+            "value": "[resourceId(parameters('neuResourceGroup'),'Microsoft.Sql/servers', parameters('neuSqlServerName'))]"
+          },
+          "databaseNames": {
+            "value": "[variables('listOfDatabaseNames')]"
+        
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]",
+        "[resourceId(parameters('neuResourceGroup'),'Microsoft.Resources/deployments', 'neu-Resources-deployment')]"
+        
+      ]
     },
     {
       "condition": "[parameters('deployVirtualNetwork')]",
@@ -1313,7 +1538,7 @@
             "value": "[parameters('serviceBusNamespaceName')]"
           },
           "subnetResourceIdList": {
-            "value": "[if(parameters('deployVirtualNetwork'), reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value, variables('emptyArray'))]"
+            "value": "[if(parameters('deployVirtualNetwork'), union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('pireanVnetSubnets')), variables('emptyArray'))]"
           },
           "ipAddresses": {
             "value": "[parameters('LogicAppConnectionIpRulesServiceBus')]"
