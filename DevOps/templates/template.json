@@ -910,6 +910,7 @@
       "apiVersion": "2020-10-01",
       "name": "add-appInsights-instrumentation-key-vault-secret",
       "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -1408,6 +1409,7 @@
       "condition": "[not(empty(parameters('databaseNames')))]",
       "name": "[if(empty(parameters('databaseNames')),'no-databases-to-add-in-keyvault',parameters('databaseNames')[copyIndex()].secretName)]",
       "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
       "apiVersion": "2020-10-01",
       "properties": {
         "mode": "Incremental",
@@ -1498,6 +1500,7 @@
       "condition": "[not(empty(parameters('TopicNames')))]",
       "name": "[if(empty(parameters('TopicNames')),'no-TopicNames-to-add-in-keyvault', parameters('TopicNames')[copyIndex()].secretNameTopic)]",
       "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
       "apiVersion": "2020-10-01",
       "properties": {
         "mode": "Incremental",
@@ -1534,6 +1537,7 @@
       "condition": "[not(empty(parameters('TopicNames')))]",
       "name": "[if(empty(parameters('TopicNames')),'no-Subscriptions-to-add-in-keyvault', parameters('TopicNames')[copyIndex()].secretNameSubscription)]",
       "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
       "apiVersion": "2020-10-01",
       "properties": {
         "mode": "Incremental",
@@ -1570,6 +1574,7 @@
       "apiVersion": "2020-10-01",
       "name": "add-Search-Name-key-vault-secret",
       "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -1599,6 +1604,7 @@
       "apiVersion": "2020-10-01",
       "name": "add-Search-Apikey-key-vault-secret",
       "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
