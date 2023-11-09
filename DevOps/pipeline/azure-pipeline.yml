@@ -23,7 +23,7 @@ pr:
 parameters:
 - name: env
   type: string
-  displayName: 'Select the K6 test environment'
+  displayName: 'Select Deploy environment'
   default: westeurope
   values:
     - westeurope
