@@ -21,9 +21,9 @@ pr:
     - develop
 
 parameters:
-- name: env
+- name: location
   type: string
-  displayName: 'Select Deploy environment'
+  displayName: 'Select Deploy location'
   default: westeurope
   values:
     - westeurope
@@ -91,6 +91,7 @@ stages:
               environmentName: ${{parameter.key}}
               infrastuctureType: pre_req_infr
               deployKv: ${{parameter.kv}}
+              deploymentLocation: ${{parameter.location}}
 
         - ${{ else }}:
           - template: pipeline/infrastructure.yml@devopsTemplates
@@ -108,3 +109,4 @@ stages:
               destructiveVirtualNetworkDeploy: "Enabled" #Disabled,Enabled
               deployVirtualNetwork: "true" #Deploying the subnets
               deployASP: "true" #Deploying the application service plans
+              deploymentLocation: ${{parameter.location}}
