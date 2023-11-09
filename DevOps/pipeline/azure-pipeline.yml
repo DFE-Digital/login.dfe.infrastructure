@@ -90,7 +90,7 @@ stages:
                 serviceConnection: $(testServiceConnection)
               environmentName: ${{parameter.key}}
               infrastuctureType: pre_req_infr
-              deployKv: ${{parameter.kv}}
+              deployKv: "${{parameter.kv}}"
               deploymentLocation: ${{parameters.location}}
 
         - ${{ else }}:
