@@ -31,6 +31,10 @@ parameters:
   type: boolean
   displayName: 'Deploy Pre-Requisites only'
   default: false
+- name: kv
+  type: boolean
+  displayName: 'Deploy Key vault only if Pre-Requisites selected'
+  default: false
 - name: tran
   type: boolean
   displayName: 'Transformation Deployment'
@@ -85,6 +89,7 @@ stages:
                 serviceConnection: $(testServiceConnection)
               environmentName: ${{parameter.key}}
               infrastuctureType: pre_req_infr
+              deployKv: ${{parameter.kv}}
 
         - ${{ else }}:
           - template: pipeline/infrastructure.yml@devopsTemplates
