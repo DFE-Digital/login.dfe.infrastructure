@@ -91,7 +91,7 @@ stages:
               environmentName: ${{parameter.key}}
               infrastuctureType: pre_req_infr
               deployKv: ${{parameter.kv}}
-              deploymentLocation: ${{parameter.location}}
+              deploymentLocation: ${{parameters.location}}
 
         - ${{ else }}:
           - template: pipeline/infrastructure.yml@devopsTemplates
