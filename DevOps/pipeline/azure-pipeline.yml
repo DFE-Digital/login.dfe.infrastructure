@@ -109,4 +109,4 @@ stages:
               destructiveVirtualNetworkDeploy: "Enabled" #Disabled,Enabled
               deployVirtualNetwork: "true" #Deploying the subnets
               deployASP: "true" #Deploying the application service plans
-              deploymentLocation: ${{parameter.location}}
+              deploymentLocation: ${{parameters.location}}
