@@ -144,12 +144,6 @@
         "description": "Properties for the elastic pool"
       }
     },
-    "aadshdclientid": {
-      "type": "string",
-      "metadata": {
-        "description": "Object Id of the aad shd client id for Devices vault connection"
-      }  
-    },
     "destructiveVirtualNetworkDeploy": {
       "type": "string",
       "defaultValue": "Disabled",
@@ -286,13 +280,6 @@
       "defaultValue": true,
       "metadata": {
         "description": "Whether to provision Azure Managed Grafana Instance"
-      }
-    },
-    "provisionSQLGeoReplication": {
-      "type": "bool",
-      "defaultValue": true,
-      "metadata": {
-        "description": "Whether to provision SQL Server Geo Replication"
       }
     },
     "deployDataFactory": {
@@ -559,29 +546,6 @@
       "metadata": {
         "description": "Whether to deploy the Application Service Plans"
       }
-    },
-    "sqlFireWallRules": {
-      "type": "array",
-      "defaultValue": [
-        {
-          "Name": "DfE-London-Peering",
-          "DisplayName": "DfE-(London Peering)",
-          "IPRange": "104.209.113.99-104.209.113.99"
-        },
-        {
-          "Name": "DfE-London-VPN",
-          "DisplayName": "DfE-(London VPN)",
-          "IPRange": "217.38.175.55-217.38.175.58"
-        },
-        {
-          "Name": "DfE-Palo-Alto-VPN",
-          "DisplayName": "DfE-(Palo Alto VPN)",
-          "IPRange": "208.127.46.232-208.127.46.255"
-        }
-      ],
-      "metadata": {
-        "description": "White listed SQL Server Firewall rules"
-      }
     }
   },
   "variables": {
@@ -624,14 +588,7 @@
       "amplsPrivateLinkResource": "[resourceId('Microsoft.insights/privateLinkScopes', parameters('amplsName'))]",
       "amplsPrivateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('amplsSubnetName'))]"
     },
-    "copy": [
-      { 
-        "name": "listOfDatabaseNames",
-          "count": "[length(parameters('databaseNames'))]",
-          "input": "[concat(resourceGroup().id, '/providers/Microsoft.Sql/servers/', parameters('sqlServerName'), '/databases/', parameters('databaseNames')[copyIndex('listOfDatabaseNames')].name)]"
-
-      }
-    ]
+    "copy": []
     
   },
   "resources": [
@@ -964,7 +921,7 @@
             "value": "[parameters('keyVaultName')]"
           },
           "secretName": {
-            "value": "appInsightsInstrumentationKey"
+            "value": "[if(equals(resourceGroup().location, 'westeurope'),'appInsightsInstrumentationKey','neuAppInsightsInstrumentationKey')]"
           },
           "secretValue": {
             "value": "[reference('app-insights').outputs.InstrumentationKey.value]"
@@ -1113,7 +1070,7 @@
             "value": "[parameters('azureCdnName')]"
           },
           "originName": {
-            "value": "[parameters('originName')]"
+            "value": "[replace(parameters('originName'), '-', '')]"
           },
           "originHostname": {
             "value": "[parameters('originHostname')]"
@@ -1216,88 +1173,6 @@
       }
     },
     {
-      "condition": "[parameters('deployServiceBus')]",
-      "name": "delay-service-bus-key-vault-secret",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments','service-bus')]"
-      ],
-      "properties": {
-        "expressionEvaluationOptions": {
-          "scope": "inner"
-        },
-        "mode": "Incremental",
-        "parameters": {
-          "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
-          },
-          "secretName": {
-            "value": "sharedServiceBusConnectionString"
-          },
-          "secretResourceId": {
-            "value": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', parameters('serviceBusNamespaceName'), 'RootManageSharedAccessKey')]"
-          },
-          "contentType": {
-            "value": "Shared service bus connection string"
-          },
-          "templateUri": {
-            "value": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]"
-          }
-        },
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "parameters": {
-            "keyVaultName": {
-              "type": "string"
-            },
-            "secretName": {
-              "type": "string"
-            },
-            "secretResourceId": {
-              "type": "string"
-            },
-            "contentType": {
-              "type": "string"
-            },
-            "templateUri": {
-              "type": "string"
-            }
-          },
-          "variables": {},
-          "resources": [
-            {
-              "apiVersion": "2020-10-01",
-              "name": "add-service-bus-key-vault-secret",
-              "type": "Microsoft.Resources/deployments",
-              "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                  "uri": "[parameters('templateUri')]",
-                  "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                  "keyVaultName": {
-                    "value": "[parameters('keyVaultName')]"
-                  },
-                  "secretName": {
-                    "value": "[parameters('secretName')]"
-                  },
-                  "secretValue": {
-                    "value": "[listkeys(parameters('secretResourceId'), '2017-04-01').primaryConnectionString]"
-                  },
-                  "contentType": {
-                    "value": "[parameters('contentType')]"
-                  }
-                }
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
       "condition": "[and(parameters('deployVirtualNetwork'), parameters('deployServiceBus'))]",
       "apiVersion": "2020-10-01",
       "name": "service-bus-firewall-rule",
@@ -1323,8 +1198,7 @@
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'service-bus')]"
       ]
-    },
-    
+    }, 
     {
       "condition": "[parameters('deployASP')]",
       "apiVersion": "2020-10-01",
@@ -1565,35 +1439,6 @@
       ]
     },
     {
-      "apiVersion": "2020-10-01",
-      "name": "add-sql-server-name-key-vault-secret",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
-          },
-          "secretName": {
-            "value": "platformGlobalServerName"
-          },
-          "secretValue": {
-            "value": "[concat(parameters('sqlServerName'),'.database.windows.net')]"
-          },
-          "contentType": {
-            "value": ""
-          }
-        }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]"
-      ]
-    },
-    {
       "condition": "[not(empty(parameters('TopicNames')))]",
       "name": "[if(empty(parameters('TopicNames')),'no-topics-to-deploy', concat(parameters('serviceBusNamespaceName'), '/', parameters('TopicNames')[copyIndex()].name))]",
       "type": "Microsoft.ServiceBus/namespaces/topics",
@@ -1736,7 +1581,7 @@
             "value": "[parameters('keyVaultName')]"
           },
           "secretName": {
-            "value": "azureSearchName"
+            "value": "[if(equals(resourceGroup().location, 'westeurope'),'azureSearchName','neuAzureSearchName')]"
           },
           "secretValue": {
             "value": "[parameters('azureSearchName')]"
@@ -1765,7 +1610,7 @@
             "value": "[parameters('keyVaultName')]"
           },
           "secretName": {
-            "value": "azureSearchkey"
+            "value": "[if(equals(resourceGroup().location, 'westeurope'),'azureSearchkey','neuAzureSearchkey')]"
           },
           "secretValue": {
             "value": "[reference('azure-search', '2020-10-01').outputs.azureSearchKey.value]"
