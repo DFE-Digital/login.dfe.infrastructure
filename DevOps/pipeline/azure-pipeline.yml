@@ -24,8 +24,9 @@ parameters:
 - name: env
   type: string
   displayName: 'Select the K6 test environment'
-  default: 'westeurope'
+  default: westeurope
   values:
+    - westeurope
     - northeurope
 - name: prereq
   type: boolean
