@@ -1479,7 +1479,7 @@
     {
       "condition": "[and(and(equals(resourceGroup().location, 'northeurope'),parameters('deployVirtualNetwork')), parameters('deployServiceBus'))]",
       "apiVersion": "2020-10-01",
-      "name": "service-bus-firewall-rule",
+      "name": "service-bus-firewall-rule-weu",
       "type": "Microsoft.Resources/deployments",
       "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
       "properties": {
@@ -1490,7 +1490,7 @@
         },
         "parameters": {
           "serviceBusNamespaceName": {
-            "value": "[parameters('serviceBusNamespaceName')]"
+            "value": "[replace(parameters('serviceBusNamespaceName'),'neu-','')]"
           },
           "subnetResourceIdList": {
             "value": "[if(and(equals(resourceGroup().location, 'northeurope'),parameters('deployVirtualNetwork')),union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('weuVnetSubnets')) , reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value)]"
@@ -1507,7 +1507,7 @@
     {
       "condition": "[and(equals(resourceGroup().location, 'northeurope'),parameters('deployVirtualNetwork'))]",
       "apiVersion": "2020-10-01",
-      "name": "sql-server-firewall-rule",
+      "name": "sql-server-firewall-rule-weu",
       "type": "Microsoft.Resources/deployments",
       "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
       "properties": {
@@ -1518,7 +1518,7 @@
         },
         "parameters": {
           "serverName": {
-            "value": "[parameters('sqlServerName')]"
+            "value": "[replace(parameters('sqlServerName'),'neu-','')]"
           },
           "subnetResourceIdList": {
             "value": "[if(and(equals(resourceGroup().location, 'northeurope'),parameters('deployVirtualNetwork')),union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('weuVnetSubnets')) , reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value)]"
