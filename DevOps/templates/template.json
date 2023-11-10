@@ -1709,7 +1709,7 @@
         },
         "parameters": {
           "primaryNamespaceId": {
-            "value": "[concat('/subscriptions/',subscription().id,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.ServiceBus/namespaces/',replace(parameters('serviceBusNamespaceName'),'neu-',''))]"
+            "value": "[concat(subscription().id,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.ServiceBus/namespaces/',replace(parameters('serviceBusNamespaceName'),'neu-',''))]"
           },
           "primaryNamespaceName": {
             "value": "[replace(parameters('serviceBusNamespaceName'),'neu-','')]"
