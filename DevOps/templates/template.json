@@ -1682,15 +1682,30 @@
       }
     },
     {
-        "type": "Microsoft.ServiceBus/namespaces/disasterRecoveryConfigs",
-        "apiVersion": "2022-10-01-preview",
-        "name": "[concat(replace(parameters('serviceBusNamespaceName'),'neu-',''), '/', parameters('serviceBusNamespaceName'))]",
-        "dependsOn": [
-            "[resourceId('Microsoft.Resources/deployments', 'service-bus')]"
-        ],
-        "properties": {
-            "partnerNamespace": "[resourceId('Microsoft.ServiceBus/namespace', parameters('serviceBusNamespaceName'))]"
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
+      "name": "azure-service-bus-disast-rec",
+      "apiVersion": "2020-10-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-service-bus-disast-rec.json')]"
+        },
+        "parameters": {
+          "serviceBusNamespaceNamePrimary": {
+            "value": "[replace(parameters('serviceBusNamespaceName'),'neu-','')]"
+          },
+          "serviceBusNamespaceNameSecondary": {
+            "value": "[parameters('serviceBusNamespaceName')]"
+          },
+          "disasterRecoveryName": {
+            "value": "[replace(parameters('serviceBusNamespaceName'),'neu-','')]"
+          }
         }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'service-bus')]"
+      ]
     },
     {
       "condition": "[not(empty(parameters('databaseNames')))]",
