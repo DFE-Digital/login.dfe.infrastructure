@@ -1672,7 +1672,6 @@
       "apiVersion": "2020-06-01",
       "name": "[concat(replace(parameters('redisCacheName'),'neu-',''), '/', parameters('redisCacheName'))]",
       "dependsOn": [
-          "[resourceId('Microsoft.Cache/redis', replace(parameters('redisCacheName'),'neu-',''))]",
           "[resourceId('Microsoft.Cache/redis', parameters('redisCacheName'))]"
       ],
       "comments": "Create a geo-replication link. This resource is created as a nested resource of the primary cache. Its name is fixed and cannot be changed. Its properties identifies the secondary cache and labels it as the secondary.",
@@ -1681,6 +1680,17 @@
           "linkedRedisCacheLocation": "[resourceGroup().location]",
           "serverRole": "Secondary"
       }
+    },
+    {
+        "type": "Microsoft.ServiceBus/namespaces/disasterRecoveryConfigs",
+        "apiVersion": "2022-10-01-preview",
+        "name": "[concat(replace(parameters('serviceBusNamespaceName'),'neu-',''), '/', parameters('serviceBusNamespaceName'))]",
+        "dependsOn": [
+            "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName'))]"
+        ],
+        "properties": {
+            "partnerNamespace": "[resourceId('Microsoft.ServiceBus/namespace', parameters('serviceBusNamespaceName'))]"
+        }
     },
     {
       "condition": "[not(empty(parameters('databaseNames')))]",
