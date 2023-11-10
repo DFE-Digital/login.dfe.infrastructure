@@ -1684,8 +1684,11 @@
           "redisCacheNameSecondary": {
             "value": "[parameters('redisCacheName')]"
           },
-          "secondaryResourceGroup": {
+          "secondaryResourceGroupName": {
             "value": "[resourceGroup().name]"
+          },
+          "secondaryResourceGroupLocation": {
+            "value": "[resourceGroup().location]"
           }
         }
       },
@@ -1713,6 +1716,9 @@
           },
           "disasterRecoveryName": {
             "value": "[replace(parameters('serviceBusNamespaceName'),'neu-','')]"
+          },
+          "serviceBusResourceGroupName": {
+            "value": "[resourceGroup().name]"
           }
         }
       },
