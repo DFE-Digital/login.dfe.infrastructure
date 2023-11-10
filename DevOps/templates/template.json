@@ -1384,7 +1384,7 @@
       }
     },
     {
-      "condition": "[not(empty(parameters('TopicNames')))]",
+      "condition": "[and(not(empty(parameters('TopicNames'))),not(equals(resourceGroup().location, 'northeurope')))]",
       "name": "[if(empty(parameters('TopicNames')),'no-topics-to-deploy', concat(parameters('serviceBusNamespaceName'), '/', parameters('TopicNames')[copyIndex()].name))]",
       "type": "Microsoft.ServiceBus/namespaces/topics",
       "apiVersion": "2022-01-01-preview",
@@ -1412,7 +1412,7 @@
       ]
     },
     {
-      "condition": "[not(empty(parameters('TopicNames')))]",
+      "condition": "[and(not(empty(parameters('TopicNames'))),not(equals(resourceGroup().location, 'northeurope')))]",
       "name": "[if(empty(parameters('TopicNames')),'no-subscriptions-to-deploy', concat(parameters('serviceBusNamespaceName'), '/', parameters('TopicNames')[copyIndex()].name, '/', parameters('TopicNames')[copyIndex()].subscription))]",
       "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
       "apiVersion": "2022-01-01-preview",
@@ -1668,20 +1668,33 @@
     },
     {
       "condition": "[equals(resourceGroup().location, 'northeurope')]",
-      "type": "Microsoft.Cache/Redis/linkedServers",
-      "apiVersion": "2020-06-01",
-      "name": "[concat(replace(parameters('redisCacheName'),'neu-',''), '/', parameters('redisCacheName'))]",
-      "dependsOn": [
-          "[resourceId('Microsoft.Resources/deployments', 'redis-cache')]"
-      ],
-      "comments": "Create a geo-replication link. This resource is created as a nested resource of the primary cache. Its name is fixed and cannot be changed. Its properties identifies the secondary cache and labels it as the secondary.",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
+      "name": "azure-redis-disast-rec",
+      "apiVersion": "2020-10-01",
       "properties": {
-          "linkedRedisCacheId": "[resourceId('Microsoft.Cache/Redis', parameters('redisCacheName'))]",
-          "linkedRedisCacheLocation": "[resourceGroup().location]",
-          "serverRole": "Secondary"
-      }
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-redis-geo-link.json')]"
+        },
+        "parameters": {
+          "redisCacheNamePrimary": {
+            "value": "[replace(parameters('redisCacheName'),'neu-','')]"
+          },
+          "redisCacheNameSecondary": {
+            "value": "[parameters('redisCacheName')]"
+          },
+          "secondaryResourceGroup": {
+            "value": "[resourceGroup().name]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'redis-cache')]"
+      ]
     },
     {
+      "condition": "[equals(resourceGroup().location, 'northeurope')]",
       "type": "Microsoft.Resources/deployments",
       "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
       "name": "azure-service-bus-disast-rec",
@@ -1773,7 +1786,7 @@
       ]
     },
     {
-      "condition": "[not(empty(parameters('TopicNames')))]",
+      "condition": "[and(not(empty(parameters('TopicNames'))),not(equals(resourceGroup().location, 'northeurope')))]",
       "name": "[if(empty(parameters('TopicNames')),'no-TopicNames-to-add-in-keyvault', parameters('TopicNames')[copyIndex()].secretNameTopic)]",
       "type": "Microsoft.Resources/deployments",
       "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
@@ -1810,7 +1823,7 @@
       ]
     },
     {
-      "condition": "[not(empty(parameters('TopicNames')))]",
+      "condition": "[and(not(empty(parameters('TopicNames'))),not(equals(resourceGroup().location, 'northeurope')))]",
       "name": "[if(empty(parameters('TopicNames')),'no-Subscriptions-to-add-in-keyvault', parameters('TopicNames')[copyIndex()].secretNameSubscription)]",
       "type": "Microsoft.Resources/deployments",
       "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
