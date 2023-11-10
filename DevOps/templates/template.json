@@ -575,6 +575,29 @@
       "metadata": {
         "description": "Whether to deploy the Application Service Plans"
       }
+    },
+    "sqlFireWallRules": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "Name": "DfE-London-Peering",
+          "DisplayName": "DfE-(London Peering)",
+          "IPRange": "104.209.113.99-104.209.113.99"
+        },
+        {
+          "Name": "DfE-London-VPN",
+          "DisplayName": "DfE-(London VPN)",
+          "IPRange": "217.38.175.55-217.38.175.58"
+        },
+        {
+          "Name": "DfE-Palo-Alto-VPN",
+          "DisplayName": "DfE-(Palo Alto VPN)",
+          "IPRange": "208.127.46.232-208.127.46.255"
+        }
+      ],
+      "metadata": {
+        "description": "White listed SQL Server Firewall rules"
+      }
     }
   },
   "variables": {
@@ -621,12 +644,12 @@
       { 
         "name": "weuVnetSubnets",
         "count": "[if(not(equals(parameters('environmentId'),'d01')),sub(length(parameters('applicationSubnets')),1),length(parameters('applicationSubnets')))]",
-        "input": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('applicationSubnets')[copyIndex('weuVnetSubnets')])]" 
+        "input": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', replace(parameters('virtualNetworkName'),'neu-',''), parameters('applicationSubnets')[copyIndex('weuVnetSubnets')])]" 
       },
       { 
         "name": "listOfDatabaseNames",
         "count": "[length(parameters('databaseNames'))]",
-        "input": "[concat(resourceGroup().id, '/providers/Microsoft.Sql/servers/', parameters('sqlServerName'), '/databases/', parameters('databaseNames')[copyIndex('listOfDatabaseNames')].name)]"
+        "input": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Sql/servers/databases', parameters('sqlServerName'), parameters('databaseNames')[copyIndex('listOfDatabaseNames')].name)]"
   
       }
     ]
@@ -1035,7 +1058,7 @@
     {
       "name": "azure-cdn-endpoint",
       "type": "Microsoft.Resources/deployments",
-      "condition": "[equals(resourceGroup().location,'northeurope')]",
+      "condition": "[not(equals(resourceGroup().location,'northeurope'))]",
       "apiVersion": "2020-10-01",
       "properties": {
         "mode": "Incremental",
@@ -1536,6 +1559,73 @@
       },
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'sql-server')]"
+      ]
+    },
+    {
+      "condition": "[equals(resourceGroup().location, 'northeurope')]",
+      "apiVersion": "2020-10-01",
+      "name": "sql-server-failover-group",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/sql-server-failover-groups.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "sqlserverName": {
+            "value": "[replace(parameters('sqlServerName'),'neu-','')]"
+          },
+          "neuSqlServerId": {
+            "value": "[resourceId(resourceGroup().name,'Microsoft.Sql/servers', parameters('sqlServerName'))]"
+          },
+          "databaseNames": {
+            "value": "[variables('listOfDatabaseNames')]"
+        
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]"        
+      ]
+    },
+    {
+      "condition": "[equals(resourceGroup().location, 'northeurope')]",
+      "apiVersion": "2020-10-01",
+      "name": "[concat('sql-server-firewall-rule-neu','-',parameters('sqlFireWallRules')[copyIndex()].Name)]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/sql-server-firewall-rules.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "serverName": {
+            "value": "[parameters('sqlServerName')]"
+          },
+          "subnetResourceIdList": {
+            "value": "[createArray()]"
+          },
+          "copyMode": {
+            "value": "[parameters('sqlFirewallRulesCopyMode')]"
+          },
+          "ipAddresses": {
+            "value": ["[parameters('sqlFireWallRules')[copyIndex()].IPRange]"]
+          },
+          "firewallRuleNamePrefix": {
+            "value": "[parameters('sqlFireWallRules')[copyIndex()].DisplayName]"
+          }
+        }
+      },
+      "copy": {
+        "name": "ipaddresscopy",
+        "count": "[length(parameters('sqlFireWallRules'))]",
+        "mode": "Parallel"
+      },   
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]" 
       ]
     },
     {
