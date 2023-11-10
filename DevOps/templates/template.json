@@ -1708,17 +1708,17 @@
           "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-service-bus-disast-rec.json')]"
         },
         "parameters": {
-          "serviceBusNamespaceNamePrimary": {
+          "primaryNamespaceId": {
+            "value": "[concat('/subscriptions/',subscription().id,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.ServiceBus/namespaces/',replace(parameters('serviceBusNamespaceName'),'neu-',''))]"
+          },
+          "primaryNamespaceName": {
             "value": "[replace(parameters('serviceBusNamespaceName'),'neu-','')]"
           },
-          "serviceBusNamespaceNameSecondary": {
-            "value": "[parameters('serviceBusNamespaceName')]"
+          "secondaryNamespaceId": {
+            "value": "[concat('/subscriptions/',subscription().id,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.ServiceBus/namespaces/',parameters('serviceBusNamespaceName'))]"
           },
-          "disasterRecoveryName": {
-            "value": "[replace(parameters('serviceBusNamespaceName'),'neu-','')]"
-          },
-          "serviceBusResourceGroupName": {
-            "value": "[resourceGroup().name]"
+          "aliasName": {
+            "value": "[replace(parameters('serviceBusNamespaceName'),'neu-','geo-')]"
           }
         }
       },
