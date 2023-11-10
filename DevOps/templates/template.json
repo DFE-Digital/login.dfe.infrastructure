@@ -621,7 +621,7 @@
       { 
         "name": "weuVnetSubnets",
         "count": "[if(not(equals(parameters('environmentId'),'d01')),sub(length(parameters('applicationSubnets')),1),length(parameters('applicationSubnets')))]",
-        "input": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('applicationSubnets')[copyIndex('neuVnetSubnets')])]" 
+        "input": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('applicationSubnets')[copyIndex('weuVnetSubnets')])]" 
       },
       { 
         "name": "listOfDatabaseNames",
