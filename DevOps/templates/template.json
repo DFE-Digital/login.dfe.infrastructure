@@ -1629,6 +1629,44 @@
       ]
     },
     {
+      "condition": "[not(equals(resourceGroup().location, 'northeurope'))]",
+      "apiVersion": "2020-10-01",
+      "name": "[concat('sql-server-firewall-rule-weu','-',parameters('sqlFireWallRules')[copyIndex()].Name)]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/sql-server-firewall-rules.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "serverName": {
+            "value": "[parameters('sqlServerName')]"
+          },
+          "subnetResourceIdList": {
+            "value": "[createArray()]"
+          },
+          "copyMode": {
+            "value": "[parameters('sqlFirewallRulesCopyMode')]"
+          },
+          "ipAddresses": {
+            "value": ["[parameters('sqlFireWallRules')[copyIndex()].IPRange]"]
+          },
+          "firewallRuleNamePrefix": {
+            "value": "[parameters('sqlFireWallRules')[copyIndex()].DisplayName]"
+          }
+        }
+      },
+      "copy": {
+        "name": "ipaddresscopy",
+        "count": "[length(parameters('sqlFireWallRules'))]",
+        "mode": "Parallel"
+      },   
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]" 
+      ]
+    },
+    {
       "condition": "[not(empty(parameters('databaseNames')))]",
       "name": "[if(empty(parameters('databaseNames')),'no-databases-to-add-in-keyvault',parameters('databaseNames')[copyIndex()].secretName)]",
       "type": "Microsoft.Resources/deployments",
