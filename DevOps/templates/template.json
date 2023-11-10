@@ -876,7 +876,7 @@
       }
     },
     {
-      "condition": "[not(empty(parameters('databaseNames')))]",
+      "condition": "[and(not(empty(parameters('databaseNames'))),not(equals(resourceGroup().location,'northeurope')))]",
       "name": "[if(empty(parameters('databaseNames')),'no-databases-to-deploy',parameters('databaseNames')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
