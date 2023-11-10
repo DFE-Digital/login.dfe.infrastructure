@@ -349,6 +349,35 @@
           "20.103.131.1"
         ]
     },
+    
+    "LogicAppConnectionIpRulesServiceBusNeu": {
+      "type": "array",
+      "defaultValue": [
+        "52.178.150.68",
+        "94.245.91.93",
+        "20.82.226.52",
+        "20.82.224.59",
+        "13.69.227.208/28",
+        "13.69.231.192/27",
+        "40.115.108.29",
+        "20.82.246.112/28",
+        "52.146.138.32/27"
+      ]
+  },
+  "LogicAppConnectionIpRulesSqlNeu": {
+      "type": "array",
+      "defaultValue": [
+        "52.178.150.68",
+        "94.245.91.93",
+        "20.82.226.52",
+        "20.82.224.59",
+        "13.69.227.208-13.69.227.223",
+        "13.69.231.192-13.69.231.223",
+        "40.115.108.29",
+        "20.82.246.112-20.82.246.127",
+        "52.146.138.32-52.146.138.63"
+      ]
+  },
     "azureActiveDirectoryAdmin": {
       "type": "string",
       "metadata": {
@@ -588,7 +617,19 @@
       "amplsPrivateLinkResource": "[resourceId('Microsoft.insights/privateLinkScopes', parameters('amplsName'))]",
       "amplsPrivateEndpointSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('amplsSubnetName'))]"
     },
-    "copy": []
+    "copy": [
+      { 
+        "name": "weuVnetSubnets",
+        "count": "[if(not(equals(parameters('environmentId'),'d01')),sub(length(parameters('applicationSubnets')),1),length(parameters('applicationSubnets')))]",
+        "input": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('applicationSubnets')[copyIndex('neuVnetSubnets')])]" 
+      },
+      { 
+        "name": "listOfDatabaseNames",
+        "count": "[length(parameters('databaseNames'))]",
+        "input": "[concat(resourceGroup().id, '/providers/Microsoft.Sql/servers/', parameters('sqlServerName'), '/databases/', parameters('databaseNames')[copyIndex('listOfDatabaseNames')].name)]"
+  
+      }
+    ]
     
   },
   "resources": [
@@ -812,39 +853,6 @@
       }
     },
     {
-      "condition": "[parameters('deployVirtualNetwork')]",
-      "apiVersion": "2020-10-01",
-      "name": "sql-server-firewall-rule",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/sql-server-firewall-rules.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "serverName": {
-            "value": "[parameters('sqlServerName')]"
-          },
-          "subnetResourceIdList": {
-            "value": "[if(parameters('deployVirtualNetwork'), reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value, variables('emptyArray'))]"
-          },
-          "copyMode": {
-            "value": "[parameters('sqlFirewallRulesCopyMode')]"
-          },
-          "ipAddresses": {
-            "value": "[parameters('LogicAppConnectionIpRulesSql')]"
-          },
-          "firewallRuleNamePrefix": {
-            "value": "logicAppConnections"
-          }
-        }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]"
-      ]
-    },
-    {
       "condition": "[not(empty(parameters('databaseNames')))]",
       "name": "[if(empty(parameters('databaseNames')),'no-databases-to-deploy',parameters('databaseNames')[copyIndex()].name)]",
       "type": "Microsoft.Resources/deployments",
@@ -904,36 +912,6 @@
       },
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'log-analytics-workspace')]"
-      ]
-    },
-    {
-      "apiVersion": "2020-10-01",
-      "name": "add-appInsights-instrumentation-key-vault-secret",
-      "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
-          },
-          "secretName": {
-            "value": "[if(equals(resourceGroup().location, 'westeurope'),'appInsightsInstrumentationKey','neuAppInsightsInstrumentationKey')]"
-          },
-          "secretValue": {
-            "value": "[reference('app-insights').outputs.InstrumentationKey.value]"
-          },
-          "contentType": {
-            "value": "AppInsights instrumentation key"
-          }
-        }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'app-insights')]"
       ]
     },
     {
@@ -1057,6 +1035,7 @@
     {
       "name": "azure-cdn-endpoint",
       "type": "Microsoft.Resources/deployments",
+      "condition": "[equals(resourceGroup().location,'northeurope')]",
       "apiVersion": "2020-10-01",
       "properties": {
         "mode": "Incremental",
@@ -1176,33 +1155,6 @@
         "[resourceId('Microsoft.Resources/deployments', 'log-analytics-workspace')]"
       ]
     },
-    {
-      "condition": "[and(parameters('deployVirtualNetwork'), parameters('deployServiceBus'))]",
-      "apiVersion": "2020-10-01",
-      "name": "service-bus-firewall-rule",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/service-bus-network-rules.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "serviceBusNamespaceName": {
-            "value": "[parameters('serviceBusNamespaceName')]"
-          },
-          "subnetResourceIdList": {
-            "value": "[if(parameters('deployVirtualNetwork'), reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value, variables('emptyArray'))]"
-          },
-          "ipAddresses": {
-            "value": "[parameters('LogicAppConnectionIpRulesServiceBus')]"
-          }
-        }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'service-bus')]"
-      ]
-    }, 
     {
       "condition": "[parameters('deployASP')]",
       "apiVersion": "2020-10-01",
@@ -1409,41 +1361,6 @@
       }
     },
     {
-      "condition": "[not(empty(parameters('databaseNames')))]",
-      "name": "[if(empty(parameters('databaseNames')),'no-databases-to-add-in-keyvault',parameters('databaseNames')[copyIndex()].secretName)]",
-      "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
-      "apiVersion": "2020-10-01",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]"
-        },
-        "parameters": {
-          "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
-          },
-          "secretName": {
-            "value": "[parameters('databaseNames')[copyIndex()].secretName]"
-          },
-          "secretValue": {
-            "value": "[parameters('databaseNames')[copyIndex()].name]"
-          },
-          "contentType": {
-            "value": ""
-          }
-        }
-      },
-      "copy": {
-        "name": "databasecopy",
-        "count": "[length(parameters('databaseNames'))]",
-        "mode": "Parallel"
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]"
-      ]
-    },
-    {
       "condition": "[not(empty(parameters('TopicNames')))]",
       "name": "[if(empty(parameters('TopicNames')),'no-topics-to-deploy', concat(parameters('serviceBusNamespaceName'), '/', parameters('TopicNames')[copyIndex()].name))]",
       "type": "Microsoft.ServiceBus/namespaces/topics",
@@ -1497,6 +1414,193 @@
         "[resourceId('Microsoft.Resources/deployments', 'service-bus')]",
         "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'audit')]",
         "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'securealert')]"
+      ]
+    },
+    {
+      "condition": "[and(parameters('deployVirtualNetwork'), parameters('deployServiceBus'))]",
+      "apiVersion": "2020-10-01",
+      "name": "service-bus-firewall-rule",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/service-bus-network-rules.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "serviceBusNamespaceName": {
+            "value": "[parameters('serviceBusNamespaceName')]"
+          },
+          "subnetResourceIdList": {
+            "value": "[if(and(equals(resourceGroup().location, 'northeurope'),parameters('deployVirtualNetwork')),union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('weuVnetSubnets')) , reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value)]"
+          },
+          "ipAddresses": {
+            "value": "[if(equals(resourceGroup().location, 'northeurope'),union(parameters('LogicAppConnectionIpRulesServiceBus'),parameters('LogicAppConnectionIpRulesServiceBusNeu')),parameters('LogicAppConnectionIpRulesServiceBus'))]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'service-bus')]"
+      ]
+    },    
+    {
+      "condition": "[parameters('deployVirtualNetwork')]",
+      "apiVersion": "2020-10-01",
+      "name": "sql-server-firewall-rule",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/sql-server-firewall-rules.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "serverName": {
+            "value": "[parameters('sqlServerName')]"
+          },
+          "subnetResourceIdList": {
+            "value": "[if(and(equals(resourceGroup().location, 'northeurope'),parameters('deployVirtualNetwork')),union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('weuVnetSubnets')) , reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value)]"
+          },
+          "copyMode": {
+            "value": "[parameters('sqlFirewallRulesCopyMode')]"
+          },
+          "ipAddresses": {
+            "value": "[if(equals(resourceGroup().location, 'northeurope'),union(parameters('LogicAppConnectionIpRulesSql'),parameters('LogicAppConnectionIpRulesSqlNeu')),parameters('LogicAppConnectionIpRulesSql'))]"
+          },
+          "firewallRuleNamePrefix": {
+            "value": "logicAppConnections"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]"
+      ]
+    },
+    {
+      "condition": "[and(and(equals(resourceGroup().location, 'northeurope'),parameters('deployVirtualNetwork')), parameters('deployServiceBus'))]",
+      "apiVersion": "2020-10-01",
+      "name": "service-bus-firewall-rule",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/service-bus-network-rules.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "serviceBusNamespaceName": {
+            "value": "[parameters('serviceBusNamespaceName')]"
+          },
+          "subnetResourceIdList": {
+            "value": "[if(and(equals(resourceGroup().location, 'northeurope'),parameters('deployVirtualNetwork')),union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('weuVnetSubnets')) , reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value)]"
+          },
+          "ipAddresses": {
+            "value": "[if(equals(resourceGroup().location, 'northeurope'),union(parameters('LogicAppConnectionIpRulesServiceBus'),parameters('LogicAppConnectionIpRulesServiceBusNeu')),parameters('LogicAppConnectionIpRulesServiceBus'))]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'service-bus')]"
+      ]
+    },    
+    {
+      "condition": "[and(equals(resourceGroup().location, 'northeurope'),parameters('deployVirtualNetwork'))]",
+      "apiVersion": "2020-10-01",
+      "name": "sql-server-firewall-rule",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/sql-server-firewall-rules.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "serverName": {
+            "value": "[parameters('sqlServerName')]"
+          },
+          "subnetResourceIdList": {
+            "value": "[if(and(equals(resourceGroup().location, 'northeurope'),parameters('deployVirtualNetwork')),union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('weuVnetSubnets')) , reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value)]"
+          },
+          "copyMode": {
+            "value": "[parameters('sqlFirewallRulesCopyMode')]"
+          },
+          "ipAddresses": {
+            "value": "[if(equals(resourceGroup().location, 'northeurope'),union(parameters('LogicAppConnectionIpRulesSql'),parameters('LogicAppConnectionIpRulesSqlNeu')),parameters('LogicAppConnectionIpRulesSql'))]"
+          },
+          "firewallRuleNamePrefix": {
+            "value": "logicAppConnections"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]"
+      ]
+    },
+    {
+      "condition": "[not(empty(parameters('databaseNames')))]",
+      "name": "[if(empty(parameters('databaseNames')),'no-databases-to-add-in-keyvault',parameters('databaseNames')[copyIndex()].secretName)]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
+      "apiVersion": "2020-10-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "[parameters('databaseNames')[copyIndex()].secretName]"
+          },
+          "secretValue": {
+            "value": "[parameters('databaseNames')[copyIndex()].name]"
+          },
+          "contentType": {
+            "value": ""
+          }
+        }
+      },
+      "copy": {
+        "name": "databasecopy",
+        "count": "[length(parameters('databaseNames'))]",
+        "mode": "Parallel"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]"
+      ]
+    },
+    {
+      "apiVersion": "2020-10-01",
+      "name": "add-appInsights-instrumentation-key-vault-secret",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "[if(equals(resourceGroup().location, 'westeurope'),'appInsightsInstrumentationKey','neuAppInsightsInstrumentationKey')]"
+          },
+          "secretValue": {
+            "value": "[reference('app-insights').outputs.InstrumentationKey.value]"
+          },
+          "contentType": {
+            "value": "AppInsights instrumentation key"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'app-insights')]"
       ]
     },
     {
