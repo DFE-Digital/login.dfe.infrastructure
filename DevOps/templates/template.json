@@ -1459,7 +1459,7 @@
             "value": "[parameters('sqlServerName')]"
           },
           "subnetResourceIdList": {
-            "value": "[if(and(equals(resourceGroup().location, 'northeurope'),parameters('deployVirtualNetwork')),union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('weuVnetSubnets')) , reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value)]"
+            "value": "[if(and(equals(resourceGroup().location, 'northeurope'),parameters('deployVirtualNetwork')),reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value, reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value)]"
           },
           "copyMode": {
             "value": "[parameters('sqlFirewallRulesCopyMode')]"
@@ -1521,13 +1521,13 @@
             "value": "[replace(parameters('sqlServerName'),'neu-','')]"
           },
           "subnetResourceIdList": {
-            "value": "[if(and(equals(resourceGroup().location, 'northeurope'),parameters('deployVirtualNetwork')),reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value, variables('emptyArray'))]"
+            "value": "[if(and(equals(resourceGroup().location, 'northeurope'),parameters('deployVirtualNetwork')),variables('weuVnetSubnets'), variables('emptyArray'))]"
           },
           "copyMode": {
             "value": "[parameters('sqlFirewallRulesCopyMode')]"
           },
           "ipAddresses": {
-            "value": "[if(equals(resourceGroup().location, 'northeurope'),parameters('LogicAppConnectionIpRulesSqlNeu'), variables('emptyArray'))]"
+            "value": "[if(equals(resourceGroup().location, 'northeurope'),union(parameters('LogicAppConnectionIpRulesServiceBus'),parameters('LogicAppConnectionIpRulesServiceBusNeu')), parameters('LogicAppConnectionIpRulesServiceBus'))]"
           },
           "firewallRuleNamePrefix": {
             "value": "logicAppConnections"
