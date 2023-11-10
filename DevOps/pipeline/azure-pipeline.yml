@@ -107,6 +107,6 @@ stages:
               templatePath:  $(System.DefaultWorkingDirectory)/login.dfe.infrastructure/DevOps/templates/template.json
               deployPrivateEndpoint: "true"
               destructiveVirtualNetworkDeploy: "Disabled" #Disabled,Enabled
-              deployVirtualNetwork: "true" #Deploying the subnets
-              deployASP: "true" #Deploying the application service plans
+              deployVirtualNetwork: "fasle" #Deploying the subnets
+              deployASP: "fasle" #Deploying the application service plans
               deploymentLocation: ${{parameters.location}}
