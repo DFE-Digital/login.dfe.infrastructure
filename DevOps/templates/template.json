@@ -1667,6 +1667,22 @@
       ]
     },
     {
+      "condition": "[equals(resourceGroup().location, 'northeurope')]",
+      "type": "Microsoft.Cache/Redis/linkedServers",
+      "apiVersion": "2020-06-01",
+      "name": "[concat(replace(parameters('redisCacheName'),'neu-',''), '/', parameters('redisCacheName'))]",
+      "dependsOn": [
+          "[resourceId('Microsoft.Cache/redis', replace(parameters('redisCacheName'),'neu-',''))]",
+          "[resourceId('Microsoft.Cache/redis', parameters('redisCacheName'))]"
+      ],
+      "comments": "Create a geo-replication link. This resource is created as a nested resource of the primary cache. Its name is fixed and cannot be changed. Its properties identifies the secondary cache and labels it as the secondary.",
+      "properties": {
+          "linkedRedisCacheId": "[resourceId('Microsoft.Cache/Redis', parameters('redisCacheName'))]",
+          "linkedRedisCacheLocation": "[resourceGroup().location]",
+          "serverRole": "Secondary"
+      }
+    },
+    {
       "condition": "[not(empty(parameters('databaseNames')))]",
       "name": "[if(empty(parameters('databaseNames')),'no-databases-to-add-in-keyvault',parameters('databaseNames')[copyIndex()].secretName)]",
       "type": "Microsoft.Resources/deployments",
