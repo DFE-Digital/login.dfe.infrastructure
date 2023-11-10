@@ -649,7 +649,7 @@
       { 
         "name": "listOfDatabaseNames",
         "count": "[length(parameters('databaseNames'))]",
-        "input": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Sql/servers/databases', parameters('sqlServerName'), parameters('databaseNames')[copyIndex('listOfDatabaseNames')].name)]"
+        "input": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Sql/servers/databases', replace(parameters('virtualNetworkName'),'neu-',''), parameters('databaseNames')[copyIndex('listOfDatabaseNames')].name)]"
   
       }
     ]
