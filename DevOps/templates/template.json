@@ -1847,8 +1847,7 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'redis-cache')]",
-        "[resourceId('Microsoft.Resources/deployments', 'azure-redis-disast-rec')]"
+        "[resourceId('Microsoft.Resources/deployments', 'redis-cache')]"
       ]
     },
     {
@@ -1878,8 +1877,7 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'redis-cache')]",
-        "[resourceId('Microsoft.Resources/deployments', 'azure-redis-disast-rec')]"
+        "[resourceId('Microsoft.Resources/deployments', 'redis-cache')]"
       ]
     },
     {
