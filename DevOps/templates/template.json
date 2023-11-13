@@ -1745,7 +1745,7 @@
             "value": "platformGlobalServerName"
           },
           "secretValue": {
-            "value": "[if(equals(resourceGroup().location, 'westeurope'),concat(parameters('sqlServerName'),'.database.windows.net'),concat(parameters('sqlServerName'),'-fog.database.windows.net'))]"
+            "value": "[if(equals(resourceGroup().location, 'westeurope'),concat(parameters('sqlServerName'),'.database.windows.net'),concat(replace(parameters('sqlServerName'),'neu-',''),'-fog.database.windows.net'))]"
           },
           "contentType": {
             "value": ""
