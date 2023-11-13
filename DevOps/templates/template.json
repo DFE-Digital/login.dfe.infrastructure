@@ -1839,7 +1839,7 @@
             "value": "neu-redisConn"
           },
           "secretValue": {
-            "value": "[listkeys(resourceId('Microsoft.Cache/Redis', parameters('redisCacheName')), '2017-04-01').primaryKey]"
+            "value": "[format('redis://:{0}@{1}.geo.redis.cache.windows.net:6380',listkeys(resourceId('Microsoft.Cache/Redis', parameters('redisCacheName')), '2023-08-01').primaryKey, parameters('redisCacheName'))]"
           },
           "contentType": {
             "value": ""
@@ -1852,8 +1852,8 @@
       ]
     },
     {
-      "condition": "[equals(resourceGroup().location, 'westeurope')]",
-      "name": "add-redis-conn-str-vault-secret",
+      "condition": "[equals(resourceGroup().location, 'northeurope')]",
+      "name": "add-redis-conn-str-geo-vault-secret",
       "type": "Microsoft.Resources/deployments",
       "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
       "apiVersion": "2020-10-01",
@@ -1870,7 +1870,37 @@
             "value": "redisConn"
           },
           "secretValue": {
-            "value": "[listkeys(resourceId('Microsoft.Cache/Redis', parameters('redisCacheName')), '2017-04-01').primaryKey]"
+            "value": "[format('redis://:{0}@{1}.geo.redis.cache.windows.net:6380',listkeys(resourceId(replace(resourceGroup().name,'neu-',''), 'Microsoft.Cache/Redis', replace(parameters('redisCacheName'),'neu-','')), '2023-08-01').primaryKey, parameters('redisCacheName'))]"
+          },
+          "contentType": {
+            "value": ""
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'redis-cache')]",
+        "[resourceId('Microsoft.Resources/deployments', 'azure-redis-disast-rec')]"
+      ]
+    },
+    {
+      "condition": "[equals(resourceGroup().location, 'westeurope')]",
+      "name": "add-redis-conn-str-vault-secret",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "redisConn"
+          },
+          "secretValue": {
+            "value": "[format('redis://:{0}@{1}.redis.cache.windows.net:6380',listkeys(resourceId('Microsoft.Cache/Redis', parameters('redisCacheName')), '2023-08-01').primaryKey, parameters('redisCacheName'))]"
           },
           "contentType": {
             "value": ""
