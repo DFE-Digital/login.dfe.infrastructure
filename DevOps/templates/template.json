@@ -1935,8 +1935,7 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'service-bus')]",
-        "[resourceId('Microsoft.Resources/deployments', 'azure-service-bus-disast-rec')]"
+        "[resourceId('Microsoft.Resources/deployments', 'service-bus')]"
       ]
     },
     {
