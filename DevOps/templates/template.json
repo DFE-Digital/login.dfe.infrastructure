@@ -580,16 +580,6 @@
       "type": "array",
       "defaultValue": [
         {
-          "Name": "DfE-London-Peering",
-          "DisplayName": "DfE-(London Peering)",
-          "IPRange": "104.209.113.99-104.209.113.99"
-        },
-        {
-          "Name": "DfE-London-VPN",
-          "DisplayName": "DfE-(London VPN)",
-          "IPRange": "217.38.175.55-217.38.175.58"
-        },
-        {
           "Name": "DfE-Palo-Alto-VPN",
           "DisplayName": "DfE-(Palo Alto VPN)",
           "IPRange": "208.127.46.232-208.127.46.255"
