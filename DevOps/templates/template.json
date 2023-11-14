@@ -593,7 +593,7 @@
   "variables": {
     "redisSubnetName": "redis-sn-1",
     "azureSearchSubnetName": "azureSearch-sn-1",
-    "workspaceId": "[if(equals(resourceGroup().location, 'northeurope'),resourceId('Microsoft.OperationalInsights/workspaces', tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-neu-shd-laws'))),resourceId('Microsoft.OperationalInsights/workspaces', tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-shd-laws'))))]",
+    "workspaceId": "[if(equals(resourceGroup().location, 'northeurope'),resourceId('Microsoft.OperationalInsights/workspaces', tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-neu-', parameters('platformGlobalName'),'-shd-laws'))),resourceId('Microsoft.OperationalInsights/workspaces', tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-shd-laws'))))]",
     "sqlServerDiagSettName": "[tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-sql-laws'))]",
     "sbnServerDiagSettName": "[tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-sbn-laws'))]",
     "schServerDiagSettName": "[tolower(concat(parameters('platformGlobalIdentifier'), parameters('environmentId'), '-', parameters('platformGlobalName'),'-sch-laws'))]",
