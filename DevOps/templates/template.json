@@ -1931,7 +1931,7 @@
             "value": "[if(equals(resourceGroup().location, 'westeurope'), listkeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', parameters('serviceBusNamespaceName'), 'RootManageSharedAccessKey'), '2017-04-01').primaryConnectionString, listkeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', parameters('serviceBusNamespaceName'), 'RootManageSharedAccessKey'), '2017-04-01').aliasPrimaryConnectionString)]"
           },
           "contentType": {
-            "value": ""
+            "value": "Shared service bus connection string"
           }
         }
       },
