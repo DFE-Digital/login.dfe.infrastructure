@@ -73,7 +73,7 @@ stages:
   - ${{ if in(parameter.key, 'tran','dev','test','pp','pr') }}:
     - ${{ if eq(parameter.value, 'true') }}:
       - stage: Deployment_${{parameter.Key}}
-        displayName: "Deployment [${{parameter.Key}}]"
+        displayName: "Deployment [${{parameter.Key}}] ${{parameters.location}}"
        # dependsOn: 
        #  - scanInfra
         variables:
