@@ -1028,6 +1028,7 @@
     },
     {
       "name": "azure-cdn",
+      "condition": "[not(equals(resourceGroup().location,'northeurope'))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "properties": {
