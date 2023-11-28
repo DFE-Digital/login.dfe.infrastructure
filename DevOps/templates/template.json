@@ -231,7 +231,10 @@
         "pmpporgssyncfa-sn",
         "pmpporgssyncst-sn",
         "pmppprodeltafa-sn",
-        "pmppprodeltast-sn"
+        "pmppprodeltast-sn",
+        "pmppprodeltast-collect-sn",
+        "pmppprodeltast-dqt-sn",
+        "pmppprodeltast-s2s-sn"
       ],
       "metadata": {
         "description": "Names of pirean subnets to create for service bus integration"
