@@ -230,6 +230,9 @@
         "pmppsyncst-sn",
         "pmpporgssyncfa-sn",
         "pmpporgssyncst-sn",
+        "pmppprodeltast-collect-sn",
+        "pmppprodeltast-dqt-sn",
+        "pmppprodeltast-s2s-sn",
         "pmppprodeltafa-sn",
         "pmppprodeltast-sn"
       ],
