@@ -72,41 +72,42 @@ stages:
 - ${{ each parameter in parameters }}:
   - ${{ if in(parameter.key, 'tran','dev','test','pp','pr') }}:
     - ${{ if eq(parameter.value, 'true') }}:
-      - stage: Deployment_${{parameter.Key}}
-        displayName: "Deployment [${{parameter.Key}}] ${{parameters.location}}"
-       # dependsOn: 
-       #  - scanInfra
-        variables:
-        - group: dsi-${{parameter.key}}-kv
-        jobs:
-        - ${{ if parameters.prereq }}:
-          - template: pipeline/infrastructure.yml@devopsTemplates
-            parameters:
-              ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
-                serviceConnection: $(devServiceConnection)
-              ${{ elseif eq(parameter.key, 'pr') }}:
-                serviceConnection: $(prodServiceConnection)
-              ${{ else }}:
-                serviceConnection: $(testServiceConnection)
-              environmentName: ${{parameter.key}}
-              infrastuctureType: pre_req_infr
-              deployKv: ${{parameters.kv}}
-              deploymentLocation: ${{parameters.location}}
+      - ${{ if or(or(in(parameter.key, 'tran','pp','pr'),eq(parameters.location, 'northeurope')),and(in(parameter.key, 'dev','test'),eq(parameters.location, 'westeurope'))) }}:
+        - stage: Deployment_${{parameter.Key}}
+          displayName: "Deployment [${{parameter.Key}}] ${{parameters.location}}"
+        # dependsOn: 
+        #  - scanInfra
+          variables:
+          - group: dsi-${{parameter.key}}-kv
+          jobs:
+          - ${{ if parameters.prereq }}:
+            - template: pipeline/infrastructure.yml@devopsTemplates
+              parameters:
+                ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
+                  serviceConnection: $(devServiceConnection)
+                ${{ elseif eq(parameter.key, 'pr') }}:
+                  serviceConnection: $(prodServiceConnection)
+                ${{ else }}:
+                  serviceConnection: $(testServiceConnection)
+                environmentName: ${{parameter.key}}
+                infrastuctureType: pre_req_infr
+                deployKv: ${{parameters.kv}}
+                deploymentLocation: ${{parameters.location}}
 
-        - ${{ else }}:
-          - template: pipeline/infrastructure.yml@devopsTemplates
-            parameters:
-              ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
-                serviceConnection: $(devServiceConnection)
-              ${{ elseif eq(parameter.key, 'pr') }}:
-                serviceConnection: $(prodServiceConnection)
-              ${{ else }}:
-                serviceConnection: $(testServiceConnection)
-              environmentName: ${{parameter.key}}
-              infrastuctureType: base_infr
-              templatePath:  $(System.DefaultWorkingDirectory)/login.dfe.infrastructure/DevOps/templates/template.json
-              deployPrivateEndpoint: "true"
-              destructiveVirtualNetworkDeploy: "Disabled" #Disabled,Enabled
-              deployVirtualNetwork: "true" #Deploying the subnets
-              deployASP: "false" #Deploying the application service plans
-              deploymentLocation: ${{parameters.location}}
+          - ${{ else }}:
+            - template: pipeline/infrastructure.yml@devopsTemplates
+              parameters:
+                ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
+                  serviceConnection: $(devServiceConnection)
+                ${{ elseif eq(parameter.key, 'pr') }}:
+                  serviceConnection: $(prodServiceConnection)
+                ${{ else }}:
+                  serviceConnection: $(testServiceConnection)
+                environmentName: ${{parameter.key}}
+                infrastuctureType: base_infr
+                templatePath:  $(System.DefaultWorkingDirectory)/login.dfe.infrastructure/DevOps/templates/template.json
+                deployPrivateEndpoint: "true"
+                destructiveVirtualNetworkDeploy: "Disabled" #Disabled,Enabled
+                deployVirtualNetwork: "true" #Deploying the subnets
+                deployASP: "false" #Deploying the application service plans
+                deploymentLocation: ${{parameters.location}}
