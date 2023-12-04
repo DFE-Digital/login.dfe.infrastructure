@@ -121,7 +121,7 @@ Also, this pipeline has an extra parameter in the pipeline to trigger the Pre-Re
 
 ### Certificates
 --- 
-For adding the certificate for the gateway
+For adding the certificate for the Front Door
 1. Add Certificate Authority in Keyvault following this [Doc](https://learn.microsoft.com/en-us/azure/key-vault/certificates/how-to-integrate-certificate-authority)
 2. If certificates were not generated before
    1. Click Generate/Import in the certificate section in KeyVault
@@ -153,10 +153,10 @@ How to Set the variable group [here](https://github.com/DFE-Digital/login.dfe.de
 
 ## Next Pipelines 
 ---
-P.S All below pipelines except the gateway flow can show [here](https://github.com/DFE-Digital/login.dfe.devops/blob/main/Docs/PipelineFlow.md)
+P.S All below pipelines except the Front door flow can show [here](https://github.com/DFE-Digital/login.dfe.devops/blob/main/Docs/PipelineFlow.md)
 P.S For Access, Directory, applications, Organasation, organasation-worker, search, search-worker & Jobs you need to run Infrastructure first and will see that the task `Add Web Ip Access restriction for backend & mid tier` will fail but the `Create infrastructure` will run. Then run the full pipeline
 
-1. Gateway Pipeline [Document](https://github.com/DFE-Digital/login.dfe.devops/blob/main/Docs/Gateway.md)
+1. Front Door Pipeline [Document](https://github.com/DFE-Digital/login.dfe.devops/blob/main/Docs/FrontDoor;.md)
 2. ui.toole.kit & audit-logger
 3. Access, Directory & applications 
 4. Organasation, organasation-worker, search & search-worker
