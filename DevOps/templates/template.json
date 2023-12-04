@@ -177,6 +177,23 @@
         "description": "Names of additional subnets to create for application integration"
       }
     },
+     "pireanSubnets": {
+      "type": "array",
+      "defaultValue": [
+        "pmppsyncfa-sn",
+        "pmppsyncst-sn",
+        "pmpporgssyncfa-sn",
+        "pmpporgssyncst-sn",
+        "pmppprodeltast-collect-sn",
+        "pmppprodeltast-dqt-sn",
+        "pmppprodeltast-s2s-sn",
+        "pmppprodeltafa-sn",
+        "pmppprodeltast-sn"
+      ],
+      "metadata": {
+        "description": "Names of pirean subnets to create for service bus integration"
+      }
+    },
     "TopicNames": {
       "type": "array",
       "defaultValue": [
