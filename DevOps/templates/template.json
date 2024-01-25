@@ -1036,8 +1036,16 @@
               "value": true
           },
           "virtualNetworksSubNet": {
-            "value": ["[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', replace(parameters('virtualNetworkName'),'neu-',''), 'backend-g2-sn')]",
-            "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', replace(parameters('virtualNetworkName'),'neu-',''), 'backend-g3-sn')]"]
+            "value": [{
+                          "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', replace(parameters('virtualNetworkName'),'neu-',''), 'backend-g2-sn')]",
+                          "action": "Allow",
+                          "state": "Succeeded"
+                      },{
+                          "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', replace(parameters('virtualNetworkName'),'neu-',''), 'backend-g3-sn')]",
+                          "action": "Allow",
+                          "state": "Succeeded"
+                      }
+                    ]
           }
         }
       },
