@@ -80,6 +80,12 @@
         "description": "Name of the storage account resource"
       }
     },
+    "storageAccountProvProfName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the storage account resource for provide Profile"
+      }
+    },
     "keyVaultName": {
       "type": "string",
       "metadata": {
@@ -1014,6 +1020,32 @@
       ]
     },
     {
+      "name": "storage-account-pp",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/storage-account.json')]"
+        },
+        "parameters": {
+          "storageAccountName": {
+            "value": "[parameters('storageAccountProvProfName')]"
+          },
+          "NetFirewall":{
+              "value": true
+          },
+          "virtualNetworksSubNet": {
+            "value": ["[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', replace(parameters('virtualNetworkName'),'neu-',''), 'backend-g2-sn')]",
+            "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', replace(parameters('virtualNetworkName'),'neu-',''), 'backend-g3-sn')]"]
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'virtual-network')]"
+      ]
+    },
+    {
       "condition": "[parameters('deployAzureSearch')]",
       "name": "azure-search",
       "type": "Microsoft.Resources/deployments",
@@ -1332,10 +1364,10 @@
             "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku]"
           },
           "appServicePlanOS": {
-            "value": "[if(contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2'),'','Linux')]"
+            "value": "[if(or(contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2'),contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g3')),'Windows','Linux')]"
           },
           "appServicePlanIsLinux": {
-            "value": "[not(contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2'))]"
+            "value": "[not(or(contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2'),contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g3')))]"
           },
           "defaultCapacity": {
             "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku.capacity]"
