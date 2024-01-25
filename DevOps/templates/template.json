@@ -761,7 +761,7 @@
       ]
     },
     {
-      "condition": "[and(parameters('deployRedisCachePrivateEndpoint'),not(equals(resourceGroup().location, 'northeurope')))]",
+      "condition": "[and(and(parameters('deployRedisCachePrivateEndpoint'),not(equals(resourceGroup().location, 'northeurope'))),or(or(contains(parameters('environmentId'),'d03'),contains(parameters('environmentId'),'t02')),contains(parameters('environmentId'),'p01')))]",
       "apiVersion": "2020-10-01",
       "name": "redis-cache-private-endpoint",
       "type": "Microsoft.Resources/deployments",
