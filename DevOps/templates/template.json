@@ -221,6 +221,12 @@
           "subscription":"provprofsync-messages",
           "secretNameTopic": "provprofServiceBusTopicName",
           "secretNameSubscription": "provprofServiceBusSubscriptionName"
+        },
+        {
+          "name": "provprofcache",
+          "subscription":"provprofcache-messages",
+          "secretNameTopic": "provprofcacheServiceBusTopicName",
+          "secretNameSubscription": "provprofcacheServiceBusSubscriptionName"
         }
         
       ],
