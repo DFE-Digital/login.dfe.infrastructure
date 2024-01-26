@@ -215,11 +215,41 @@
           "subscription":"securealert-messages",
           "secretNameTopic": "secureServiceBusTopicName",
           "secretNameSubscription": "secureServiceBusSubscriptionName"
+        },
+        {
+          "name": "provprofsync",
+          "subscription":"provprofsync-messages",
+          "secretNameTopic": "provprofServiceBusTopicName",
+          "secretNameSubscription": "provprofServiceBusSubscriptionName"
         }
         
       ],
       "metadata": {
         "description": "Topic names & subscriptions of service bus"
+      }
+    },
+    "svcBusExtraSubNames": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "topic": "provprofsync",
+          "subscription":"provprofcollect-messages",
+          "secretNameSubscription": "provprofCollectServiceBusSubscriptionName"
+        },
+        {
+          "topic": "provprofsync",
+          "subscription":"provprofdqt-messages",
+          "secretNameSubscription": "provprofdqtServiceBusSubscriptionName"
+        },
+        {
+          "topic": "provprofsync",
+          "subscription":"provprofs2s-messages",
+          "secretNameSubscription": "provprofs2sServiceBusSubscriptionName"
+        }
+        
+      ],
+      "metadata": {
+        "description": "Extra subscriptions for a service bus topics"
       }
     },
     "platformGlobalIdentifier": {
@@ -1510,7 +1540,37 @@
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'service-bus')]",
         "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'audit')]",
-        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'securealert')]"
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'securealert')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'provprofsync')]"
+      ]
+    },
+    {
+      "condition": "[and(not(empty(parameters('svcBusExtraSubNames'))),not(equals(resourceGroup().location, 'northeurope')))]",
+      "name": "[if(empty(parameters('svcBusExtraSubNames')),'no-extra-subscriptions-to-deploy', concat(parameters('serviceBusNamespaceName'), '/', parameters('svcBusExtraSubNames')[copyIndex()].topic, '/', parameters('svcBusExtraSubNames')[copyIndex()].subscription))]",
+      "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
+      "apiVersion": "2022-01-01-preview",
+      "properties": {
+        "isClientAffine": false,
+        "lockDuration": "PT5M",
+        "requiresSession": false,
+        "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+        "deadLetteringOnMessageExpiration": false,
+        "deadLetteringOnFilterEvaluationExceptions": true,
+        "maxDeliveryCount": 10,
+        "status": "Active",
+        "enableBatchedOperations": true,
+        "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S"
+      },
+      "copy": {
+        "name": "svcBusExtraSubNames",
+        "count": "[length(parameters('svcBusExtraSubNames'))]",
+        "mode": "Parallel"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'service-bus')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'audit')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'securealert')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'provprofsync')]"
       ]
     },
     {
@@ -2084,7 +2144,46 @@
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'service-bus')]",
         "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'audit')]",
-        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'securealert')]"
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'securealert')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'provprofsync')]"
+      ]
+    },
+    {
+      "condition": "[and(not(empty(parameters('svcBusExtraSubNames'))),not(equals(resourceGroup().location, 'northeurope')))]",
+      "name": "[if(empty(parameters('svcBusExtraSubNames')),'no-extra-Subscriptions-to-add-in-keyvault', parameters('svcBusExtraSubNames')[copyIndex()].secretNameSubscription)]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
+      "apiVersion": "2020-10-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "[parameters('svcBusExtraSubNames')[copyIndex()].secretNameSubscription]"
+          },
+          "secretValue": {
+            "value": "[parameters('svcBusExtraSubNames')[copyIndex()].subscription]"
+          },
+          "contentType": {
+            "value": ""
+          }
+        }
+      },
+      "copy": {
+        "name": "subscriptionscopy",
+        "count": "[length(parameters('svcBusExtraSubNames'))]",
+        "mode": "Parallel"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'service-bus')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'audit')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'securealert')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'provprofsync')]"
       ]
     },
     {
