@@ -1628,7 +1628,7 @@
             "value": "[parameters('sqlFirewallRulesCopyMode')]"
           },
           "ipAddresses": {
-            "value": "[if(equals(resourceGroup().location, 'northeurope'),union(parameters('LogicAppConnectionIpRulesSql'),parameters('LogicAppConnectionIpRulesSqlNeu')),parameters('LogicAppConnectionIpRulesSql'))]"
+            "value": "[if(equals(resourceGroup().location, 'northeurope'),parameters('LogicAppConnectionIpRulesSqlNeu'),parameters('LogicAppConnectionIpRulesSql'))]"
           },
           "firewallRuleNamePrefix": {
             "value": "logicAppConnections"
@@ -1666,41 +1666,7 @@
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'service-bus')]"
       ]
-    },    
-    {
-      "condition": "[and(equals(resourceGroup().location, 'northeurope'),parameters('deployVirtualNetwork'))]",
-      "apiVersion": "2020-10-01",
-      "name": "sql-server-firewall-rule-weu",
-      "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/sql-server-firewall-rules.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "serverName": {
-            "value": "[replace(parameters('sqlServerName'),'neu-','')]"
-          },
-          "subnetResourceIdList": {
-            "value": "[if(and(equals(resourceGroup().location, 'northeurope'),parameters('deployVirtualNetwork')),variables('weuVnetSubnets'), variables('emptyArray'))]"
-          },
-          "copyMode": {
-            "value": "[parameters('sqlFirewallRulesCopyMode')]"
-          },
-          "ipAddresses": {
-            "value": "[if(equals(resourceGroup().location, 'northeurope'),union(parameters('LogicAppConnectionIpRulesSql'),parameters('LogicAppConnectionIpRulesSqlNeu')), parameters('LogicAppConnectionIpRulesSql'))]"
-          },
-          "firewallRuleNamePrefix": {
-            "value": "logicAppConnections"
-          }
-        }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]"
-      ]
-    },
+    }, 
     {
       "condition": "[equals(resourceGroup().location, 'northeurope')]",
       "apiVersion": "2020-10-01",
