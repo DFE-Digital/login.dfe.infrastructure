@@ -178,7 +178,9 @@
         "backend-g1-sn",
         "backend-g3-sn",
         "utils-sn",
-        "backend-g2-sn"
+        "backend-g2-sn",
+        "backend-g4-sn",
+        "backend-g5-sn"
       ],
       "metadata": {
         "description": "Names of additional subnets to create for application integration"
@@ -615,6 +617,26 @@
             "name": "P2v2",
             "tier": "PremiumV2",
             "size": "P2v2",
+            "family": "Pv2",
+            "capacity": 1
+          }
+        },
+        {
+          "name": "backend-g4-asp",
+          "sku": {
+            "name": "P2v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 1
+          }
+        },
+        {
+          "name": "backend-g5-asp",
+          "sku": {
+            "name": "P2v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
             "family": "Pv2",
             "capacity": 1
           }
