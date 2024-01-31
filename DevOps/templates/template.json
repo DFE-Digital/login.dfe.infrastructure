@@ -511,9 +511,9 @@
         {
           "name": "midtier-g1-asp",
           "sku": {
-            "name": "P1v3",
+            "name": "P2v3",
             "tier": "PremiumV3",
-            "size": "P1v3",
+            "size": "P2v3",
             "family": "Pv3",
             "capacity": 3
           }
