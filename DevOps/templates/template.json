@@ -614,9 +614,9 @@
         {
           "name": "backend-g3-asp",
           "sku": {
-            "name": "P2v2",
+            "name": "P1v2",
             "tier": "PremiumV2",
-            "size": "P2v2",
+            "size": "P1v2",
             "family": "Pv2",
             "capacity": 1
           }
@@ -624,7 +624,7 @@
         {
           "name": "backend-g4-asp",
           "sku": {
-            "name": "P2v2",
+            "name": "P1v2",
             "tier": "PremiumV2",
             "size": "P1v2",
             "family": "Pv2",
@@ -634,7 +634,7 @@
         {
           "name": "backend-g5-asp",
           "sku": {
-            "name": "P2v2",
+            "name": "P1v2",
             "tier": "PremiumV2",
             "size": "P1v2",
             "family": "Pv2",
