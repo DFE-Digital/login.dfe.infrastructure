@@ -1430,10 +1430,10 @@
             "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku]"
           },
           "appServicePlanOS": {
-            "value": "[if(or(contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2'),contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g3')),'Windows','Linux')]"
+            "value": "[if(or(or(or(contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2'),contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g3')),contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g4')),contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g5')),'Windows','Linux')]"
           },
           "appServicePlanIsLinux": {
-            "value": "[not(or(contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2'),contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g3')))]"
+            "value": "[not(or(or(or(contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2'),contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g3')),contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g4')),contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g5')))]"
           },
           "defaultCapacity": {
             "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku.capacity]"
