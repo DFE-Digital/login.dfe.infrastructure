@@ -220,13 +220,13 @@
         },
         {
           "name": "provprofsync",
-          "subscription":"provprofsync-messages",
+          "subscription":"ppsyncstatus-messages",
           "secretNameTopic": "provprofServiceBusTopicName",
           "secretNameSubscription": "provprofServiceBusSubscriptionName"
         },
         {
           "name": "provprofcache",
-          "subscription":"provprofcache-messages",
+          "subscription":"ppcachestatus-messages",
           "secretNameTopic": "provprofcacheServiceBusTopicName",
           "secretNameSubscription": "provprofcacheServiceBusSubscriptionName"
         }
@@ -241,17 +241,17 @@
       "defaultValue": [
         {
           "topic": "provprofsync",
-          "subscription":"provprofcollect-messages",
+          "subscription":"ppdeltacollect-messages",
           "secretNameSubscription": "provprofCollectServiceBusSubscriptionName"
         },
         {
           "topic": "provprofsync",
-          "subscription":"provprofdqt-messages",
+          "subscription":"ppdeltateachers-messages",
           "secretNameSubscription": "provprofdqtServiceBusSubscriptionName"
         },
         {
           "topic": "provprofsync",
-          "subscription":"provprofs2s-messages",
+          "subscription":"ppdeltas2s-messages",
           "secretNameSubscription": "provprofs2sServiceBusSubscriptionName"
         }
         
