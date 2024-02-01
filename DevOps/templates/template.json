@@ -219,13 +219,13 @@
           "secretNameSubscription": "secureServiceBusSubscriptionName"
         },
         {
-          "name": "provprofsync",
+          "name": "providerprofilesync",
           "subscription":"ppsyncstatus-messages",
           "secretNameTopic": "provprofServiceBusTopicName",
           "secretNameSubscription": "provprofServiceBusSubscriptionName"
         },
         {
-          "name": "provprofcache",
+          "name": "providerprofilecache",
           "subscription":"ppcachestatus-messages",
           "secretNameTopic": "provprofcacheServiceBusTopicName",
           "secretNameSubscription": "provprofcacheServiceBusSubscriptionName"
@@ -240,17 +240,17 @@
       "type": "array",
       "defaultValue": [
         {
-          "topic": "provprofsync",
+          "topic": "providerprofilesync",
           "subscription":"ppdeltacollect-messages",
           "secretNameSubscription": "provprofCollectServiceBusSubscriptionName"
         },
         {
-          "topic": "provprofsync",
+          "topic": "providerprofilesync",
           "subscription":"ppdeltateachers-messages",
           "secretNameSubscription": "provprofdqtServiceBusSubscriptionName"
         },
         {
-          "topic": "provprofsync",
+          "topic": "providerprofilesync",
           "subscription":"ppdeltas2s-messages",
           "secretNameSubscription": "provprofs2sServiceBusSubscriptionName"
         }
