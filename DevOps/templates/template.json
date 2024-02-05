@@ -80,6 +80,12 @@
         "description": "Name of the storage account resource"
       }
     },
+    "storageAccountProvProfName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the storage account resource for provide Profile"
+      }
+    },
     "keyVaultName": {
       "type": "string",
       "metadata": {
@@ -171,7 +177,10 @@
         "midtier-g3-sn",
         "backend-g1-sn",
         "backend-g3-sn",
-        "utils-sn"
+        "utils-sn",
+        "backend-g2-sn",
+        "backend-g4-sn",
+        "backend-g5-sn"
       ],
       "metadata": {
         "description": "Names of additional subnets to create for application integration"
@@ -208,11 +217,47 @@
           "subscription":"securealert-messages",
           "secretNameTopic": "secureServiceBusTopicName",
           "secretNameSubscription": "secureServiceBusSubscriptionName"
+        },
+        {
+          "name": "providerprofilesync",
+          "subscription":"ppsyncstatus-messages",
+          "secretNameTopic": "provprofServiceBusTopicName",
+          "secretNameSubscription": "provprofServiceBusSubscriptionName"
+        },
+        {
+          "name": "providerprofilecache",
+          "subscription":"ppcachestatus-messages",
+          "secretNameTopic": "provprofcacheServiceBusTopicName",
+          "secretNameSubscription": "provprofcacheServiceBusSubscriptionName"
         }
         
       ],
       "metadata": {
         "description": "Topic names & subscriptions of service bus"
+      }
+    },
+    "svcBusExtraSubNames": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "topic": "providerprofilesync",
+          "subscription":"ppdeltacollect-messages",
+          "secretNameSubscription": "provprofCollectServiceBusSubscriptionName"
+        },
+        {
+          "topic": "providerprofilesync",
+          "subscription":"ppdeltateachers-messages",
+          "secretNameSubscription": "provprofdqtServiceBusSubscriptionName"
+        },
+        {
+          "topic": "providerprofilesync",
+          "subscription":"ppdeltas2s-messages",
+          "secretNameSubscription": "provprofs2sServiceBusSubscriptionName"
+        }
+        
+      ],
+      "metadata": {
+        "description": "Extra subscriptions for a service bus topics"
       }
     },
     "platformGlobalIdentifier": {
@@ -521,9 +566,9 @@
         {
           "name": "midtier-g2-asp",
           "sku": {
-            "name": "P1v3",
+            "name": "P2v3",
             "tier": "PremiumV3",
-            "size": "P1v3",
+            "size": "P2v3",
             "family": "Pv3",
             "capacity": 3
           }
@@ -550,9 +595,49 @@
           "name": "backend-g1-asp",
           "sku": {
             "name": "P2v2",
-            "tier": "PremiumV3",
+            "tier": "PremiumV2",
             "size": "P2v2",
-            "family": "Pv3",
+            "family": "Pv2",
+            "capacity": 1
+          }
+        },
+        {
+          "name": "backend-g2-asp",
+          "sku": {
+            "name": "P2v2",
+            "tier": "PremiumV2",
+            "size": "P2v2",
+            "family": "Pv2",
+            "capacity": 1
+          }
+        },
+        {
+          "name": "backend-g3-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 1
+          }
+        },
+        {
+          "name": "backend-g4-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
+            "capacity": 1
+          }
+        },
+        {
+          "name": "backend-g5-asp",
+          "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family": "Pv2",
             "capacity": 1
           }
         }
@@ -740,7 +825,7 @@
       ]
     },
     {
-      "condition": "[and(parameters('deployRedisCachePrivateEndpoint'),not(equals(resourceGroup().location, 'northeurope')))]",
+      "condition": "[and(and(parameters('deployRedisCachePrivateEndpoint'),not(equals(resourceGroup().location, 'northeurope'))),not(or(or(contains(parameters('environmentId'),'d03'),contains(parameters('environmentId'),'t02')),contains(parameters('environmentId'),'p01'))))]",
       "apiVersion": "2020-10-01",
       "name": "redis-cache-private-endpoint",
       "type": "Microsoft.Resources/deployments",
@@ -985,6 +1070,40 @@
           },
           "ipRules": {
             "value": "[parameters('cdnIpRules')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'virtual-network')]"
+      ]
+    },
+    {
+      "name": "storage-account-pp",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/storage-account.json')]"
+        },
+        "parameters": {
+          "storageAccountName": {
+            "value": "[parameters('storageAccountProvProfName')]"
+          },
+          "NetFirewall":{
+              "value": true
+          },
+          "virtualNetworksSubNet": {
+            "value": [{
+                          "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', replace(parameters('virtualNetworkName'),'neu-',''), 'backend-g2-sn')]",
+                          "action": "Allow",
+                          "state": "Succeeded"
+                      },{
+                          "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', replace(parameters('virtualNetworkName'),'neu-',''), 'backend-g3-sn')]",
+                          "action": "Allow",
+                          "state": "Succeeded"
+                      }
+                    ]
           }
         }
       },
@@ -1311,10 +1430,10 @@
             "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku]"
           },
           "appServicePlanOS": {
-            "value": "[if(contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2'),'','Linux')]"
+            "value": "[if(or(or(or(contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2'),contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g3')),contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g4')),contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g5')),'Windows','Linux')]"
           },
           "appServicePlanIsLinux": {
-            "value": "[not(contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2'))]"
+            "value": "[not(or(or(or(contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2'),contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g3')),contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g4')),contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g5')))]"
           },
           "defaultCapacity": {
             "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku.capacity]"
@@ -1449,7 +1568,37 @@
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'service-bus')]",
         "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'audit')]",
-        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'securealert')]"
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'securealert')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'providerprofilesync')]"
+      ]
+    },
+    {
+      "condition": "[and(not(empty(parameters('svcBusExtraSubNames'))),not(equals(resourceGroup().location, 'northeurope')))]",
+      "name": "[if(empty(parameters('svcBusExtraSubNames')),'no-extra-subscriptions-to-deploy', concat(parameters('serviceBusNamespaceName'), '/', parameters('svcBusExtraSubNames')[copyIndex()].topic, '/', parameters('svcBusExtraSubNames')[copyIndex()].subscription))]",
+      "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
+      "apiVersion": "2022-01-01-preview",
+      "properties": {
+        "isClientAffine": false,
+        "lockDuration": "PT5M",
+        "requiresSession": false,
+        "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+        "deadLetteringOnMessageExpiration": false,
+        "deadLetteringOnFilterEvaluationExceptions": true,
+        "maxDeliveryCount": 10,
+        "status": "Active",
+        "enableBatchedOperations": true,
+        "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S"
+      },
+      "copy": {
+        "name": "svcBusExtraSubNames",
+        "count": "[length(parameters('svcBusExtraSubNames'))]",
+        "mode": "Parallel"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'service-bus')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'audit')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'securealert')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'providerprofilesync')]"
       ]
     },
     {
@@ -1468,10 +1617,10 @@
             "value": "[parameters('serviceBusNamespaceName')]"
           },
           "subnetResourceIdList": {
-            "value": "[if(and(equals(resourceGroup().location, 'northeurope'),parameters('deployVirtualNetwork')),union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('weuVnetSubnets'),variables('pireanVnetSubnets')) , union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('pireanVnetSubnets')))]"
+            "value": "[if(parameters('deployVirtualNetwork'),union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('pireanVnetSubnets')) , union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('pireanVnetSubnets')))]"
           },
           "ipAddresses": {
-            "value": "[if(equals(resourceGroup().location, 'northeurope'),union(parameters('LogicAppConnectionIpRulesServiceBus'),parameters('LogicAppConnectionIpRulesServiceBusNeu')),parameters('LogicAppConnectionIpRulesServiceBus'))]"
+            "value": "[if(equals(resourceGroup().location, 'northeurope'),parameters('LogicAppConnectionIpRulesServiceBusNeu'),parameters('LogicAppConnectionIpRulesServiceBus'))]"
           }
         }
       },
@@ -1501,7 +1650,7 @@
             "value": "[parameters('sqlFirewallRulesCopyMode')]"
           },
           "ipAddresses": {
-            "value": "[if(equals(resourceGroup().location, 'northeurope'),union(parameters('LogicAppConnectionIpRulesSql'),parameters('LogicAppConnectionIpRulesSqlNeu')),parameters('LogicAppConnectionIpRulesSql'))]"
+            "value": "[if(equals(resourceGroup().location, 'northeurope'),parameters('LogicAppConnectionIpRulesSqlNeu'),parameters('LogicAppConnectionIpRulesSql'))]"
           },
           "firewallRuleNamePrefix": {
             "value": "logicAppConnections"
@@ -1539,41 +1688,7 @@
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'service-bus')]"
       ]
-    },    
-    {
-      "condition": "[and(equals(resourceGroup().location, 'northeurope'),parameters('deployVirtualNetwork'))]",
-      "apiVersion": "2020-10-01",
-      "name": "sql-server-firewall-rule-weu",
-      "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/sql-server-firewall-rules.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "serverName": {
-            "value": "[replace(parameters('sqlServerName'),'neu-','')]"
-          },
-          "subnetResourceIdList": {
-            "value": "[if(and(equals(resourceGroup().location, 'northeurope'),parameters('deployVirtualNetwork')),variables('weuVnetSubnets'), variables('emptyArray'))]"
-          },
-          "copyMode": {
-            "value": "[parameters('sqlFirewallRulesCopyMode')]"
-          },
-          "ipAddresses": {
-            "value": "[if(equals(resourceGroup().location, 'northeurope'),union(parameters('LogicAppConnectionIpRulesSql'),parameters('LogicAppConnectionIpRulesSqlNeu')), parameters('LogicAppConnectionIpRulesSql'))]"
-          },
-          "firewallRuleNamePrefix": {
-            "value": "logicAppConnections"
-          }
-        }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'sql-server')]"
-      ]
-    },
+    }, 
     {
       "condition": "[equals(resourceGroup().location, 'northeurope')]",
       "apiVersion": "2020-10-01",
@@ -2023,7 +2138,46 @@
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'service-bus')]",
         "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'audit')]",
-        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'securealert')]"
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'securealert')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'providerprofilesync')]"
+      ]
+    },
+    {
+      "condition": "[and(not(empty(parameters('svcBusExtraSubNames'))),not(equals(resourceGroup().location, 'northeurope')))]",
+      "name": "[if(empty(parameters('svcBusExtraSubNames')),'no-extra-Subscriptions-to-add-in-keyvault', parameters('svcBusExtraSubNames')[copyIndex()].secretNameSubscription)]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
+      "apiVersion": "2020-10-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/key-vault-secret.json')]"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "[parameters('svcBusExtraSubNames')[copyIndex()].secretNameSubscription]"
+          },
+          "secretValue": {
+            "value": "[parameters('svcBusExtraSubNames')[copyIndex()].subscription]"
+          },
+          "contentType": {
+            "value": ""
+          }
+        }
+      },
+      "copy": {
+        "name": "subscriptionscopy",
+        "count": "[length(parameters('svcBusExtraSubNames'))]",
+        "mode": "Parallel"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'service-bus')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'audit')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'securealert')]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), 'providerprofilesync')]"
       ]
     },
     {
