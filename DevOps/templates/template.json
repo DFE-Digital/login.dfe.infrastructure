@@ -1617,10 +1617,10 @@
             "value": "[parameters('serviceBusNamespaceName')]"
           },
           "subnetResourceIdList": {
-            "value": "[if(and(equals(resourceGroup().location, 'northeurope'),parameters('deployVirtualNetwork')),union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('weuVnetSubnets')) , reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value)]"
+            "value": "[if(parameters('deployVirtualNetwork'),union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('pireanVnetSubnets')) , union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('pireanVnetSubnets')))]"
           },
           "ipAddresses": {
-            "value": "[if(equals(resourceGroup().location, 'northeurope'),union(parameters('LogicAppConnectionIpRulesServiceBus'),parameters('LogicAppConnectionIpRulesServiceBusNeu')),parameters('LogicAppConnectionIpRulesServiceBus'))]"
+            "value": "[if(equals(resourceGroup().location, 'northeurope'),parameters('LogicAppConnectionIpRulesServiceBusNeu'),parameters('LogicAppConnectionIpRulesServiceBus'))]"
           }
         }
       },
