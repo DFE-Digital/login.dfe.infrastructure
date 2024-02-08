@@ -1077,7 +1077,7 @@
           "resourceAccessRules": {
             "value": [{
               "tenantId": "[subscription().tenantId]",
-              "resourceId": "[resourceId('Microsoft.Resources/deployments', 'sql-server')]"
+              "resourceId": "[resourceId(resourceGroup().name,'Microsoft.Sql/servers', parameters('sqlServerName'))]"
             }]
           }
         }
