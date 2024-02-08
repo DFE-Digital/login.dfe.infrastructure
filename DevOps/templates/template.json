@@ -1070,6 +1070,12 @@
           },
           "ipRules": {
             "value": "[parameters('cdnIpRules')]"
+          },
+          "resourceAccessRules": {
+            "value": [{
+              "tenantId": "[subscription().tenantId]",
+              "resourceId": "[resourceId('Microsoft.Resources/deployments', 'sql-server')]"
+            }]
           }
         }
       },
