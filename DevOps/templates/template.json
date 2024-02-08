@@ -965,6 +965,9 @@
           },
           "omsWorkspaceId": {
             "value": "[variables('workspaceId')]"
+          },
+          "storageEndpoint": {
+            "value": "[concat('https://', replace(parameters('storageAccountName'), '-', ''),'.blob.core.windows.net/')]"
           }
         },
         "dependsOn": [
