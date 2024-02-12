@@ -960,11 +960,8 @@
           "azureActiveDirectoryAdminSID": {
             "value": "[parameters('azureActiveDirectoryAdminSID')]"
           },
-          "diagnosticSettingsName": {
-            "value": "[variables('sqlServerDiagSettName')]"
-          },
-          "omsWorkspaceId": {
-            "value": "[variables('workspaceId')]"
+          "storageEndpoint": {
+            "value": "[concat('https://', replace(parameters('storageAccountName'), '-', ''),'.blob.core.windows.net/')]"
           }
         },
         "dependsOn": [
@@ -1070,6 +1067,12 @@
           },
           "ipRules": {
             "value": "[parameters('cdnIpRules')]"
+          },
+          "resourceAccessRules": {
+            "value": [{
+              "tenantId": "[subscription().tenantId]",
+              "resourceId": "[resourceId(resourceGroup().name,'Microsoft.Sql/servers', parameters('sqlServerName'))]"
+            }]
           }
         }
       },
