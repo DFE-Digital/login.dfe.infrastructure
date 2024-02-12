@@ -960,12 +960,6 @@
           "azureActiveDirectoryAdminSID": {
             "value": "[parameters('azureActiveDirectoryAdminSID')]"
           },
-          "diagnosticSettingsName": {
-            "value": "[variables('sqlServerDiagSettName')]"
-          },
-          "omsWorkspaceId": {
-            "value": "[variables('workspaceId')]"
-          },
           "storageEndpoint": {
             "value": "[concat('https://', replace(parameters('storageAccountName'), '-', ''),'.blob.core.windows.net/')]"
           }
