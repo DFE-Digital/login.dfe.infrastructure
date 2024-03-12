@@ -22,10 +22,9 @@ pr:
 
 parameters:
 - name: location
-  type: string
-  displayName: 'Select Deploy location'
-  default: westeurope
-  values:
+  type: object
+  displayName: 'Deployment locations (- westeurope & - northeurope)'
+  default:
     - westeurope
     - northeurope
 - name: prereq
@@ -69,45 +68,61 @@ stages:
     # Code scaning tools
     - template:  pipeline/checkov.yml@devopsTemplates
 
-- ${{ each parameter in parameters }}:
-  - ${{ if in(parameter.key, 'tran','dev','test','pp','pr') }}:
-    - ${{ if eq(parameter.value, 'true') }}:
-      - ${{ if or(and(in(parameter.key, 'tran','pp','pr'),eq(parameters.location, 'northeurope')),and(in(parameter.key, 'tran','dev','test','pp','pr'),eq(parameters.location, 'westeurope'))) }}:
-        - stage: Deployment_${{parameter.Key}}
-          displayName: "Deployment [${{parameter.Key}}] ${{parameters.location}}"
-        # dependsOn: 
-        #  - scanInfra
-          variables:
-          - group: dsi-${{parameter.key}}-kv
-          jobs:
-          - ${{ if parameters.prereq }}:
-            - template: pipeline/infrastructure.yml@devopsTemplates
-              parameters:
-                ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
-                  serviceConnection: $(devServiceConnection)
-                ${{ elseif eq(parameter.key, 'pr') }}:
-                  serviceConnection: $(prodServiceConnection)
-                ${{ else }}:
-                  serviceConnection: $(testServiceConnection)
-                environmentName: ${{parameter.key}}
-                infrastuctureType: pre_req_infr
-                deployKv: ${{parameters.kv}}
-                deploymentLocation: ${{parameters.location}}
+- ${{ each location in parameters.location }}:
+  - ${{ each parameter in parameters }}:
+    - ${{ if in(parameter.key, 'tran','dev','test','pp','pr') }}:
+      - ${{ if eq(parameter.value, 'true') }}:
+        - ${{ if or(and(in(parameter.key, 'tran','pp','pr'),eq(location, 'northeurope')),and(in(parameter.key, 'tran','dev','test','pp','pr'),eq(location, 'westeurope'))) }}:
+          - stage: Deployment_${{parameter.Key}}
+            displayName: "Deployment [${{parameter.Key}}] ${{parameters.location}}"
+            ${{ if eq(location,'westeurope') }}:
+              ${{ if eq(var.key,'pr') }}:
+                dependsOn: 
+                - scanInfra
+                - Deployment_pp_${{location}}
+                condition: in(dependencies.Deployment_pp_westeurope.result, 'Succeeded', 'Skipped')
+              ${{ else }}:
+                dependsOn: 
+                - scanInfra
+            ${{ if eq(location,'northeurope') }}:
+              ${{ if eq(length(parameters.location), 2) }}:
+                dependsOn: 
+                - scanInfra
+                - Deployment_${{var.key}}_westeurope
+              ${{ else }}:
+                dependsOn: 
+                - scanInfra
+            variables:
+            - group: dsi-${{parameter.key}}-kv
+            jobs:
+            - ${{ if parameters.prereq }}:
+              - template: pipeline/infrastructure.yml@devopsTemplates
+                parameters:
+                  ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
+                    serviceConnection: $(devServiceConnection)
+                  ${{ elseif eq(parameter.key, 'pr') }}:
+                    serviceConnection: $(prodServiceConnection)
+                  ${{ else }}:
+                    serviceConnection: $(testServiceConnection)
+                  environmentName: ${{parameter.key}}
+                  infrastuctureType: pre_req_infr
+                  deployKv: ${{parameters.kv}}
+                  deploymentLocation: ${{location}}
 
-          - ${{ else }}:
-            - template: pipeline/infrastructure.yml@devopsTemplates
-              parameters:
-                ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
-                  serviceConnection: $(devServiceConnection)
-                ${{ elseif eq(parameter.key, 'pr') }}:
-                  serviceConnection: $(prodServiceConnection)
-                ${{ else }}:
-                  serviceConnection: $(testServiceConnection)
-                environmentName: ${{parameter.key}}
-                infrastuctureType: base_infr
-                templatePath:  $(System.DefaultWorkingDirectory)/login.dfe.infrastructure/DevOps/templates/template.json
-                deployPrivateEndpoint: "true"
-                destructiveVirtualNetworkDeploy: "Disabled" #Disabled,Enabled
-                deployVirtualNetwork: "true" #Deploying the subnets
-                deployASP: "true" #Deploying the application service plans
-                deploymentLocation: ${{parameters.location}}
+            - ${{ else }}:
+              - template: pipeline/infrastructure.yml@devopsTemplates
+                parameters:
+                  ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
+                    serviceConnection: $(devServiceConnection)
+                  ${{ elseif eq(parameter.key, 'pr') }}:
+                    serviceConnection: $(prodServiceConnection)
+                  ${{ else }}:
+                    serviceConnection: $(testServiceConnection)
+                  environmentName: ${{parameter.key}}
+                  infrastuctureType: base_infr
+                  templatePath:  $(System.DefaultWorkingDirectory)/login.dfe.infrastructure/DevOps/templates/template.json
+                  deployPrivateEndpoint: "true"
+                  destructiveVirtualNetworkDeploy: "Disabled" #Disabled,Enabled
+                  deployVirtualNetwork: "true" #Deploying the subnets
+                  deployASP: "true" #Deploying the application service plans
+                  deploymentLocation: ${{location}}
