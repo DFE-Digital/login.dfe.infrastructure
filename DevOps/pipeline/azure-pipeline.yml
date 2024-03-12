@@ -73,7 +73,7 @@ stages:
     - ${{ if in(parameter.key, 'tran','dev','test','pp','pr') }}:
       - ${{ if eq(parameter.value, 'true') }}:
         - ${{ if or(and(in(parameter.key, 'tran','pp','pr'),eq(location, 'northeurope')),and(in(parameter.key, 'tran','dev','test','pp','pr'),eq(location, 'westeurope'))) }}:
-          - stage: Deployment_${{parameter.Key}}
+          - stage: Deployment_${{parameter.Key}}_${{location}}
             displayName: "Deployment [${{parameter.Key}}] ${{location}}"
             ${{ if eq(location,'westeurope') }}:
               ${{ if eq(parameter.key,'pr') }}:
