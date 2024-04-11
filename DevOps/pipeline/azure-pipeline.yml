@@ -6,7 +6,7 @@ resources:
       type: github
       endpoint: DfE-Digital
       name: DFE-Digital/login.dfe.devops
-      ref: main
+      ref: feature/DSI-6855
 
 trigger:
   branches:
@@ -93,7 +93,18 @@ stages:
                 dependsOn: 
                 - scanInfra
             variables:
-            - group: dsi-${{parameter.key}}-kv
+            - name: environmentId
+              ${{ if eq(parameter.key, 'tran') }}:
+                value: d03
+              ${{ if eq(parameter.key, 'dev') }}:
+                value: d01
+              ${{ if eq(parameter.key, 'test') }}:
+                value: t01
+              ${{ if eq(parameter.key, 'pp') }}:
+                value: t02
+              ${{ if eq(parameter.key, 'pr') }}:
+                value: p01
+            # - group: dsi-${{var.key}}-kv
             jobs:
             - ${{ if parameters.prereq }}:
               - template: pipeline/infrastructure.yml@devopsTemplates
