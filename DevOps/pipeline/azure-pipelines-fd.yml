@@ -51,7 +51,17 @@ stages:
         dependsOn: 
         - scanGateway
         variables:
-        - group: dsi-${{parameter.key}}-kv
+        - name: environmentId
+          ${{ if eq(parameter.key, 'tran') }}:
+            value: d03
+          ${{ if eq(parameter.key, 'dev') }}:
+            value: d01
+          ${{ if eq(parameter.key, 'test') }}:
+            value: t01
+          ${{ if eq(parameter.key, 'pp') }}:
+            value: t02
+          ${{ if eq(parameter.key, 'pr') }}:
+            value: p01
         jobs:
         - template: pipeline/frontDoor.yml@devopsTemplates
           parameters:
