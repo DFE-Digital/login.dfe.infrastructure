@@ -6,7 +6,7 @@ resources:
       type: github
       endpoint: DfE-Digital
       name: DFE-Digital/login.dfe.devops
-      ref: feature/DSI-6855
+      ref: main
 
 trigger:
   branches:
@@ -104,7 +104,6 @@ stages:
                 value: t02
               ${{ if eq(parameter.key, 'pr') }}:
                 value: p01
-            # - group: dsi-${{var.key}}-kv
             jobs:
             - ${{ if parameters.prereq }}:
               - template: pipeline/infrastructure.yml@devopsTemplates
