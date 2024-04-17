@@ -691,7 +691,7 @@
         "description": "White listed SQL Server Firewall rules"
       }
     },
-    "sqlPITRRetentionDays": {
+    "sqlPitrRetentionDays": {
       "type": "string",
       "metadata": {
         "description": "The backup retention period in days. This is how many days Point-in-Time Restore will be supported"
@@ -1034,8 +1034,8 @@
           "databaseSku": {
             "value": "[if(contains(parameters('databaseNames')[copyIndex()], 'sku'), parameters('databaseNames')[copyIndex()].sku, variables('elasticSku'))]"
           },
-          "sqlPITRRetentionDays": {
-            "value": "[parameters('sqlPITRRetentionDays')]"
+          "sqlPitrRetentionDays": {
+            "value": "[parameters('sqlPitrRetentionDays')]"
           },
           "sqlPitrDiffBackupIntervalInHours": {
             "value": "[parameters('sqlPitrDiffBackupIntervalInHours')]"
