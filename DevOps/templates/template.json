@@ -425,21 +425,21 @@
         "20.82.246.112/28",
         "52.146.138.32/27"
       ]
-  },
-  "LogicAppConnectionIpRulesSqlNeu": {
-      "type": "array",
-      "defaultValue": [
-        "52.178.150.68",
-        "94.245.91.93",
-        "20.82.226.52",
-        "20.82.224.59",
-        "13.69.227.208-13.69.227.223",
-        "13.69.231.192-13.69.231.223",
-        "40.115.108.29",
-        "20.82.246.112-20.82.246.127",
-        "52.146.138.32-52.146.138.63"
-      ]
-  },
+    },
+    "LogicAppConnectionIpRulesSqlNeu": {
+        "type": "array",
+        "defaultValue": [
+          "52.178.150.68",
+          "94.245.91.93",
+          "20.82.226.52",
+          "20.82.224.59",
+          "13.69.227.208-13.69.227.223",
+          "13.69.231.192-13.69.231.223",
+          "40.115.108.29",
+          "20.82.246.112-20.82.246.127",
+          "52.146.138.32-52.146.138.63"
+        ]
+    },
     "azureActiveDirectoryAdmin": {
       "type": "string",
       "metadata": {
@@ -689,6 +689,42 @@
       ],
       "metadata": {
         "description": "White listed SQL Server Firewall rules"
+      }
+    },
+    "sqlPitrRetentionDays": {
+      "type": "string",
+      "metadata": {
+        "description": "The backup retention period in days. This is how many days Point-in-Time Restore will be supported"
+      }
+    },
+    "sqlPitrDiffBackupIntervalInHours": {
+      "type": "string",
+      "metadata": {
+        "description": "The number of hours between each differential backup"
+      }
+    },
+    "sqlLtrWeeklyRetention": {
+      "type": "string",
+      "metadata": {
+        "description": "The weekly retention policy for an LTR backup in an ISO 8601 format"
+      }
+    },
+    "sqlLtrMonthlyRetention": {
+      "type": "string",
+      "metadata": {
+        "description": "The monthly retention policy for an LTR backup in an ISO 8601 format"
+      }
+    },
+    "sqlLtrYearlyRetention": {
+      "type": "string",
+      "metadata": {
+        "description": "The yearly retention policy for an LTR backup in an ISO 8601 format"
+      }
+    },
+    "sqlLtrYearlyRetentionWeekOfYear": {
+      "type": "string",
+      "metadata": {
+        "description": "The week of year to take the yearly backup in an ISO 8601 format"
       }
     }
   },
@@ -997,6 +1033,24 @@
           },
           "databaseSku": {
             "value": "[if(contains(parameters('databaseNames')[copyIndex()], 'sku'), parameters('databaseNames')[copyIndex()].sku, variables('elasticSku'))]"
+          },
+          "sqlPitrRetentionDays": {
+            "value": "[parameters('sqlPitrRetentionDays')]"
+          },
+          "sqlPitrDiffBackupIntervalInHours": {
+            "value": "[parameters('sqlPitrDiffBackupIntervalInHours')]"
+          },
+          "sqlLtrWeeklyRetention": {
+            "value": "[parameters('sqlLtrWeeklyRetention')]"
+          },
+          "sqlLtrMonthlyRetention": {
+            "value": "[parameters('sqlLtrMonthlyRetention')]"
+          },
+          "sqlLtrYearlyRetention": {
+            "value": "[parameters('sqlLtrYearlyRetention')]"
+          },
+          "sqlLtrYearlyRetentionWeekOfYear": {
+            "value": "[parameters('sqlLtrYearlyRetentionWeekOfYear')]"
           }
         }
       },
