@@ -13,7 +13,7 @@
     },
     "branch": {
         "type": "string",
-        "defaultValue": "feature/NSA-7916_sql_backup_retention",
+        "defaultValue": "main",
         "metadata": {
             "description": "Branch that use for the ARM templateLinks"
         }
