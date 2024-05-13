@@ -225,6 +225,12 @@
           "secretNameSubscription": "provprofServiceBusSubscriptionName"
         },
         {
+          "name": "providerprofilesupport",
+          "subscription":"ppsupport-messages",
+          "secretNameTopic": "provprofSupServiceBusTopicName",
+          "secretNameSubscription": "provprofSupServiceBusSubscriptionName"
+        },
+        {
           "name": "providerprofilecache",
           "subscription":"ppcachestatus-messages",
           "secretNameTopic": "provprofcacheServiceBusTopicName",
