@@ -1181,7 +1181,15 @@
                           "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', replace(parameters('virtualNetworkName'),'neu-',''), 'backend-g3-sn')]",
                           "action": "Allow",
                           "state": "Succeeded"
-                      }
+                      },{
+                        "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', replace(parameters('virtualNetworkName'),'neu-',''), 'backend-g4-sn')]",
+                        "action": "Allow",
+                        "state": "Succeeded"
+                      },{
+                        "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', replace(parameters('virtualNetworkName'),'neu-',''), 'backend-g5-sn')]",
+                        "action": "Allow",
+                        "state": "Succeeded"
+                    }
                     ]
           }
         }
