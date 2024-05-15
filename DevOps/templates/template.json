@@ -1174,19 +1174,19 @@
           },
           "virtualNetworksSubNet": {
             "value": [{
-                          "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', replace(parameters('virtualNetworkName'),'neu-',''), 'backend-g2-sn')]",
+                          "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), 'backend-g2-sn')]",
                           "action": "Allow",
                           "state": "Succeeded"
                       },{
-                          "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', replace(parameters('virtualNetworkName'),'neu-',''), 'backend-g3-sn')]",
+                          "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), 'backend-g3-sn')]",
                           "action": "Allow",
                           "state": "Succeeded"
                       },{
-                        "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', replace(parameters('virtualNetworkName'),'neu-',''), 'backend-g4-sn')]",
+                        "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), 'backend-g4-sn')]",
                         "action": "Allow",
                         "state": "Succeeded"
                       },{
-                        "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', replace(parameters('virtualNetworkName'),'neu-',''), 'backend-g5-sn')]",
+                        "id": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), 'backend-g5-sn')]",
                         "action": "Allow",
                         "state": "Succeeded"
                     }
