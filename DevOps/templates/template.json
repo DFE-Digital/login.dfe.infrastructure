@@ -1424,7 +1424,7 @@
             "value": "[parameters('samltierAppServicePlanSku')[copyIndex()].sku.capacity]"
           },
           "zoneredundant": {
-            "value": "[parameters('samltierAppServicePlanSku')[copyIndex()].sku.zoneredundant]"
+            "value": "[parameters('samltierAppServicePlanSku')[copyIndex()].zoneredundant]"
           }
         }
       },
@@ -1461,7 +1461,7 @@
             "value": "[parameters('prestierAppServicePlanSku')[copyIndex()].sku.capacity]"
           },
           "zoneredundant": {
-            "value": "[parameters('prestierAppServicePlanSku')[copyIndex()].sku.zoneredundant]"
+            "value": "[parameters('prestierAppServicePlanSku')[copyIndex()].zoneredundant]"
           }
         }
       },
@@ -1498,7 +1498,7 @@
             "value": "[parameters('midtierAppServicePlanSku')[copyIndex()].sku.capacity]"
           },
           "zoneredundant": {
-            "value": "[parameters('midtierAppServicePlanSku')[copyIndex()].sku.zoneredundant]"
+            "value": "[parameters('midtierAppServicePlanSku')[copyIndex()].zoneredundant]"
           }
         }
       },
@@ -1535,7 +1535,7 @@
             "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku.capacity]"
           },
           "zoneredundant": {
-            "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku.zoneredundant]"
+            "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].zoneredundant]"
           }
 
         }
