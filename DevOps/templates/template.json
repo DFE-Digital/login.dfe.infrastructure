@@ -13,7 +13,7 @@
     },
     "branch": {
         "type": "string",
-        "defaultValue": "main",
+        "defaultValue": "feature/NSA-8080_ASP_resizing",
         "metadata": {
             "description": "Branch that use for the ARM templateLinks"
         }
@@ -1422,6 +1422,9 @@
           },
           "defaultCapacity": {
             "value": "[parameters('samltierAppServicePlanSku')[copyIndex()].sku.capacity]"
+          },
+          "zoneRedundancy": {
+            "value": "[parameters('samltierAppServicePlanSku')[copyIndex()].sku.zoneredunant]"
           }
         }
       },
@@ -1456,6 +1459,9 @@
           },
           "defaultCapacity": {
             "value": "[parameters('prestierAppServicePlanSku')[copyIndex()].sku.capacity]"
+          },
+          "zoneRedundancy": {
+            "value": "[parameters('prestierAppServicePlanSku')[copyIndex()].sku.zoneredunant]"
           }
         }
       },
@@ -1490,6 +1496,9 @@
           },
           "defaultCapacity": {
             "value": "[parameters('midtierAppServicePlanSku')[copyIndex()].sku.capacity]"
+          },
+          "zoneRedundancy": {
+            "value": "[parameters('midtierAppServicePlanSku')[copyIndex()].sku.zoneredunant]"
           }
         }
       },
@@ -1524,6 +1533,9 @@
           },
           "defaultCapacity": {
             "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku.capacity]"
+          },
+          "zoneRedundancy": {
+            "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku.zoneredunant]"
           }
 
         }
