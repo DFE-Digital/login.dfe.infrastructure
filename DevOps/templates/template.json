@@ -1423,7 +1423,7 @@
           "defaultCapacity": {
             "value": "[parameters('samltierAppServicePlanSku')[copyIndex()].sku.capacity]"
           },
-          "zoneRedundancy": {
+          "zoneredundant": {
             "value": "[parameters('samltierAppServicePlanSku')[copyIndex()].sku.zoneredundant]"
           }
         }
@@ -1460,7 +1460,7 @@
           "defaultCapacity": {
             "value": "[parameters('prestierAppServicePlanSku')[copyIndex()].sku.capacity]"
           },
-          "zoneRedundancy": {
+          "zoneredundant": {
             "value": "[parameters('prestierAppServicePlanSku')[copyIndex()].sku.zoneredundant]"
           }
         }
@@ -1497,7 +1497,7 @@
           "defaultCapacity": {
             "value": "[parameters('midtierAppServicePlanSku')[copyIndex()].sku.capacity]"
           },
-          "zoneRedundancy": {
+          "zoneredundant": {
             "value": "[parameters('midtierAppServicePlanSku')[copyIndex()].sku.zoneredundant]"
           }
         }
@@ -1534,7 +1534,7 @@
           "defaultCapacity": {
             "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku.capacity]"
           },
-          "zoneRedundancy": {
+          "zoneredundant": {
             "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku.zoneredundant]"
           }
 
