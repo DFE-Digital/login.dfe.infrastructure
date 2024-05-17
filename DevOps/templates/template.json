@@ -1420,11 +1420,23 @@
           "appServicePlanIsLinux": {
             "value": true
           },
+          "zoneredundant": {
+            "value": "[parameters('samltierAppServicePlanSku')[copyIndex()].zoneredundant]"
+          },
+          "autoscaleEnabled": {
+            "value": "[parameters('samltierAppServicePlanSku')[copyIndex()].autoscaleEnabled]"
+          },
           "defaultCapacity": {
             "value": "[parameters('samltierAppServicePlanSku')[copyIndex()].sku.capacity]"
           },
-          "zoneredundant": {
-            "value": "[parameters('samltierAppServicePlanSku')[copyIndex()].zoneredundant]"
+          "maximumCapacity": {
+            "value": "[parameters('samltierAppServicePlanSku')[copyIndex()].maximumCapacity]"
+          },
+          "metricThresholdToScaleOut": {
+            "value": "[parameters('samltierAppServicePlanSku')[copyIndex()].metricThresholdToScaleOut]"
+          },
+          "metricThresholdToScaleIn": {
+            "value": "[parameters('samltierAppServicePlanSku')[copyIndex()].metricThresholdToScaleIn]"
           }
         }
       },
@@ -1457,11 +1469,23 @@
           "appServicePlanIsLinux": {
             "value": true
           },
+          "zoneredundant": {
+            "value": "[parameters('prestierAppServicePlanSku')[copyIndex()].zoneredundant]"
+          },
+          "autoscaleEnabled": {
+            "value": "[parameters('prestierAppServicePlanSku')[copyIndex()].autoscaleEnabled]"
+          },
           "defaultCapacity": {
             "value": "[parameters('prestierAppServicePlanSku')[copyIndex()].sku.capacity]"
           },
-          "zoneredundant": {
-            "value": "[parameters('prestierAppServicePlanSku')[copyIndex()].zoneredundant]"
+          "maximumCapacity": {
+            "value": "[parameters('prestierAppServicePlanSku')[copyIndex()].maximumCapacity]"
+          },
+          "metricThresholdToScaleOut": {
+            "value": "[parameters('prestierAppServicePlanSku')[copyIndex()].metricThresholdToScaleOut]"
+          },
+          "metricThresholdToScaleIn": {
+            "value": "[parameters('prestierAppServicePlanSku')[copyIndex()].metricThresholdToScaleIn]"
           }
         }
       },
@@ -1494,11 +1518,23 @@
           "appServicePlanIsLinux": {
             "value": true
           },
+          "zoneredundant": {
+            "value": "[parameters('midtierAppServicePlanSku')[copyIndex()].zoneredundant]"
+          },
+          "autoscaleEnabled": {
+            "value": "[parameters('midtierAppServicePlanSku')[copyIndex()].autoscaleEnabled]"
+          },
           "defaultCapacity": {
             "value": "[parameters('midtierAppServicePlanSku')[copyIndex()].sku.capacity]"
           },
-          "zoneredundant": {
-            "value": "[parameters('midtierAppServicePlanSku')[copyIndex()].zoneredundant]"
+          "maximumCapacity": {
+            "value": "[parameters('midtierAppServicePlanSku')[copyIndex()].maximumCapacity]"
+          },
+          "metricThresholdToScaleOut": {
+            "value": "[parameters('midtierAppServicePlanSku')[copyIndex()].metricThresholdToScaleOut]"
+          },
+          "metricThresholdToScaleIn": {
+            "value": "[parameters('midtierAppServicePlanSku')[copyIndex()].metricThresholdToScaleIn]"
           }
         }
       },
@@ -1531,11 +1567,23 @@
           "appServicePlanIsLinux": {
             "value": "[not(or(or(or(contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g2'),contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g3')),contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g4')),contains(parameters('backEndAppServicePlanSku')[copyIndex()].name,'g5')))]"
           },
+          "zoneredundant": {
+            "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].zoneredundant]"
+          },
+          "autoscaleEnabled": {
+            "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].autoscaleEnabled]"
+          },
           "defaultCapacity": {
             "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].sku.capacity]"
           },
-          "zoneredundant": {
-            "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].zoneredundant]"
+          "maximumCapacity": {
+            "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].maximumCapacity]"
+          },
+          "metricThresholdToScaleOut": {
+            "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].metricThresholdToScaleOut]"
+          },
+          "metricThresholdToScaleIn": {
+            "value": "[parameters('backEndAppServicePlanSku')[copyIndex()].metricThresholdToScaleIn]"
           }
 
         }
