@@ -13,7 +13,7 @@
     },
     "branch": {
         "type": "string",
-        "defaultValue": "main",
+        "defaultValue": "feature/nsa-8080_asp_resizing",
         "metadata": {
             "description": "Branch that use for the ARM templateLinks"
         }
