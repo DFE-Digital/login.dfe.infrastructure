@@ -359,7 +359,7 @@
     },
     "deployServiceBus": {
       "type": "bool",
-      "defaultValue": false,
+      "defaultValue": true,
       "metadata": {
         "description": "Whether to deploy the shared Service Bus resource"
       }
