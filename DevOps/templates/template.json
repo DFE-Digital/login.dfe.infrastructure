@@ -92,6 +92,12 @@
         "description": "Name of the Key Vault resource"
       }
     },
+    "managedIdenityStorage": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the managed identity resource"
+      }
+    },
     "azureSearchName": {
       "type": "string",
       "metadata": {
@@ -2385,6 +2391,32 @@
       },
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'azure-search')]"
+      ]
+    },
+    {
+      "apiVersion": "2020-10-01",
+      "name": "managed-idenity-provider-profile-storage",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('templatesBaseUri'),'&repo=DFE-Digital/login.dfe.devops&ref=',parameters('branch'),'&token=', parameters('AccessToken'),'&file=templates/azure-managed-Identity.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "identityName": {
+            "value": "[parameters('managedIdenityStorage')]"
+          },
+          "role": {
+            "value": "StorageBlobDataContributor"
+          },
+          "roleDefinitionId": {
+            "value": "ba92f5b4-2d11-453d-a403-e96b0029c9fe"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'storage-account-pp')]"
       ]
     }
   ],
