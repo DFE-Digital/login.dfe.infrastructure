@@ -12,13 +12,13 @@ trigger:
   branches:
     include:
     - feature/*
-    - develop
+    - main
     - release/*
 
 pr:
   branches:
     include:
-    - develop
+    - main
 
 parameters:
 - name: location
