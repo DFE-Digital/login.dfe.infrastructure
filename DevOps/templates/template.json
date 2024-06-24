@@ -92,7 +92,7 @@
         "description": "Name of the Key Vault resource"
       }
     },
-    "managedIdenityStorage": {
+    "storageIdenityName": {
       "type": "string",
       "metadata": {
         "description": "Name of the managed identity resource"
@@ -2405,7 +2405,7 @@
         },
         "parameters": {
           "identityName": {
-            "value": "[parameters('managedIdenityStorage')]"
+            "value": "[parameters('storageIdenityName')]"
           },
           "role": {
             "value": "StorageBlobDataOwner"
