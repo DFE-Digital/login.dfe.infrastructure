@@ -40,8 +40,12 @@ stages:
 - stage: scanGateway
   displayName: "Scan tools"
   jobs:
-    # Code scaning tools
-    - template:  pipeline/checkov.yml@devopsTemplates
+    
+    - template:  pipeline/scanTools.yml@devopsTemplates
+      parameters:
+        AppDeploy: false 
+
+
 
 - ${{ each parameter in parameters }}:
   - ${{ if in(parameter.key, 'tran','dev','test','pp','pr') }}:

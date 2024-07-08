@@ -61,12 +61,14 @@ variables:
 
 stages:
 
-# Code Scans & Build the artifact for deployment
+# Code Scans
 - stage: scanInfra
   displayName: "Scan tools"
   jobs:
-    # Code scaning tools
-    - template:  pipeline/checkov.yml@devopsTemplates
+
+    - template:  pipeline/scanTools.yml@devopsTemplates
+      parameters:
+        AppDeploy: false 
 
 - ${{ each location in parameters.location }}:
   - ${{ each parameter in parameters }}:
