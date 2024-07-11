@@ -1179,24 +1179,33 @@
               "value": true
           },
           "virtualNetworksSubNet": {
-            "value": [{
-                          "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), 'backend-g2-sn')]",
-                          "action": "Allow",
-                          "state": "Succeeded"
-                      },{
-                          "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), 'backend-g3-sn')]",
-                          "action": "Allow",
-                          "state": "Succeeded"
-                      },{
-                        "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), 'backend-g4-sn')]",
-                        "action": "Allow",
-                        "state": "Succeeded"
-                      },{
-                        "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), 'backend-g5-sn')]",
-                        "action": "Allow",
-                        "state": "Succeeded"
-                    }
-                    ]
+            "value": [
+                {
+                    "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), 'backend-g2-sn')]",
+                    "action": "Allow",
+                    "state": "Succeeded"
+                },
+                {
+                    "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), 'backend-g3-sn')]",
+                    "action": "Allow",
+                    "state": "Succeeded"
+                },
+                {
+                    "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), 'backend-g4-sn')]",
+                    "action": "Allow",
+                    "state": "Succeeded"
+                },
+                {
+                    "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), 'backend-g5-sn')]",
+                    "action": "Allow",
+                    "state": "Succeeded"
+                },
+                {
+                    "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), 'midtier-g3-sn')]",
+                    "action": "Allow",
+                    "state": "Succeeded"
+                }
+            ]
           }
         }
       },
