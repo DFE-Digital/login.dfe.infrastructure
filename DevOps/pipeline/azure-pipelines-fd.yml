@@ -36,8 +36,8 @@ variables:
 
 stages:
 
-# Code Scans & Build the artifact for deployment
-- stage: scanGateway
+# Code Scans
+- stage: scanTemplate
   displayName: "Scan tools"
   jobs:
     
@@ -53,7 +53,7 @@ stages:
       - stage: Deployment_${{parameter.Key}}
         displayName: "Deployment [${{parameter.Key}}]"
         dependsOn: 
-        - scanGateway
+        - scanTemplate
         variables:
         - name: environmentId
           ${{ if eq(parameter.key, 'tran') }}:

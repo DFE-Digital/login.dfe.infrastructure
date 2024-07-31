@@ -78,14 +78,8 @@ stages:
           - stage: Deployment_${{parameter.Key}}_${{location}}
             displayName: "Deployment [${{parameter.Key}}] ${{location}}"
             ${{ if eq(location,'westeurope') }}:
-              ${{ if eq(parameter.key,'pr') }}:
-                dependsOn: 
-                - scanInfra
-                - Deployment_pp_${{location}}
-                condition: in(dependencies.Deployment_pp_westeurope.result, 'Succeeded', 'Skipped')
-              ${{ else }}:
-                dependsOn: 
-                - scanInfra
+              dependsOn: 
+              - scanInfra
             ${{ if eq(location,'northeurope') }}:
               ${{ if eq(length(parameters.location), 2) }}:
                 dependsOn: 
@@ -138,3 +132,13 @@ stages:
                   deployVirtualNetwork: "false" #Deploying the subnets
                   deployASP: "false" #Deploying the application service plans
                   deploymentLocation: ${{location}}
+          
+          - ${{ if and(eq(var.key, 'pr'),eq(location, 'westeurope')) }}:
+            - stage: branchPrTag
+              displayName: "GitHub PR & Release Branch Tag"
+              dependsOn: 
+              - Deployment_${{var.key}}_${{location}}
+              jobs:
+              - template:  pipeline/tagCreation.yml@devopsTemplates
+                parameters:
+                  applicationName: ${{variables.applicationFullName}}
