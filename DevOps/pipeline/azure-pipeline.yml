@@ -141,4 +141,4 @@ stages:
               jobs:
               - template:  pipeline/tagCreation.yml@devopsTemplates
                 parameters:
-                  applicationName: ${{variables.applicationFullName}}
+                  applicationName: infra
