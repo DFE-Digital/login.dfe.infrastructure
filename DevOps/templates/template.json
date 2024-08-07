@@ -192,23 +192,6 @@
         "description": "Names of additional subnets to create for application integration"
       }
     },
-     "pireanSubnets": {
-      "type": "array",
-      "defaultValue": [
-        "pmppsyncfa-sn",
-        "pmppsyncst-sn",
-        "pmpporgssyncfa-sn",
-        "pmpporgssyncst-sn",
-        "pmppprodeltast-collect-sn",
-        "pmppprodeltast-dqt-sn",
-        "pmppprodeltast-s2s-sn",
-        "pmppprodeltafa-sn",
-        "pmppprodeltast-sn"
-      ],
-      "metadata": {
-        "description": "Names of pirean subnets to create for service bus integration"
-      }
-    },
     "TopicNames": {
       "type": "array",
       "defaultValue": [
@@ -801,11 +784,6 @@
         "name": "weuVnetSubnets",
         "count": "[if(not(equals(parameters('environmentId'),'d01')),sub(length(parameters('applicationSubnets')),1),length(parameters('applicationSubnets')))]",
         "input": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', replace(parameters('virtualNetworkName'),'neu-',''), parameters('applicationSubnets')[copyIndex('weuVnetSubnets')])]" 
-      },
-      { 
-        "name": "pireanVnetSubnets",
-        "count": "[if(not(equals(parameters('environmentId'),'p01')),sub(length(parameters('pireanSubnets')),2),length(parameters('pireanSubnets')))]",
-        "input": "[resourceId(concat('s141',parameters('environmentId'),'-shd'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('pireanSubnets')[copyIndex('pireanVnetSubnets')])]" 
       },
       { 
         "name": "listOfDatabaseNames",
@@ -1764,7 +1742,7 @@
       ]
     },
     {
-      "condition": "[and(parameters('deployVirtualNetwork'), parameters('deployServiceBus'))]",
+      "condition": "[and(equals(resourceGroup().location, 'westeurope'),and(parameters('deployVirtualNetwork'), parameters('deployServiceBus'))]",
       "apiVersion": "2020-10-01",
       "name": "service-bus-firewall-rule",
       "type": "Microsoft.Resources/deployments",
@@ -1779,10 +1757,10 @@
             "value": "[parameters('serviceBusNamespaceName')]"
           },
           "subnetResourceIdList": {
-            "value": "[if(parameters('deployVirtualNetwork'),union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('pireanVnetSubnets')) , union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('pireanVnetSubnets')))]"
+            "value": "[reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value)]"
           },
           "ipAddresses": {
-            "value": "[if(equals(resourceGroup().location, 'northeurope'),parameters('LogicAppConnectionIpRulesServiceBusNeu'),parameters('LogicAppConnectionIpRulesServiceBus'))]"
+            "value": "[parameters('LogicAppConnectionIpRulesServiceBus'))]"
           }
         }
       },
