@@ -1757,10 +1757,10 @@
             "value": "[parameters('serviceBusNamespaceName')]"
           },
           "subnetResourceIdList": {
-            "value": "[reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value)]"
+            "value": "[reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value]"
           },
           "ipAddresses": {
-            "value": "[parameters('LogicAppConnectionIpRulesServiceBus'))]"
+            "value": "[parameters('LogicAppConnectionIpRulesServiceBus')]"
           }
         }
       },
@@ -1818,7 +1818,7 @@
             "value": "[replace(parameters('serviceBusNamespaceName'),'neu-','')]"
           },
           "subnetResourceIdList": {
-            "value": "[if(and(equals(resourceGroup().location, 'northeurope'),parameters('deployVirtualNetwork')),union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('weuVnetSubnets')) , variables('weuVnetSubnets'))]"
+            "value": "[if(parameters('deployVirtualNetwork'),union(reference('get-subnet-resourceid-list', '2020-10-01').outputs.subnetResourceIdList.value,variables('weuVnetSubnets')) , variables('weuVnetSubnets'))]"
           },
           "ipAddresses": {
             "value": "[if(equals(resourceGroup().location, 'northeurope'),union(parameters('LogicAppConnectionIpRulesServiceBus'),parameters('LogicAppConnectionIpRulesServiceBusNeu')),parameters('LogicAppConnectionIpRulesServiceBus'))]"
