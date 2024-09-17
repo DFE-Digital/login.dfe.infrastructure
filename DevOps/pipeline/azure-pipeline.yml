@@ -31,6 +31,10 @@ parameters:
   type: boolean
   displayName: 'Deploy Key vault only if Pre-Requisites selected'
   default: false
+- name: idm
+  type: boolean
+  displayName: 'Bicep Deployment'
+  default: true
 - name: tran
   type: boolean
   displayName: 'Transformation Deployment'
@@ -54,6 +58,7 @@ parameters:
 
 variables:
 - group: dsi-global
+- group: dsi-idm
 
 stages:
 
