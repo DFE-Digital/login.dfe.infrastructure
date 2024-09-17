@@ -116,4 +116,7 @@ stages:
                 deployPrivateEndpoint: "true"
                 deployASP: "true" #Deploying the application service plans
                 deploymentLocation: ${{location}}
-                deployKv: ${{bool(parameter.kv)}}
+                ${{ if eq(parameter.kv, 'true') }}:
+                  deployKv: true
+                ${{ else }}:
+                  deployKv: false
