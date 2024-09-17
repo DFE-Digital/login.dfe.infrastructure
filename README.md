@@ -13,7 +13,6 @@ This document refers to the DevOps engineers who will maintain this pipeline. Al
 1. Azure Active Directory needs 3 App registrations created by the DevOps team. (This Prerequisite is already set. This may be needed when moving tenants )
    1. Service connections for the pipeline to be able to deploy in all environments. May need approval from the CIP team -> Name: `S141<Subscriptions enitial Letter>.bsvc.cip.azdo`
    2. Azure Active Directory Admin for the use of connection in the SQL server. May need approval from the CIP team -> Name: `s141-dfesignin-<Environment Name>-sql-admin`
-   3. Microsoft Azure App Service that will give access to the app services to access the key vaults. May need approval from the CIP team -> Name: `Microsoft Azure App Service`
 2. Azure Active Directory needs 2 App registrations created by the devops team. (This Prerequisite is already set. But for new environments they will be needed)
    1. The will be the authentication for the app services with the name `S141EnvId-app` how to create [here](https://github.com/DFE-Digital/login.dfe.devops/blob/main/Docs/AppRegistrations.md)
    2. The will be the authentication for the client services with the name `S141EnvId-client` how to created [here](https://github.com/DFE-Digital/login.dfe.devops/blob/main/Docs/AppRegistrations.md)
@@ -25,7 +24,6 @@ This document refers to the DevOps engineers who will maintain this pipeline. Al
 6. Updated parameter `deployPrivateEndpoint` from false to true for deploying all the private endpoints and after deployment changes back to false in azure-pipeline.yml
 7. Updated variable `destructiveVirtualNetworkDeploy` from Disabled to Enabled for deploying the vnet the First time and after deployment changes back to Disabled in azure-pipeline.yml
 8. When new `s141<EnvId>-shd` resource group or any other resource group is deployed with a need of virtual Network creation, the CIP team needs to allow the virtual Network creation in that resource group
-9.  Check the Deploy Pre-Requisites and environment you deploy in the first run for the creation of the Logic app and the KeyVault.
 
 ## Deployment
 ---
@@ -57,7 +55,7 @@ Also, this pipeline has an extra parameter in the pipeline to trigger the Pre-Re
 7. Add by pipeline, CDN Assets Version in the keyvault with the name `cdnAssetsVersion`
 8. Add by pipeline, CDN Host Name in the keyvault with the name `cdnHostName`
 9. All Add by pipeline hosts/Urls names of the app services with the name schema `standalone<Appservice Full Name>HostName`. P.S For All frond-end services use the Certificate domain/if no certificate exists for the domain use the app service default schema 
-10. Add redis Connection in the keyvault with the name `redisConn` & format `redis://:<primary key>@<Host name>:<port name>`
+10. Add by pipeline, redis Connection in the keyvault with the name `redisConn` & format `redis://:<primary key>@<Host name>:<port name>`
 11. Add by pipeline, Node start file path in the keyvault with the name `platformGlobalNodeStart`
 12. Add by pipeline, Pm2 Instances in the keyvault with the name `platformGlobalPm2Instances`
 13. Add by pipeline, Pm2 Execution Mode in the keyvault with the name `platformGlobalPm2ExecMode`
@@ -81,10 +79,10 @@ Also, this pipeline has an extra parameter in the pipeline to trigger the Pre-Re
 31. Add the crypto Private Key that used by interactions in the keyvault with the name `cryptoPublicKey`
 32. Add the crypto Private Key that used by interactions in the keyvault with the name `cryptoPrivateKey`
 33. Add the corona form redirect url in the keyvault with the name `coronaFormRedirectUrl`
-34. Add the client secret for help in the keyvault with the name `helpClientSecret`
-35. Add the assertions secret in the keyvault with the name `assertionsSecret`
-36. Add the afroms client secret in the keyvault with the name `afromsClientSecret`
-37. Add the afroms client id in the keyvault with the name `afromsClientId`
+34. Add the client secret for help  after the enteries added in database in the keyvault with the name `helpClientSecret`
+35. Add the assertions secret  after the enteries added in database in the keyvault with the name `assertionsSecret`
+36. Add the afroms client  after the enteries added in database secret in the keyvault with the name `afromsClientSecret`
+37. Add the afroms client id  after the enteries added in database in the keyvault with the name `afromsClientId`
 38. Add the aforms setting in the keyvault with the name `aformsSetting`
 39. Add the asp setting in the keyvault with the name `aspSettings`
 40. Add the s2s setting in the keyvault with the name `s2sSettings`
