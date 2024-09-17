@@ -79,7 +79,7 @@ stages:
           - stage: Deployment_${{parameter.Key}}_${{location}}
             displayName: "Deployment [${{parameter.Key}}] ${{location}}"
             ${{ if eq(location,'westeurope') }}:
-              dependsOn: 
+              #dependsOn: 
               #- scanInfra
             ${{ if eq(location,'northeurope') }}:
               ${{ if eq(length(parameters.location), 2) }}:
@@ -87,7 +87,7 @@ stages:
                 #- scanInfra
                 - Deployment_${{parameter.key}}_westeurope
               ${{ else }}:
-                dependsOn: 
+                #dependsOn: 
                 #- scanInfra
             variables:
             - name: environmentId
