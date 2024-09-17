@@ -63,13 +63,13 @@ variables:
 stages:
 
 # Code Scans
-- stage: scanInfra
-  displayName: "Scan tools"
-  jobs:
+# - stage: scanInfra
+#   displayName: "Scan tools"
+#   jobs:
 
-    - template:  pipeline/scanTools.yml@devopsTemplates
-      parameters:
-        AppDeploy: false 
+#     - template:  pipeline/scanTools.yml@devopsTemplates
+#       parameters:
+#         AppDeploy: false 
 
 - ${{ each location in parameters.location }}:
   - ${{ each parameter in parameters }}:
@@ -80,15 +80,15 @@ stages:
             displayName: "Deployment [${{parameter.Key}}] ${{location}}"
             ${{ if eq(location,'westeurope') }}:
               dependsOn: 
-              - scanInfra
+              #- scanInfra
             ${{ if eq(location,'northeurope') }}:
               ${{ if eq(length(parameters.location), 2) }}:
                 dependsOn: 
-                - scanInfra
+                #- scanInfra
                 - Deployment_${{parameter.key}}_westeurope
               ${{ else }}:
                 dependsOn: 
-                - scanInfra
+                #- scanInfra
             variables:
             - name: environmentId
               ${{ if eq(parameter.key, 'tran') }}:
