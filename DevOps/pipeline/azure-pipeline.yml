@@ -29,7 +29,7 @@ parameters:
     - northeurope
 - name: kv
   type: boolean
-  displayName: 'Deploy Key vault only if Pre-Requisites selected'
+  displayName: 'Deploy Key vault'
   default: false
 - name: idm
   type: boolean
@@ -59,6 +59,8 @@ parameters:
 variables:
 - group: dsi-global
 - group: dsi-idm
+- name: deployKv
+  value: ${{parameters.deployKv}}
 
 stages:
 
@@ -116,4 +118,3 @@ stages:
                 deployPrivateEndpoint: "true"
                 deployASP: "true" #Deploying the application service plans
                 deploymentLocation: ${{location}}
-                deployKv: ${{parameter.kv}}
