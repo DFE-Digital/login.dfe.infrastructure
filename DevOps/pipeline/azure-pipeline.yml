@@ -60,7 +60,7 @@ variables:
 - group: dsi-global
 - group: dsi-idm
 - name: deployKv
-  value: ${{parameters.deployKv}}
+  value: ${{parameters.kv}}
 
 stages:
 
