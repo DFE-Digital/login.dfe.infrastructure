@@ -26,7 +26,6 @@ parameters:
   displayName: 'Deployment locations (- westeurope & - northeurope)'
   default:
     - westeurope
-    - northeurope
 - name: kv
   type: boolean
   displayName: 'Deploy Key vault'
@@ -34,7 +33,7 @@ parameters:
 - name: sha
   type: boolean
   displayName: 'Deploy Self Host agent only'
-  default: false
+  default: true
 - name: idm
   type: boolean
   displayName: 'Bicep Deployment'
