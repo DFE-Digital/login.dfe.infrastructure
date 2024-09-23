@@ -62,7 +62,7 @@ parameters:
 
 variables:
 - group: dsi-global
-#- group: dsi-idm
+- group: dsi-idm
 - name: deployKv
   value: ${{parameters.kv}}
 - name: selfHostAgent
