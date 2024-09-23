@@ -31,6 +31,10 @@ parameters:
   type: boolean
   displayName: 'Deploy Key vault'
   default: false
+- name: sha
+  type: boolean
+  displayName: 'Deploy Self Host agent only'
+  default: false
 - name: idm
   type: boolean
   displayName: 'Bicep Deployment'
@@ -58,9 +62,11 @@ parameters:
 
 variables:
 - group: dsi-global
-- group: dsi-idm
+#- group: dsi-idm
 - name: deployKv
   value: ${{parameters.kv}}
+- name: selfHostAgent
+  value: ${{parameters.sha}}
 
 stages:
 
