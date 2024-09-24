@@ -102,4 +102,3 @@ stages:
                 deployPrivateEndpoint: "true"
                 deployASP: "true" #Deploying the application service plans
                 deploymentLocation: ${{location}}
-                selfHostAgent: ${{parameters.sha}}
