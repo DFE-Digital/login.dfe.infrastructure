@@ -99,6 +99,4 @@ stages:
                 ${{ else }}:
                   serviceConnection: $(testServiceConnection)
                 environmentName: ${{parameter.key}}
-                deployPrivateEndpoint: "true"
-                deployASP: "true" #Deploying the application service plans
                 deploymentLocation: ${{location}}
