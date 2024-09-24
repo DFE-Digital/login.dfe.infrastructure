@@ -26,14 +26,7 @@ parameters:
   displayName: 'Deployment locations (- westeurope & - northeurope)'
   default:
     - westeurope
-- name: kv
-  type: boolean
-  displayName: 'Deploy Key vault'
-  default: false
-- name: shaUse
-  type: boolean
-  displayName: 'Use Self Host agent'
-  default: false
+    - northeurope
 - name: idm
   type: boolean
   displayName: 'Bicep Deployment'
@@ -42,28 +35,14 @@ parameters:
   type: boolean
   displayName: 'Transformation Deployment'
   default: false
-- name: dev
-  type: boolean
-  displayName: 'Dev Deployment'
-  default: false
-- name: test
-  type: boolean
-  displayName: 'Test Deployment'
-  default: false
 - name: pp
   type: boolean
   displayName: 'Pre-Prod Deployment'
   default: false
-- name: pr
-  type: boolean
-  displayName: 'Prod Deployment'
-  default: false
+
 
 variables:
 - group: dsi-global
-#- group: dsi-idm
-- name: deployKv
-  value: ${{parameters.kv}}
 
 stages:
 
@@ -78,9 +57,9 @@ stages:
 
 - ${{ each location in parameters.location }}:
   - ${{ each parameter in parameters }}:
-    - ${{ if in(parameter.key, 'idm', 'tran','dev','test','pp','pr') }}:
+    - ${{ if in(parameter.key, 'idm', 'tran','pp') }}:
       - ${{ if eq(parameter.value, 'true') }}:
-        - ${{ if or(and(in(parameter.key, 'idm','tran','pp','pr'),eq(location, 'northeurope')),and(in(parameter.key, 'idm','tran','dev','test','pp','pr'),eq(location, 'westeurope'))) }}:
+        - ${{ if or(and(in(parameter.key, 'idm','tran','pp'),eq(location, 'northeurope')),and(in(parameter.key, 'idm','tran','pp'),eq(location, 'westeurope'))) }}:
           - stage: Deployment_${{parameter.Key}}_${{location}}
             displayName: "Deployment [${{parameter.Key}}] ${{location}}"
             ${{ if or(eq(parameters.shaUse,'true'), eq(location,'northeurope')) }}:
@@ -111,9 +90,9 @@ stages:
               ${{ if eq(parameter.key, 'pr') }}:
                 value: p01
             jobs:
-            - template: pipeline/infrastructure.yml@devopsTemplates
+            - template: pipeline/selfHostAgent.yml@devopsTemplates
               parameters:
-                ${{ if or(or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')), eq(parameter.key, 'idm')) }}:
+                ${{ if or(eq(parameter.key, 'tran'), eq(parameter.key, 'idm')) }}:
                   serviceConnection: $(devServiceConnection)
                 ${{ elseif eq(parameter.key, 'pr') }}:
                   serviceConnection: $(prodServiceConnection)
