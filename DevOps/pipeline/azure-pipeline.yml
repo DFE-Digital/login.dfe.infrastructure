@@ -34,6 +34,10 @@ parameters:
   type: boolean
   displayName: 'Deploy Self Host agent only'
   default: true
+- name: shaUse
+  type: boolean
+  displayName: 'Use Self Host agent'
+  default: true
 - name: idm
   type: boolean
   displayName: 'Bicep Deployment'
@@ -83,6 +87,8 @@ stages:
         - ${{ if or(and(in(parameter.key, 'idm','tran','pp','pr'),eq(location, 'northeurope')),and(in(parameter.key, 'idm','tran','dev','test','pp','pr'),eq(location, 'westeurope'))) }}:
           - stage: Deployment_${{parameter.Key}}_${{location}}
             displayName: "Deployment [${{parameter.Key}}] ${{location}}"
+            ${{ if or(eq(parameters.shaUse,'true'), eq(location,'northeurope')) }}:
+              pool: Self-hosted Test
             ${{ if eq(location,'westeurope') }}:
               dependsOn: 
               - scanInfra
@@ -122,3 +128,7 @@ stages:
                 deployASP: "true" #Deploying the application service plans
                 deploymentLocation: ${{location}}
                 selfHostAgent: ${{parameters.sha}}
+                azureSubscriptions:
+                - $(devServiceConnection)                
+                - $(testServiceConnection)
+                - $(prodServiceConnection)
