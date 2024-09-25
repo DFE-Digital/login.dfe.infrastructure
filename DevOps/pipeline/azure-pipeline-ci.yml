@@ -8,17 +8,9 @@ resources:
       name: DFE-Digital/login.dfe.devops
       ref: feature/DSI-7240
 
-trigger:
-  branches:
-    include:
-    - feature/*
-    - main
-    - release/*
+trigger: none
 
-pr:
-  branches:
-    include:
-    - main
+pr: none
 
 parameters:
 - name: location
@@ -43,6 +35,8 @@ parameters:
 
 variables:
 - group: dsi-global
+- name: BuildTagID
+  value: $(BuildID)
 
 stages:
 
