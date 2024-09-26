@@ -61,7 +61,6 @@ parameters:
 
 variables:
 - group: dsi-global
-- group: dsi-idm
 - name: deployKv
   value: ${{parameters.kv}}
 
