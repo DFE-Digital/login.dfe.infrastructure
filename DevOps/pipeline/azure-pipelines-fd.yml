@@ -71,13 +71,10 @@ stages:
           parameters:
             ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
               serviceConnection: $(devServiceConnection)
-              azpPool: $(azpPoolDev)
             ${{ elseif eq(parameter.key, 'pr') }}:
               serviceConnection: $(prodServiceConnection)
-              azpPool: $(azpPoolProd)
             ${{ else }}:
               serviceConnection: $(testServiceConnection)
-              azpPool: $(azpPoolTest)
             environmentName: ${{parameter.key}}
             ${{ if eq(parameter.key, 'pr') }}:
               sslCertificateName: prod-services-signin

@@ -86,11 +86,14 @@ stages:
             jobs:
             - template: pipeline/selfHostAgent.yml@devopsTemplates
               parameters:
-                ${{ if or(eq(parameter.key, 'tran'), eq(parameter.key, 'idm')) }}:
+                ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
                   serviceConnection: $(devServiceConnection)
+                  azpPool: $(azpPoolDev)
                 ${{ elseif eq(parameter.key, 'pr') }}:
                   serviceConnection: $(prodServiceConnection)
+                  azpPool: $(azpPoolProd)
                 ${{ else }}:
                   serviceConnection: $(testServiceConnection)
+                  azpPool: $(azpPoolTest)
                 environmentName: ${{parameter.key}}
                 deploymentLocation: ${{location}}
