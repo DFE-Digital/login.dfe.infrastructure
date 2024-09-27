@@ -56,8 +56,6 @@ stages:
         - ${{ if or(and(in(parameter.key, 'idm','tran','pp'),eq(location, 'northeurope')),and(in(parameter.key, 'idm','tran','pp'),eq(location, 'westeurope'))) }}:
           - stage: Deployment_${{parameter.Key}}_${{location}}
             displayName: "Deployment [${{parameter.Key}}] ${{location}}"
-            ${{ if or(eq(parameters.shaUse,'true'), eq(location,'northeurope')) }}:
-              pool: Self-hosted Test
             ${{ if eq(location,'westeurope') }}:
               dependsOn: 
               - scanInfra

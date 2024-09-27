@@ -83,7 +83,12 @@ stages:
           - stage: Deployment_${{parameter.Key}}_${{location}}
             displayName: "Deployment [${{parameter.Key}}] ${{location}}"
             ${{ if or(eq(parameters.shaUse,'true'), eq(location,'northeurope')) }}:
-              pool: Self-hosted Test
+              ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
+                pool: Self-hosted Dev
+              ${{ elseif eq(parameter.key, 'pr') }}:
+                pool: Self-hosted Prod
+              ${{ else }}:
+                pool: Self-hosted Test              
             ${{ if eq(location,'westeurope') }}:
               dependsOn: 
               - scanInfra
