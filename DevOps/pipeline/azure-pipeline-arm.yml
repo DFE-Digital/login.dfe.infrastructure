@@ -1,0 +1,144 @@
+name: $(BuildDefinitionName)_tag-$(BuildID)_at-$(Date:yyyyMMdd)$(Rev:.r)
+resources:
+  repositories:
+  # Defult branch is master
+    - repository: devopsTemplates
+      type: github
+      endpoint: DfE-Digital
+      name: DFE-Digital/login.dfe.devops
+      ref: main
+
+trigger:
+  branches:
+    include:
+    - feature/*
+    - main
+    - release/*
+
+pr:
+  branches:
+    include:
+    - main
+
+parameters:
+- name: location
+  type: object
+  displayName: 'Deployment locations (- westeurope & - northeurope)'
+  default:
+    - westeurope
+    - northeurope
+- name: prereq
+  type: boolean
+  displayName: 'Deploy Pre-Requisites only'
+  default: false
+- name: kv
+  type: boolean
+  displayName: 'Deploy Key vault only if Pre-Requisites selected'
+  default: false
+- name: tran
+  type: boolean
+  displayName: 'Transformation Deployment'
+  default: false
+- name: dev
+  type: boolean
+  displayName: 'Dev Deployment'
+  default: false
+- name: test
+  type: boolean
+  displayName: 'Test Deployment'
+  default: false
+- name: pp
+  type: boolean
+  displayName: 'Pre-Prod Deployment'
+  default: false
+- name: pr
+  type: boolean
+  displayName: 'Prod Deployment'
+  default: false
+
+variables:
+- group: dsi-global
+
+stages:
+
+# Code Scans
+- stage: scanInfra
+  displayName: "Scan tools"
+  jobs:
+
+    - template:  pipeline/scanTools.yml@devopsTemplates
+      parameters:
+        AppDeploy: false 
+
+- ${{ each location in parameters.location }}:
+  - ${{ each parameter in parameters }}:
+    - ${{ if in(parameter.key, 'tran','dev','test','pp','pr') }}:
+      - ${{ if eq(parameter.value, 'true') }}:
+        - ${{ if or(and(in(parameter.key, 'tran','pp','pr'),eq(location, 'northeurope')),and(in(parameter.key, 'tran','dev','test','pp','pr'),eq(location, 'westeurope'))) }}:
+          - stage: Deployment_${{parameter.Key}}_${{location}}
+            displayName: "Deployment [${{parameter.Key}}] ${{location}}"
+            ${{ if eq(location,'westeurope') }}:
+              dependsOn: 
+              - scanInfra
+            ${{ if eq(location,'northeurope') }}:
+              ${{ if eq(length(parameters.location), 2) }}:
+                dependsOn: 
+                - scanInfra
+                - Deployment_${{parameter.key}}_westeurope
+              ${{ else }}:
+                dependsOn: 
+                - scanInfra
+            variables:
+            - name: environmentId
+              ${{ if eq(parameter.key, 'tran') }}:
+                value: d03
+              ${{ if eq(parameter.key, 'dev') }}:
+                value: d01
+              ${{ if eq(parameter.key, 'test') }}:
+                value: t01
+              ${{ if eq(parameter.key, 'pp') }}:
+                value: t02
+              ${{ if eq(parameter.key, 'pr') }}:
+                value: p01
+            jobs:
+            - ${{ if parameters.prereq }}:
+              - template: pipeline/infrastructure.yml@devopsTemplates
+                parameters:
+                  ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
+                    serviceConnection: $(devServiceConnection)
+                  ${{ elseif eq(parameter.key, 'pr') }}:
+                    serviceConnection: $(prodServiceConnection)
+                  ${{ else }}:
+                    serviceConnection: $(testServiceConnection)
+                  environmentName: ${{parameter.key}}
+                  infrastuctureType: pre_req_infr
+                  deployKv: ${{parameters.kv}}
+                  deploymentLocation: ${{location}}
+
+            - ${{ else }}:
+              - template: pipeline/infrastructure.yml@devopsTemplates
+                parameters:
+                  ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
+                    serviceConnection: $(devServiceConnection)
+                  ${{ elseif eq(parameter.key, 'pr') }}:
+                    serviceConnection: $(prodServiceConnection)
+                  ${{ else }}:
+                    serviceConnection: $(testServiceConnection)
+                  environmentName: ${{parameter.key}}
+                  infrastuctureType: base_infr
+                  templatePath:  $(System.DefaultWorkingDirectory)/login.dfe.infrastructure/DevOps/templates/template.json
+                  deployPrivateEndpoint: "true"
+                  destructiveVirtualNetworkDeploy: "Disabled" #Disabled,Enabled
+                  deployVirtualNetwork: "false" #Deploying the subnets
+                  deployASP: "false" #Deploying the application service plans
+                  deploymentLocation: ${{location}}
+          
+          - ${{ if and(eq(var.key, 'pr'),eq(location, 'westeurope')) }}:
+            - stage: branchPrTag
+              displayName: "GitHub PR & Release Branch Tag"
+              dependsOn: 
+              - Deployment_${{var.key}}_${{location}}
+              jobs:
+              - template:  pipeline/tagCreation.yml@devopsTemplates
+                parameters:
+                  applicationName: infra
