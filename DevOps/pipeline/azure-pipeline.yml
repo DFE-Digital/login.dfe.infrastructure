@@ -26,6 +26,7 @@ parameters:
   displayName: 'Deployment locations (- westeurope & - northeurope)'
   default:
     - westeurope
+    - northeurope
 - name: kv
   type: boolean
   displayName: 'Deploy Key vault'
@@ -33,7 +34,7 @@ parameters:
 - name: shaUse
   type: boolean
   displayName: 'Use Self Host agent'
-  default: false
+  default: true
 - name: tran
   type: boolean
   displayName: 'Transformation Deployment'
@@ -84,7 +85,7 @@ stages:
               ${{ elseif eq(parameter.key, 'pr') }}:
                 pool: Self-hosted Prod
               ${{ else }}:
-                pool: Self-hosted Test              
+                pool: Self-hosted Test
             ${{ if eq(location,'westeurope') }}:
               dependsOn: 
               - scanInfra

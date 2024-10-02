@@ -81,8 +81,8 @@ Also, this pipeline has an extra parameter in the pipeline to trigger the Pre-Re
 33. Add the corona form redirect url in the keyvault with the name `coronaFormRedirectUrl`
 34. Add the client secret for help  after the enteries added in database in the keyvault with the name `helpClientSecret`
 35. Add the assertions secret  after the enteries added in database in the keyvault with the name `assertionsSecret`
-36. Add the afroms client  after the enteries added in database secret in the keyvault with the name `afromsClientSecret`
-37. Add the afroms client id  after the enteries added in database in the keyvault with the name `afromsClientId`
+36. Add the afroms client  after the enteries added in database secret in the keyvault with the name `aformsClientSecret`
+37. Add the afroms client id  after the enteries added in database in the keyvault with the name `aformsClientId`
 38. Add the aforms setting in the keyvault with the name `aformsSetting`
 39. Add the asp setting in the keyvault with the name `aspSettings`
 40. Add the s2s setting in the keyvault with the name `s2sSettings`
