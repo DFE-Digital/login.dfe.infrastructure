@@ -116,7 +116,7 @@ stages:
                   deploymentLocation: ${{location}}
 
             - ${{ else }}:
-              - template: pipeline/infrastructure.yml@devopsTemplates
+              - template: Archives/pipeline/infrastructureARM.yml@devopsTemplates
                 parameters:
                   ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
                     serviceConnection: $(devServiceConnection)
