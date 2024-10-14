@@ -60,6 +60,8 @@ variables:
 - group: dsi-global
 - name: deployKv
   value: ${{parameters.kv}}
+- name: shaUse
+  value: ${{parameters.shaUse}}
 
 stages:
 
