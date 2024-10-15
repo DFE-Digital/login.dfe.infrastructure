@@ -133,11 +133,11 @@ stages:
                   deployASP: "false" #Deploying the application service plans
                   deploymentLocation: ${{location}}
           
-          - ${{ if and(eq(var.key, 'pr'),eq(location, 'westeurope')) }}:
+          - ${{ if and(eq(parameter.key, 'pr'),eq(location, 'westeurope')) }}:
             - stage: branchPrTag
               displayName: "GitHub PR & Release Branch Tag"
               dependsOn: 
-              - Deployment_${{var.key}}_${{location}}
+              - Deployment_${{parameter.key}}_${{location}}
               jobs:
               - template:  pipeline/tagCreation.yml@devopsTemplates
                 parameters:
