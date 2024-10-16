@@ -27,14 +27,14 @@ parameters:
   default:
     - westeurope
     - northeurope
+- name: prereq
+  type: boolean
+  displayName: 'Deploy Pre-Requisites only'
+  default: false
 - name: kv
   type: boolean
-  displayName: 'Deploy Key vault'
+  displayName: 'Deploy Key vault only if Pre-Requisites selected'
   default: false
-- name: shaUse
-  type: boolean
-  displayName: 'Use Self Host agent'
-  default: true
 - name: tran
   type: boolean
   displayName: 'Transformation Deployment'
@@ -58,8 +58,6 @@ parameters:
 
 variables:
 - group: dsi-global
-- name: deployKv
-  value: ${{parameters.kv}}
 
 stages:
 
@@ -79,13 +77,6 @@ stages:
         - ${{ if or(and(in(parameter.key, 'tran','pp','pr'),eq(location, 'northeurope')),and(in(parameter.key, 'tran','dev','test','pp','pr'),eq(location, 'westeurope'))) }}:
           - stage: Deployment_${{parameter.Key}}_${{location}}
             displayName: "Deployment [${{parameter.Key}}] ${{location}}"
-            ${{ if or(eq(parameters.shaUse,'true'), eq(location,'northeurope')) }}:
-              ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
-                pool: Self-hosted Dev
-              ${{ elseif eq(parameter.key, 'pr') }}:
-                pool: Self-hosted Prod
-              ${{ else }}:
-                pool: Self-hosted Test
             ${{ if eq(location,'westeurope') }}:
               dependsOn: 
               - scanInfra
@@ -110,16 +101,44 @@ stages:
               ${{ if eq(parameter.key, 'pr') }}:
                 value: p01
             jobs:
-            - template: pipeline/infrastructure.yml@devopsTemplates
-              parameters:
-                ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
-                  serviceConnection: $(devServiceConnection)
-                ${{ elseif eq(parameter.key, 'pr') }}:
-                  serviceConnection: $(prodServiceConnection)
-                ${{ else }}:
-                  serviceConnection: $(testServiceConnection)
-                environmentName: ${{parameter.key}}
-                deployPrivateEndpoint: "true"
-                deployASP: "true" #Deploying the application service plans
-                deploymentLocation: ${{location}}
-                shaUse: ${{parameters.shaUse}}
+            - ${{ if parameters.prereq }}:
+              - template: pipeline/infrastructure.yml@devopsTemplates
+                parameters:
+                  ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
+                    serviceConnection: $(devServiceConnection)
+                  ${{ elseif eq(parameter.key, 'pr') }}:
+                    serviceConnection: $(prodServiceConnection)
+                  ${{ else }}:
+                    serviceConnection: $(testServiceConnection)
+                  environmentName: ${{parameter.key}}
+                  infrastuctureType: pre_req_infr
+                  deployKv: ${{parameters.kv}}
+                  deploymentLocation: ${{location}}
+
+            - ${{ else }}:
+              - template: Archives/pipeline/infrastructureARM.yml@devopsTemplates
+                parameters:
+                  ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
+                    serviceConnection: $(devServiceConnection)
+                  ${{ elseif eq(parameter.key, 'pr') }}:
+                    serviceConnection: $(prodServiceConnection)
+                  ${{ else }}:
+                    serviceConnection: $(testServiceConnection)
+                  environmentName: ${{parameter.key}}
+                  infrastuctureType: base_infr
+                  templatePath:  $(System.DefaultWorkingDirectory)/login.dfe.infrastructure/DevOps/templates/template.json
+                  deployPrivateEndpoint: "true"
+                  destructiveVirtualNetworkDeploy: "Disabled" #Disabled,Enabled
+                  deployVirtualNetwork: "false" #Deploying the subnets
+                  deployASP: "false" #Deploying the application service plans
+                  deploymentLocation: ${{location}}
+          
+          - ${{ if and(eq(parameter.key, 'pr'),eq(location, 'westeurope')) }}:
+            - stage: branchPrTag
+              displayName: "GitHub PR & Release Branch Tag"
+              dependsOn: 
+              - Deployment_${{parameter.key}}_${{location}}
+              jobs:
+              - template:  pipeline/tagCreation.yml@devopsTemplates
+                parameters:
+                  applicationName: infra
