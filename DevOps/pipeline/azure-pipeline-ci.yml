@@ -8,17 +8,9 @@ resources:
       name: DFE-Digital/login.dfe.devops
       ref: main
 
-trigger:
-  branches:
-    include:
-    - feature/*
-    - main
-    - release/*
+trigger: none
 
-pr:
-  branches:
-    include:
-    - main
+pr: none
 
 parameters:
 - name: location
@@ -27,25 +19,9 @@ parameters:
   default:
     - westeurope
     - northeurope
-- name: kv
-  type: boolean
-  displayName: 'Deploy Key vault'
-  default: false
-- name: shaUse
-  type: boolean
-  displayName: 'Use Self Host agent'
-  default: true
 - name: tran
   type: boolean
   displayName: 'Transformation Deployment'
-  default: false
-- name: dev
-  type: boolean
-  displayName: 'Dev Deployment'
-  default: false
-- name: test
-  type: boolean
-  displayName: 'Test Deployment'
   default: false
 - name: pp
   type: boolean
@@ -58,8 +34,8 @@ parameters:
 
 variables:
 - group: dsi-global
-- name: deployKv
-  value: ${{parameters.kv}}
+- name: BuildTagID
+  value: $(BuildID)
 
 stages:
 
@@ -74,18 +50,11 @@ stages:
 
 - ${{ each location in parameters.location }}:
   - ${{ each parameter in parameters }}:
-    - ${{ if in(parameter.key, 'tran','dev','test','pp','pr') }}:
+    - ${{ if in(parameter.key, 'tran','pp') }}:
       - ${{ if eq(parameter.value, 'true') }}:
-        - ${{ if or(and(in(parameter.key, 'tran','pp','pr'),eq(location, 'northeurope')),and(in(parameter.key, 'tran','dev','test','pp','pr'),eq(location, 'westeurope'))) }}:
+        - ${{ if or(and(in(parameter.key, 'tran','pp','pr'),eq(location, 'northeurope')),and(in(parameter.key, 'tran','pp','pr'),eq(location, 'westeurope'))) }}:
           - stage: Deployment_${{parameter.Key}}_${{location}}
             displayName: "Deployment [${{parameter.Key}}] ${{location}}"
-            ${{ if or(eq(parameters.shaUse,'true'), eq(location,'northeurope')) }}:
-              ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
-                pool: Self-hosted Dev
-              ${{ elseif eq(parameter.key, 'pr') }}:
-                pool: Self-hosted Prod
-              ${{ else }}:
-                pool: Self-hosted Test
             ${{ if eq(location,'westeurope') }}:
               dependsOn: 
               - scanInfra
@@ -101,25 +70,21 @@ stages:
             - name: environmentId
               ${{ if eq(parameter.key, 'tran') }}:
                 value: d03
-              ${{ if eq(parameter.key, 'dev') }}:
-                value: d01
-              ${{ if eq(parameter.key, 'test') }}:
-                value: t01
               ${{ if eq(parameter.key, 'pp') }}:
                 value: t02
               ${{ if eq(parameter.key, 'pr') }}:
                 value: p01
             jobs:
-            - template: pipeline/infrastructure.yml@devopsTemplates
+            - template: pipeline/selfHostAgent.yml@devopsTemplates
               parameters:
-                ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
+                ${{ if eq(parameter.key, 'tran')}}:
                   serviceConnection: $(devServiceConnection)
+                  azpPool: $(azpPoolDev)
                 ${{ elseif eq(parameter.key, 'pr') }}:
                   serviceConnection: $(prodServiceConnection)
+                  azpPool: $(azpPoolProd)
                 ${{ else }}:
                   serviceConnection: $(testServiceConnection)
+                  azpPool: $(azpPoolTest)
                 environmentName: ${{parameter.key}}
-                deployPrivateEndpoint: "true"
-                deployASP: "true" #Deploying the application service plans
                 deploymentLocation: ${{location}}
-                shaUse: ${{parameters.shaUse}}
