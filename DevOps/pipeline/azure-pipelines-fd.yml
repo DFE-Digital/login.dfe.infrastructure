@@ -85,7 +85,7 @@ stages:
             ${{ else }}:
               serviceConnection: $(testServiceConnection)
             environmentName: ${{parameter.key}}
-            shaUse: ${{parameter.shaUse}}
+            shaUse: ${{parameters.shaUse}}
             ${{ if eq(parameter.key, 'pr') }}:
               sslCertificateName: prod-services-signin
               isProduction: true
