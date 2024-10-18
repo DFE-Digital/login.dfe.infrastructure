@@ -54,7 +54,7 @@ stages:
     - ${{ if eq(parameter.value, 'true') }}:
       - stage: Deployment_${{parameter.Key}}
         displayName: "Deployment [${{parameter.Key}}]"
-        ${{ if parameters.shaUse }}:
+        ${{ if eq(parameters.shaUse, 'true') }}:
           ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
             pool: Self-hosted Dev
           ${{ elseif eq(parameter.key, 'pr') }}:
