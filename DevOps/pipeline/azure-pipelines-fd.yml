@@ -10,6 +10,10 @@ resources:
 trigger: none
 
 parameters:
+- name: shaUse
+  type: boolean
+  displayName: 'Use Self Host agent'
+  default: true
 - name: tran
   type: boolean
   displayName: 'Transformation Deployment'
@@ -45,13 +49,18 @@ stages:
       parameters:
         AppDeploy: false 
 
-
-
 - ${{ each parameter in parameters }}:
   - ${{ if in(parameter.key, 'tran','dev','test','pp','pr') }}:
     - ${{ if eq(parameter.value, 'true') }}:
       - stage: Deployment_${{parameter.Key}}
         displayName: "Deployment [${{parameter.Key}}]"
+        ${{ if eq(parameters.shaUse, 'true') }}:
+          ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
+            pool: Self-hosted Dev
+          ${{ elseif eq(parameter.key, 'pr') }}:
+            pool: Self-hosted Prod
+          ${{ else }}:
+            pool: Self-hosted Test
         dependsOn: 
         - scanTemplate
         variables:
@@ -76,6 +85,7 @@ stages:
             ${{ else }}:
               serviceConnection: $(testServiceConnection)
             environmentName: ${{parameter.key}}
+            shaUse: ${{parameters.shaUse}}
             ${{ if eq(parameter.key, 'pr') }}:
               sslCertificateName: prod-services-signin
               isProduction: true
