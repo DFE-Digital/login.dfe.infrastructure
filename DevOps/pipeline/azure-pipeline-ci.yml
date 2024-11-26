@@ -50,41 +50,40 @@ stages:
 
 - ${{ each location in parameters.location }}:
   - ${{ each parameter in parameters }}:
-    - ${{ if in(parameter.key, 'tran','pp') }}:
+    - ${{ if in(parameter.key, 'tran','pp','pr') }}:
       - ${{ if eq(parameter.value, 'true') }}:
-        - ${{ if or(and(in(parameter.key, 'tran','pp','pr'),eq(location, 'northeurope')),and(in(parameter.key, 'tran','pp','pr'),eq(location, 'westeurope'))) }}:
-          - stage: Deployment_${{parameter.Key}}_${{location}}
-            displayName: "Deployment [${{parameter.Key}}] ${{location}}"
-            ${{ if eq(location,'westeurope') }}:
+        - stage: Deployment_${{parameter.Key}}_${{location}}
+          displayName: "Deployment [${{parameter.Key}}] ${{location}}"
+          ${{ if eq(location,'westeurope') }}:
+            dependsOn: 
+            - scanInfra
+          ${{ if eq(location,'northeurope') }}:
+            ${{ if eq(length(parameters.location), 2) }}:
               dependsOn: 
               - scanInfra
-            ${{ if eq(location,'northeurope') }}:
-              ${{ if eq(length(parameters.location), 2) }}:
-                dependsOn: 
-                - scanInfra
-                - Deployment_${{parameter.key}}_westeurope
+              - Deployment_${{parameter.key}}_westeurope
+            ${{ else }}:
+              dependsOn: 
+              - scanInfra
+          variables:
+          - name: environmentId
+            ${{ if eq(parameter.key, 'tran') }}:
+              value: d03
+            ${{ if eq(parameter.key, 'pp') }}:
+              value: t02
+            ${{ if eq(parameter.key, 'pr') }}:
+              value: p01
+          jobs:
+          - template: pipeline/selfHostAgent.yml@devopsTemplates
+            parameters:
+              ${{ if eq(parameter.key, 'tran')}}:
+                serviceConnection: $(devServiceConnection)
+                azpPool: $(azpPoolDev)
+              ${{ elseif eq(parameter.key, 'pr') }}:
+                serviceConnection: $(prodServiceConnection)
+                azpPool: $(azpPoolProd)
               ${{ else }}:
-                dependsOn: 
-                - scanInfra
-            variables:
-            - name: environmentId
-              ${{ if eq(parameter.key, 'tran') }}:
-                value: d03
-              ${{ if eq(parameter.key, 'pp') }}:
-                value: t02
-              ${{ if eq(parameter.key, 'pr') }}:
-                value: p01
-            jobs:
-            - template: pipeline/selfHostAgent.yml@devopsTemplates
-              parameters:
-                ${{ if eq(parameter.key, 'tran')}}:
-                  serviceConnection: $(devServiceConnection)
-                  azpPool: $(azpPoolDev)
-                ${{ elseif eq(parameter.key, 'pr') }}:
-                  serviceConnection: $(prodServiceConnection)
-                  azpPool: $(azpPoolProd)
-                ${{ else }}:
-                  serviceConnection: $(testServiceConnection)
-                  azpPool: $(azpPoolTest)
-                environmentName: ${{parameter.key}}
-                deploymentLocation: ${{location}}
+                serviceConnection: $(testServiceConnection)
+                azpPool: $(azpPoolTest)
+              environmentName: ${{parameter.key}}
+              deploymentLocation: ${{location}}
