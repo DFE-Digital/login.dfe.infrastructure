@@ -21,71 +21,65 @@ pr:
     - main
 
 parameters:
-- name: location
-  type: object
-  displayName: 'Deployment locations (- westeurope & - northeurope)'
-  default:
-    - westeurope
-    - northeurope
-- name: kv
-  type: boolean
-  displayName: 'Deploy Key vault'
-  default: false
-- name: shaUse
-  type: boolean
-  displayName: 'Use Self Host agent'
-  default: true
-- name: tran
-  type: boolean
-  displayName: 'Transformation Deployment'
-  default: false
-- name: dev
-  type: boolean
-  displayName: 'Dev Deployment'
-  default: false
-- name: test
-  type: boolean
-  displayName: 'Test Deployment'
-  default: false
-- name: pp
-  type: boolean
-  displayName: 'Pre-Prod Deployment'
-  default: false
-- name: pr
-  type: boolean
-  displayName: 'Prod Deployment'
-  default: false
+  - name: location
+    type: object
+    displayName: 'Deployment locations (- westeurope & - northeurope)'
+    default:
+      - westeurope
+      - northeurope
+  - name: kv
+    type: boolean
+    displayName: 'Deploy Key vault'
+    default: false
+  - name: shaUse
+    type: boolean
+    displayName: 'Use Self Host agent'
+    default: true
+  - name: tran
+    type: boolean
+    displayName: 'Transformation Deployment'
+    default: false
+  - name: dev
+    type: boolean
+    displayName: 'Dev Deployment'
+    default: false
+  - name: test
+    type: boolean
+    displayName: 'Test Deployment'
+    default: false
+  - name: pp
+    type: boolean
+    displayName: 'Pre-Prod Deployment'
+    default: false
+  - name: pr
+    type: boolean
+    displayName: 'Prod Deployment'
+    default: false
 
 variables:
-- group: dsi-global
-- name: deployKv
-  value: ${{parameters.kv}}
+  - group: dsi-global
+  - group: dsi-envs-list
+  - name: deployKv
+    value: ${{parameters.kv}}
 
 stages:
 
-# Code Scans
-- stage: scanInfra
-  displayName: "Scan tools"
-  jobs:
+  # Code Scans
+  - stage: scanInfra
+    displayName: "Scan tools"
+    jobs:
 
-    - template:  pipeline/scanTools.yml@devopsTemplates
-      parameters:
-        AppDeploy: false 
+      - template:  pipeline/scanTools.yml@devopsTemplates
+        parameters:
+          AppDeploy: false 
 
-- ${{ each location in parameters.location }}:
-  - ${{ each parameter in parameters }}:
-    - ${{ if in(parameter.key, 'tran','dev','test','pp','pr') }}:
-      - ${{ if eq(parameter.value, 'true') }}:
-        - ${{ if or(and(in(parameter.key, 'tran','pp','pr'),eq(location, 'northeurope')),and(in(parameter.key, 'tran','dev','test','pp','pr'),eq(location, 'westeurope'))) }}:
+  - ${{ each location in parameters.location }}:
+    - ${{ each parameter in parameters }}:
+        - ${{ if and(or(and(in(parameter.key, 'tran','pp','pr'),eq(location, 'northeurope')),and(in(parameter.key, 'tran','dev','test','pp','pr'),eq(location, 'westeurope'))),eq(parameter.value, 'true')) }}:
           - stage: Deployment_${{parameter.Key}}_${{location}}
             displayName: "Deployment [${{parameter.Key}}] ${{location}}"
             ${{ if or(eq(parameters.shaUse,'true'), eq(location,'northeurope')) }}:
-              ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
-                pool: Self-hosted Dev
-              ${{ elseif eq(parameter.key, 'pr') }}:
-                pool: Self-hosted Prod
-              ${{ else }}:
-                pool: Self-hosted Test
+              pool: $[variables['${{var.key}}ShaPool']]
             ${{ if eq(location,'westeurope') }}:
               dependsOn: 
               - scanInfra
@@ -98,26 +92,19 @@ stages:
                 dependsOn: 
                 - scanInfra
             variables:
+            - name: secRegionId
+              ${{ if eq(location, 'westeurope') }}:
+                value: ''
+              ${{ else }}:
+                value: $(secondRegionId)
             - name: environmentId
-              ${{ if eq(parameter.key, 'tran') }}:
-                value: d03
-              ${{ if eq(parameter.key, 'dev') }}:
-                value: d01
-              ${{ if eq(parameter.key, 'test') }}:
-                value: t01
-              ${{ if eq(parameter.key, 'pp') }}:
-                value: t02
-              ${{ if eq(parameter.key, 'pr') }}:
-                value: p01
+              value: $[variables['${{var.key}}EnvId']]
+            - name: ServConName
+              value: ${{ format('{0}{1}', var.key, 'ServCon') }}
             jobs:
             - template: pipeline/infrastructure.yml@devopsTemplates
               parameters:
-                ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
-                  serviceConnection: $(devServiceConnection)
-                ${{ elseif eq(parameter.key, 'pr') }}:
-                  serviceConnection: $(prodServiceConnection)
-                ${{ else }}:
-                  serviceConnection: $(testServiceConnection)
+                serviceConnection: $(${{variables.ServConName}})
                 environmentName: ${{parameter.key}}
                 deployPrivateEndpoint: "true"
                 deployASP: "true" #Deploying the application service plans

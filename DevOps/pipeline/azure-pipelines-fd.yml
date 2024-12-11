@@ -10,80 +10,63 @@ resources:
 trigger: none
 
 parameters:
-- name: shaUse
-  type: boolean
-  displayName: 'Use Self Host agent'
-  default: true
-- name: tran
-  type: boolean
-  displayName: 'Transformation Deployment'
-  default: false
-- name: dev
-  type: boolean
-  displayName: 'Dev Deployment'
-  default: false
-- name: test
-  type: boolean
-  displayName: 'Test Deployment'
-  default: false
-- name: pp
-  type: boolean
-  displayName: 'Pre-Prod Deployment'
-  default: false
-- name: pr
-  type: boolean
-  displayName: 'Prod Deployment'
-  default: false
+  - name: shaUse
+    type: boolean
+    displayName: 'Use Self Host agent'
+    default: true
+  - name: tran
+    type: boolean
+    displayName: 'Transformation Deployment'
+    default: false
+  - name: dev
+    type: boolean
+    displayName: 'Dev Deployment'
+    default: false
+  - name: test
+    type: boolean
+    displayName: 'Test Deployment'
+    default: false
+  - name: pp
+    type: boolean
+    displayName: 'Pre-Prod Deployment'
+    default: false
+  - name: pr
+    type: boolean
+    displayName: 'Prod Deployment'
+    default: false
 
 variables:
-- group: dsi-global
+  - group: dsi-global
+  - group: dsi-envs-list
 
 stages:
 
-# Code Scans
-- stage: scanTemplate
-  displayName: "Scan tools"
-  jobs:
-    
-    - template:  pipeline/scanTools.yml@devopsTemplates
-      parameters:
-        AppDeploy: false 
+  # Code Scans
+  - stage: scanTemplate
+    displayName: "Scan tools"
+    jobs:
+      
+      - template:  pipeline/scanTools.yml@devopsTemplates
+        parameters:
+          AppDeploy: false 
 
-- ${{ each parameter in parameters }}:
-  - ${{ if in(parameter.key, 'tran','dev','test','pp','pr') }}:
-    - ${{ if eq(parameter.value, 'true') }}:
+  - ${{ each parameter in parameters }}:
+    - ${{ if and(in(parameter.key, 'tran','dev','test','pp','pr'), eq(parameter.value, 'true')) }}:
       - stage: Deployment_${{parameter.Key}}
         displayName: "Deployment [${{parameter.Key}}]"
         ${{ if eq(parameters.shaUse, 'true') }}:
-          ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
-            pool: Self-hosted Dev
-          ${{ elseif eq(parameter.key, 'pr') }}:
-            pool: Self-hosted Prod
-          ${{ else }}:
-            pool: Self-hosted Test
+          pool: $[variables['${{var.key}}ShaPool']]
         dependsOn: 
         - scanTemplate
         variables:
         - name: environmentId
-          ${{ if eq(parameter.key, 'tran') }}:
-            value: d03
-          ${{ if eq(parameter.key, 'dev') }}:
-            value: d01
-          ${{ if eq(parameter.key, 'test') }}:
-            value: t01
-          ${{ if eq(parameter.key, 'pp') }}:
-            value: t02
-          ${{ if eq(parameter.key, 'pr') }}:
-            value: p01
+          value: $[variables['${{var.key}}EnvId']]
+        - name: ServConName
+          value: ${{ format('{0}{1}', var.key, 'ServCon') }}
         jobs:
         - template: pipeline/frontDoor.yml@devopsTemplates
           parameters:
-            ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
-              serviceConnection: $(devServiceConnection)
-            ${{ elseif eq(parameter.key, 'pr') }}:
-              serviceConnection: $(prodServiceConnection)
-            ${{ else }}:
-              serviceConnection: $(testServiceConnection)
+            serviceConnection: $(${{variables.ServConName}})
             environmentName: ${{parameter.key}}
             shaUse: ${{parameters.shaUse}}
             ${{ if eq(parameter.key, 'pr') }}:
