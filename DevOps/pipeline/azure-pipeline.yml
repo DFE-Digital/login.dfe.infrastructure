@@ -61,6 +61,10 @@ variables:
   - group: dsi-envs-list
   - name: deployKv
     value: ${{parameters.kv}}
+  - name: northeurope
+    value: 'tran,pp,pr'
+  - name: westeurope
+    value: 'tran,dev,test,pp,pr'
 
 stages:
 
@@ -75,38 +79,37 @@ stages:
 
   - ${{ each location in parameters.location }}:
     - ${{ each parameter in parameters }}:
-        - ${{ if and(or(and(in(parameter.key, 'tran','pp','pr'),eq(location, 'northeurope')),and(in(parameter.key, 'tran','dev','test','pp','pr'),eq(location, 'westeurope'))),eq(parameter.value, 'true')) }}:
-          - stage: Deployment_${{parameter.Key}}_${{location}}
-            displayName: "Deployment [${{parameter.Key}}] ${{location}}"
-            ${{ if or(eq(parameters.shaUse,'true'), eq(location,'northeurope')) }}:
-              pool: $[variables['${{var.key}}ShaPool']]
-            ${{ if eq(location,'westeurope') }}:
+      - ${{ if eq(parameters[env], 'true') }}:
+        - stage: Deployment_${{parameter.Key}}_${{location}}
+          displayName: "Deployment [${{parameter.Key}}] ${{location}}"
+          ${{ if or(eq(parameters.shaUse,'true'), eq(location,'northeurope')) }}:
+            pool: $[variables['${{parameter.key}}ShaPool']]
+          ${{ if eq(location,'westeurope') }}:
+            dependsOn: 
+            - scanInfra
+          ${{ if eq(location,'northeurope') }}:
+            ${{ if eq(length(parameters.location), 2) }}:
               dependsOn: 
               - scanInfra
-            ${{ if eq(location,'northeurope') }}:
-              ${{ if eq(length(parameters.location), 2) }}:
-                dependsOn: 
-                - scanInfra
-                - Deployment_${{parameter.key}}_westeurope
-              ${{ else }}:
-                dependsOn: 
-                - scanInfra
-            variables:
-            - name: secRegionId
-              ${{ if eq(location, 'westeurope') }}:
-                value: ''
-              ${{ else }}:
-                value: $(secondRegionId)
-            - name: environmentId
-              value: $[variables['${{var.key}}EnvId']]
-            - name: ServConName
-              value: ${{ format('{0}{1}', var.key, 'ServCon') }}
-            jobs:
-            - template: pipeline/infrastructure.yml@devopsTemplates
-              parameters:
-                serviceConnection: $(${{variables.ServConName}})
-                environmentName: ${{parameter.key}}
-                deployPrivateEndpoint: "true"
-                deployASP: "true" #Deploying the application service plans
-                deploymentLocation: ${{location}}
-                shaUse: ${{parameters.shaUse}}
+              - Deployment_${{parameter.key}}_westeurope
+            ${{ else }}:
+              dependsOn: 
+              - scanInfra
+          variables:
+          - name: secRegionId
+            value: $(${{ format('{0}{1}', location, 'Id') }})
+          - name: environmentId
+            value: $[variables['${{parameter.key}}EnvId']]
+          - name: ServConName
+            value: ${{ format('{0}{1}', parameter.key, 'ServCon') }}
+          - name: ShaCodeName
+            value: ${{ format('{0}{1}', env, 'ShaCode') }}
+          jobs:
+          - template: pipeline/infrastructure.yml@devopsTemplates
+            parameters:
+              serviceConnection: $(${{variables.ServConName}})
+              environmentName: ${{parameter.key}}
+              deployPrivateEndpoint: "true"
+              deployASP: "true" #Deploying the application service plans
+              deploymentLocation: ${{location}}
+              shaUse: ${{parameters.shaUse}}

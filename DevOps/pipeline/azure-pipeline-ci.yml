@@ -67,18 +67,13 @@ stages:
               - scanInfra
           variables:
           - name: environmentId
-            value: $[variables['${{var.key}}EnvId']]
+            value: $[variables['${{parameter.key}}EnvId']]
+          - name: ServConName
+            value: ${{ format('{0}{1}', env, 'ServCon') }}
           jobs:
           - template: pipeline/selfHostAgent.yml@devopsTemplates
             parameters:
-              ${{ if eq(parameter.key, 'tran')}}:
-                serviceConnection: $(devServiceConnection)
-                azpPool: $(azpPoolDev)
-              ${{ elseif eq(parameter.key, 'pr') }}:
-                serviceConnection: $(prodServiceConnection)
-                azpPool: $(azpPoolProd)
-              ${{ else }}:
-                serviceConnection: $(testServiceConnection)
-                azpPool: $(azpPoolTest)
+              serviceConnection: $(${{variables.ServConName}})
+              azpPool: $[variables['${{env}}ShaPool']]
               environmentName: ${{parameter.key}}
               deploymentLocation: ${{location}}

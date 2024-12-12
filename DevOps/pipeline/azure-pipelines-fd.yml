@@ -55,14 +55,14 @@ stages:
       - stage: Deployment_${{parameter.Key}}
         displayName: "Deployment [${{parameter.Key}}]"
         ${{ if eq(parameters.shaUse, 'true') }}:
-          pool: $[variables['${{var.key}}ShaPool']]
+          pool: $[variables['${{parameter.key}}ShaPool']]
         dependsOn: 
         - scanTemplate
         variables:
         - name: environmentId
-          value: $[variables['${{var.key}}EnvId']]
+          value: $[variables['${{parameter.key}}EnvId']]
         - name: ServConName
-          value: ${{ format('{0}{1}', var.key, 'ServCon') }}
+          value: ${{ format('{0}{1}', parameter.key, 'ServCon') }}
         jobs:
         - template: pipeline/frontDoor.yml@devopsTemplates
           parameters:
