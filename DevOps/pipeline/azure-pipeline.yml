@@ -78,12 +78,12 @@ stages:
           AppDeploy: false 
 
   - ${{ each location in parameters.location }}:
-    - ${{ each parameter in parameters }}:
+    - ${{each env in split(variables[location],',') }}:
       - ${{ if eq(parameters[env], 'true') }}:
-        - stage: Deployment_${{parameter.Key}}_${{location}}
-          displayName: "Deployment [${{parameter.Key}}] ${{location}}"
+        - stage: Deployment_${{env}}_${{location}}
+          displayName: "Deployment [${{env}}] ${{location}}"
           ${{ if or(eq(parameters.shaUse,'true'), eq(location,'northeurope')) }}:
-            pool: $[variables['${{parameter.key}}ShaPool']]
+            pool: $[variables['${{env}}ShaPool']]
           ${{ if eq(location,'westeurope') }}:
             dependsOn: 
             - scanInfra
@@ -91,7 +91,7 @@ stages:
             ${{ if eq(length(parameters.location), 2) }}:
               dependsOn: 
               - scanInfra
-              - Deployment_${{parameter.key}}_westeurope
+              - Deployment_${{env}}_westeurope
             ${{ else }}:
               dependsOn: 
               - scanInfra
@@ -99,16 +99,16 @@ stages:
           - name: secRegionId
             value: $(${{ format('{0}{1}', location, 'Id') }})
           - name: environmentId
-            value: $[variables['${{parameter.key}}EnvId']]
+            value: $[variables['${{env}}EnvId']]
           - name: ServConName
-            value: ${{ format('{0}{1}', parameter.key, 'ServCon') }}
+            value: ${{ format('{0}{1}', env, 'ServCon') }}
           - name: ShaCodeName
             value: ${{ format('{0}{1}', env, 'ShaCode') }}
           jobs:
           - template: pipeline/infrastructure.yml@devopsTemplates
             parameters:
               serviceConnection: $(${{variables.ServConName}})
-              environmentName: ${{parameter.key}}
+              environmentName: ${{env}}
               deployPrivateEndpoint: "true"
               deployASP: "true" #Deploying the application service plans
               deploymentLocation: ${{location}}
