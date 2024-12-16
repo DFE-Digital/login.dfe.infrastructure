@@ -21,105 +21,95 @@ pr:
     - main
 
 parameters:
-- name: location
-  type: object
-  displayName: 'Deployment locations (- westeurope & - northeurope)'
-  default:
-    - westeurope
-    - northeurope
-- name: kv
-  type: boolean
-  displayName: 'Deploy Key vault'
-  default: false
-- name: shaUse
-  type: boolean
-  displayName: 'Use Self Host agent'
-  default: true
-- name: tran
-  type: boolean
-  displayName: 'Transformation Deployment'
-  default: false
-- name: dev
-  type: boolean
-  displayName: 'Dev Deployment'
-  default: false
-- name: test
-  type: boolean
-  displayName: 'Test Deployment'
-  default: false
-- name: pp
-  type: boolean
-  displayName: 'Pre-Prod Deployment'
-  default: false
-- name: pr
-  type: boolean
-  displayName: 'Prod Deployment'
-  default: false
+  - name: location
+    type: object
+    displayName: 'Deployment locations (- westeurope & - northeurope)'
+    default:
+      - westeurope
+      - northeurope
+  - name: kv
+    type: boolean
+    displayName: 'Deploy Key vault'
+    default: false
+  - name: shaUse
+    type: boolean
+    displayName: 'Use Self Host agent'
+    default: true
+  - name: tran
+    type: boolean
+    displayName: 'Transformation Deployment'
+    default: false
+  - name: dev
+    type: boolean
+    displayName: 'Dev Deployment'
+    default: false
+  - name: test
+    type: boolean
+    displayName: 'Test Deployment'
+    default: false
+  - name: pp
+    type: boolean
+    displayName: 'Pre-Prod Deployment'
+    default: false
+  - name: pr
+    type: boolean
+    displayName: 'Prod Deployment'
+    default: false
 
 variables:
-- group: dsi-global
-- name: deployKv
-  value: ${{parameters.kv}}
+  - group: dsi-global
+  - group: dsi-envs-list
+  - name: deployKv
+    value: ${{parameters.kv}}
+  - name: northeurope
+    value: 'tran,pp,pr'
+  - name: westeurope
+    value: 'tran,dev,test,pp,pr'
 
 stages:
 
-# Code Scans
-- stage: scanInfra
-  displayName: "Scan tools"
-  jobs:
+  # Code Scans
+  - stage: scanInfra
+    displayName: "Scan tools"
+    jobs:
 
-    - template:  pipeline/scanTools.yml@devopsTemplates
-      parameters:
-        AppDeploy: false 
+      - template:  pipeline/scanTools.yml@devopsTemplates
+        parameters:
+          AppDeploy: false 
 
-- ${{ each location in parameters.location }}:
-  - ${{ each parameter in parameters }}:
-    - ${{ if in(parameter.key, 'tran','dev','test','pp','pr') }}:
-      - ${{ if eq(parameter.value, 'true') }}:
-        - ${{ if or(and(in(parameter.key, 'tran','pp','pr'),eq(location, 'northeurope')),and(in(parameter.key, 'tran','dev','test','pp','pr'),eq(location, 'westeurope'))) }}:
-          - stage: Deployment_${{parameter.Key}}_${{location}}
-            displayName: "Deployment [${{parameter.Key}}] ${{location}}"
-            ${{ if or(eq(parameters.shaUse,'true'), eq(location,'northeurope')) }}:
-              ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
-                pool: Self-hosted Dev
-              ${{ elseif eq(parameter.key, 'pr') }}:
-                pool: Self-hosted Prod
-              ${{ else }}:
-                pool: Self-hosted Test
-            ${{ if eq(location,'westeurope') }}:
+  - ${{ each location in parameters.location }}:
+    - ${{each env in split(variables[location],',') }}:
+      - ${{ if eq(parameters[env], 'true') }}:
+        - stage: Deployment_${{env}}_${{location}}
+          displayName: "Deployment [${{env}}] ${{location}}"
+          ${{ if or(eq(parameters.shaUse,'true'), eq(location,'northeurope')) }}:
+            pool: $[variables['${{env}}ShaPool']]
+          ${{ if eq(location,'westeurope') }}:
+            dependsOn: 
+            - scanInfra
+          ${{ if eq(location,'northeurope') }}:
+            ${{ if eq(length(parameters.location), 2) }}:
               dependsOn: 
               - scanInfra
-            ${{ if eq(location,'northeurope') }}:
-              ${{ if eq(length(parameters.location), 2) }}:
-                dependsOn: 
-                - scanInfra
-                - Deployment_${{parameter.key}}_westeurope
-              ${{ else }}:
-                dependsOn: 
-                - scanInfra
-            variables:
-            - name: environmentId
-              ${{ if eq(parameter.key, 'tran') }}:
-                value: d03
-              ${{ if eq(parameter.key, 'dev') }}:
-                value: d01
-              ${{ if eq(parameter.key, 'test') }}:
-                value: t01
-              ${{ if eq(parameter.key, 'pp') }}:
-                value: t02
-              ${{ if eq(parameter.key, 'pr') }}:
-                value: p01
-            jobs:
-            - template: pipeline/infrastructure.yml@devopsTemplates
-              parameters:
-                ${{ if or(eq(parameter.key, 'dev'), eq(parameter.key, 'tran')) }}:
-                  serviceConnection: $(devServiceConnection)
-                ${{ elseif eq(parameter.key, 'pr') }}:
-                  serviceConnection: $(prodServiceConnection)
-                ${{ else }}:
-                  serviceConnection: $(testServiceConnection)
-                environmentName: ${{parameter.key}}
-                deployPrivateEndpoint: "true"
-                deployASP: "true" #Deploying the application service plans
-                deploymentLocation: ${{location}}
-                shaUse: ${{parameters.shaUse}}
+              - Deployment_${{env}}_westeurope
+            ${{ else }}:
+              dependsOn: 
+              - scanInfra
+          variables:
+          - name: secRegionId
+            value: $(${{ format('{0}{1}', location, 'Id') }})
+          - name: environmentId
+            value: $[variables['${{env}}EnvId']]
+          - name: ServConName
+            value: ${{ format('{0}{1}', env, 'ServCon') }}
+          - name: ShaCodeName
+            value: ${{ format('{0}{1}', env, 'ShaCode') }}
+          jobs:
+          - template: pipeline/infrastructure.yml@devopsTemplates
+            parameters:
+              serviceConnection: $(${{variables.ServConName}})
+              environmentName: ${{env}}
+              deployPrivateEndpoint: "true"
+              deployASP: "true" #Deploying the application service plans
+              deploymentLocation: ${{location}}
+              shaUse: ${{parameters.shaUse}}
