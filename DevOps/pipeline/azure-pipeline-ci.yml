@@ -13,45 +13,45 @@ trigger: none
 pr: none
 
 parameters:
-- name: location
-  type: object
-  displayName: 'Deployment locations (- westeurope & - northeurope)'
-  default:
-    - westeurope
-    - northeurope
-- name: tran
-  type: boolean
-  displayName: 'Transformation Deployment'
-  default: false
-- name: pp
-  type: boolean
-  displayName: 'Pre-Prod Deployment'
-  default: false
-- name: pr
-  type: boolean
-  displayName: 'Prod Deployment'
-  default: false
+  - name: location
+    type: object
+    displayName: 'Deployment locations (- westeurope & - northeurope)'
+    default:
+      - westeurope
+      - northeurope
+  - name: tran
+    type: boolean
+    displayName: 'Transformation Deployment'
+    default: false
+  - name: pp
+    type: boolean
+    displayName: 'Pre-Prod Deployment'
+    default: false
+  - name: pr
+    type: boolean
+    displayName: 'Prod Deployment'
+    default: false
 
 variables:
-- group: dsi-global
-- name: BuildTagID
-  value: $(BuildID)
+  - group: dsi-global
+  - group: dsi-envs-list
+  - name: BuildTagID
+    value: $(BuildID)
 
 stages:
 
-# Code Scans
-- stage: scanInfra
-  displayName: "Scan tools"
-  jobs:
+  # Code Scans
+  - stage: scanInfra
+    displayName: "Scan tools"
+    jobs:
 
-    - template:  pipeline/scanTools.yml@devopsTemplates
-      parameters:
-        AppDeploy: false 
+      - template:  pipeline/scanTools.yml@devopsTemplates
+        parameters:
+          AppDeploy: false 
 
-- ${{ each location in parameters.location }}:
-  - ${{ each parameter in parameters }}:
-    - ${{ if in(parameter.key, 'tran','pp','pr') }}:
-      - ${{ if eq(parameter.value, 'true') }}:
+  - ${{ each location in parameters.location }}:
+    - ${{ each parameter in parameters }}:
+      - ${{ if and(in(parameter.key, 'tran','pp','pr'),eq(parameter.value, 'true')) }}:
         - stage: Deployment_${{parameter.Key}}_${{location}}
           displayName: "Deployment [${{parameter.Key}}] ${{location}}"
           ${{ if eq(location,'westeurope') }}:
@@ -67,23 +67,13 @@ stages:
               - scanInfra
           variables:
           - name: environmentId
-            ${{ if eq(parameter.key, 'tran') }}:
-              value: d03
-            ${{ if eq(parameter.key, 'pp') }}:
-              value: t02
-            ${{ if eq(parameter.key, 'pr') }}:
-              value: p01
+            value: $[variables['${{parameter.key}}EnvId']]
+          - name: ServConName
+            value: ${{ format('{0}{1}', env, 'ServCon') }}
           jobs:
           - template: pipeline/selfHostAgent.yml@devopsTemplates
             parameters:
-              ${{ if eq(parameter.key, 'tran')}}:
-                serviceConnection: $(devServiceConnection)
-                azpPool: $(azpPoolDev)
-              ${{ elseif eq(parameter.key, 'pr') }}:
-                serviceConnection: $(prodServiceConnection)
-                azpPool: $(azpPoolProd)
-              ${{ else }}:
-                serviceConnection: $(testServiceConnection)
-                azpPool: $(azpPoolTest)
+              serviceConnection: $(${{variables.ServConName}})
+              azpPool: $[variables['${{env}}ShaPool']]
               environmentName: ${{parameter.key}}
               deploymentLocation: ${{location}}
