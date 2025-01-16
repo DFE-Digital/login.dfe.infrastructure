@@ -70,6 +70,8 @@ stages:
             value: $[variables['${{parameter.key}}EnvId']]
           - name: ServConName
             value: ${{ format('{0}{1}', parameter.key, 'ServCon') }}
+          - name: secRegionId
+            value: $(${{ format('{0}{1}', location, 'Id') }})
           jobs:
           - template: pipeline/selfHostAgent.yml@devopsTemplates
             parameters:
