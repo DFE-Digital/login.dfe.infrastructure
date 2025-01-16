@@ -74,6 +74,6 @@ stages:
           - template: pipeline/selfHostAgent.yml@devopsTemplates
             parameters:
               serviceConnection: $(${{variables.ServConName}})
-              azpPool: $[variables['${{env}}ShaPool']]
+              azpPool: $[variables['${{parameter.key}}ShaPool']]
               environmentName: ${{parameter.key}}
               deploymentLocation: ${{location}}
