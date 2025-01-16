@@ -72,10 +72,12 @@ stages:
             value: ${{ format('{0}{1}', parameter.key, 'ServCon') }}
           - name: secRegionId
             value: $(${{ format('{0}{1}', location, 'Id') }})
+          - name: ShaPool
+            value: ${{ format('{0}{1}', parameter.key, 'ShaPool') }}
           jobs:
           - template: pipeline/selfHostAgent.yml@devopsTemplates
             parameters:
               serviceConnection: $(${{variables.ServConName}})
-              azpPool: $[variables['${{parameter.key}}ShaPool']]
+              azpPool: $(${{variables.ShaPool}})
               environmentName: ${{parameter.key}}
               deploymentLocation: ${{location}}
