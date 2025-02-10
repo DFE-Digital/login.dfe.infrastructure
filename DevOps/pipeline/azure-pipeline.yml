@@ -103,7 +103,7 @@ stages:
           - name: ServConName
             value: ${{ format('{0}{1}', env, 'ServCon') }}
           - name: ShaCodeName
-            value: ${{ format('{0}{1}', env, 'ShaCode') }}
+            value: $(${{ format('{0}{1}', env, 'ShaCode') }})
           jobs:
           - template: pipeline/infrastructure.yml@devopsTemplates
             parameters:
