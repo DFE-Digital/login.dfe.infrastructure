@@ -2083,7 +2083,7 @@
     },
     {
       "apiVersion": "2020-10-01",
-      "name": "add-appInsights-instrumentation-key-vault-secret",
+      "name": "add-appInsights-connection-string-vault-secret",
       "type": "Microsoft.Resources/deployments",
       "resourceGroup": "[replace(resourceGroup().name,'neu-','')]",
       "properties": {
@@ -2097,13 +2097,13 @@
             "value": "[parameters('keyVaultName')]"
           },
           "secretName": {
-            "value": "[if(equals(resourceGroup().location, 'westeurope'),'appInsightsInstrumentationKey','neu-AppInsightsInstrumentationKey')]"
+            "value": "[if(equals(resourceGroup().location, 'westeurope'),'appInsightsConnectionString','neu-AppInsightsConnectionString')]"
           },
           "secretValue": {
-            "value": "[reference('app-insights').outputs.InstrumentationKey.value]"
+            "value": "[reference('app-insights').outputs.ConnectionString.value]"
           },
           "contentType": {
-            "value": "AppInsights instrumentation key"
+            "value": "AppInsights Connection String"
           }
         }
       },

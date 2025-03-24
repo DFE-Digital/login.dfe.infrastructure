@@ -46,7 +46,7 @@ Also, this pipeline has an extra parameter in the pipeline to trigger the Pre-Re
 *All secret must be added in the deployed environment
 *All Add by pipeline secrets will automatically be added in the keyvault after the pre-deployment infrastructure completes 
 
-1. Add by pipeline, app insights instrumentation key in the keyvault with the name `appInsightsInstrumentationKey`
+1. Add by pipeline, app insights Connection String in the keyvault with the name `appInsightsConnectionString`
 2. Add by pipeline, audit Service Bus Subscription Name in the keyvault with the name  `auditServiceBusSubscriptionName`
 3. Add by pipeline, audit Service Bus Topic Name in the keyvault with the name  `auditServiceBusTopicName`
 4. Add by pipeline, audit SQL Database Name in the keyvault with name  `auditSqlDbName`
