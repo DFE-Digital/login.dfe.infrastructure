@@ -7,7 +7,6 @@ resources:
       endpoint: DfE-Digital
       name: DFE-Digital/login.dfe.devops
       ref: main
-
 trigger: none
 
 pr: none
@@ -19,6 +18,10 @@ parameters:
     default:
       - westeurope
       - northeurope
+  - name: existTag
+    type: string
+    displayName: "Deploy existing tag"
+    default: "latest"
   - name: tran
     type: boolean
     displayName: 'Transformation Deployment'
@@ -31,6 +34,10 @@ parameters:
     type: boolean
     displayName: 'Prod Deployment'
     default: false
+  - name: cgNumber
+    type: number
+    displayName: 'Container Groups Need (1 Cg = 2 Ci)'
+    default: 1
 
 variables:
   - group: dsi-global
@@ -70,14 +77,18 @@ stages:
             value: $[variables['${{parameter.key}}EnvId']]
           - name: ServConName
             value: ${{ format('{0}{1}', parameter.key, 'ServCon') }}
+          - name: subId
+            value: ${{ format('{0}{1}', parameter.key, 'subId') }}
           - name: secRegionId
             value: $(${{ format('{0}{1}', location, 'Id') }})
           - name: ShaPool
             value: ${{ format('{0}{1}', parameter.key, 'ShaPool') }}
           jobs:
-          - template: pipeline/selfHostAgent.yml@devopsTemplates
+          - template: pipeline/infrastructure/selfHostAgent.yml@devopsTemplates
             parameters:
               serviceConnection: $(${{variables.ServConName}})
+              subscriptionId: $(${{variables.subId}})
               azpPool: $(${{variables.ShaPool}})
               environmentName: ${{parameter.key}}
               deploymentLocation: ${{location}}
+              cgNumber: ${{parameters.cgNumber}}
