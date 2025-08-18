@@ -46,9 +46,10 @@ stages:
     displayName: "Scan tools"
     jobs:
       
-      - template:  pipeline/scanTools.yml@devopsTemplates
+      - template: pipeline/components/checks/checks.yml@devopsTemplates
         parameters:
-          AppDeploy: false 
+          AppDeploy: false
+          custRegAuth: $(custRegAuth)
 
   - ${{ each parameter in parameters }}:
     - ${{ if and(in(parameter.key, 'tran','dev','test','pp','pr'), eq(parameter.value, 'true')) }}:

@@ -73,9 +73,10 @@ stages:
     displayName: "Scan tools"
     jobs:
 
-      - template:  pipeline/scanTools.yml@devopsTemplates
+      - template: pipeline/components/checks/checks.yml@devopsTemplates
         parameters:
           AppDeploy: false 
+          custRegAuth: $(custRegAuth)
 
   - ${{ each location in parameters.location }}:
     - ${{each env in split(variables[location],',') }}:
