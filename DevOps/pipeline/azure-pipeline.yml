@@ -84,7 +84,10 @@ stages:
         - stage: Deployment_${{env}}_${{location}}
           displayName: "Deployment [${{env}}] ${{location}}"
           ${{ if or(eq(parameters.shaUse,'true'), eq(location,'northeurope')) }}:
-            pool: $[variables['${{env}}ShaPool']]
+            pool: 
+              name: $[variables['${{env}}ShaPool']]
+              demands:
+              - HOME -equals /home/agent
           ${{ if eq(location,'westeurope') }}:
             dependsOn: 
             - scanInfra

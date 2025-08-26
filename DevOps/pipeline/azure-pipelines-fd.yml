@@ -56,7 +56,10 @@ stages:
       - stage: Deployment_${{parameter.Key}}
         displayName: "Deployment [${{parameter.Key}}]"
         ${{ if eq(parameters.shaUse, 'true') }}:
-          pool: $[variables['${{parameter.key}}ShaPool']]
+          pool:
+            name: $[variables['${{parameter.key}}ShaPool']]
+            demands:
+            - HOME -equals /home/agent
         dependsOn: 
         - scanTemplate
         variables:
