@@ -39,18 +39,18 @@ This repository contains the **pre-requisite** and **base infrastructure** for d
 
 ## Deployment
 
-All external files (ARM templates, scripts, YAML) are located in the `login.dfe.devops` repository.
+All external files (BICEP templates, scripts, YAML) are located in the `login.dfe.devops` repository.
 
 The infrastructure pipeline has two stages:
 
 1. **Scan Infrastructure**  
-   Uses Checkov to scan YAML and ARM templates.
+   Uses Checkov to scan YAML and BICEP templates.
 
 2. **Deployment Stage**  
    Contains two jobs:
    - **Pre-deployment Job**  
      Creates Logic App `s141<EnvId>-signin-git` and Key Vault.  
-     ARM template: `preDeployInfrastructure.json`
+     BICEP template: `preDeployInfrastructure.json`
    - **Base Infrastructure Job**  
      Deploys all components using `template.json` in `DevOps/templates`.
 
@@ -91,23 +91,7 @@ Examples include:
 
 ### Certificates
 
-For Front Door certificates:
-
-1. Add Certificate Authority to Key Vault  
-   [Documentation](https://learn.microsoft.com/en-us/azure/key-vault/certificates/how-to-integrate-certificate-authority)
-
-2. If generating new certificates:
-   - Use Key Vault > Certificates > Generate/Import
-   - Set DNS names, validity (12 months), content type, lifetime actions, etc.
-
-3. If importing existing certificates:
-   - Use Key Vault > Certificates > Import
-   - Upload file and provide password if needed
-
-4. Update `azure-pipelines-gw.yml` with the certificate name under `sslCertificateName`.
-
-More info:  
-[Certificate Signing Request](https://learn.microsoft.com/en-us/azure/key-vault/certificates/create-certificate-signing-request?tabs=azure-portal)
+For Front Door we use certificates provided by Front Door. They are defined in the Front Door BICEP template.
 
 ---
 
